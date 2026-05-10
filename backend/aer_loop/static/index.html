@@ -99,7 +99,7 @@
     h1 span { display: inline; }
     .subline { color: var(--muted); font-size: 12px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .page-nav {
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       gap: 6px;
@@ -135,8 +135,8 @@
     .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 16px var(--green); }
     .main {
       display: grid;
-      grid-template-columns: minmax(280px, .82fr) minmax(620px, 1.55fr) minmax(300px, .9fr);
-      grid-template-rows: auto auto auto auto;
+      grid-template-columns: minmax(300px, .95fr) minmax(360px, 1.05fr) minmax(330px, .95fr) minmax(330px, .95fr);
+      grid-template-rows: auto auto auto auto auto;
       gap: 12px;
       padding: 12px;
       align-items: start;
@@ -218,8 +218,10 @@
     .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
     .stack { display: grid; gap: 12px; }
     .left-rail { grid-column: 1; grid-row: 3 / 5; }
-    .case-board { grid-column: 2; grid-row: 3; }
-    .right-rail { grid-column: 3; grid-row: 3; max-height: 610px; overflow: auto; }
+    .queue-rail { grid-column: 2; grid-row: 3; }
+    .case-board { grid-column: 2; grid-row: 4; }
+    .right-rail { grid-column: 3; grid-row: 3 / 5; max-height: 720px; overflow: auto; }
+    .fusion-rail { grid-column: 4; grid-row: 3 / 5; max-height: 720px; overflow: auto; }
     .stream { max-height: 472px; overflow: auto; }
     table { width: 100%; border-collapse: collapse; }
     th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid rgba(124, 172, 255, .08); white-space: nowrap; }
@@ -247,14 +249,14 @@
     .confidence { display: grid; gap: 3px; min-width: 68px; }
     .bar { height: 6px; border-radius: 999px; background: rgba(255,255,255,.09); overflow: hidden; }
     .bar > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--cyan), var(--blue)); }
-    .case-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 12px; }
+    .case-grid { display: grid; grid-template-columns: 1fr; gap: 10px; padding: 12px; max-height: 520px; overflow: auto; }
     .case-card {
       border: 1px solid rgba(124, 172, 255, .15);
       background: linear-gradient(180deg, rgba(11, 30, 49, .95), rgba(8, 19, 33, .96));
       border-radius: 8px;
-      padding: 14px;
+      padding: 12px;
       cursor: pointer;
-      min-height: 250px;
+      min-height: 0;
       position: relative;
       overflow: hidden;
       transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
@@ -264,12 +266,22 @@
       box-shadow: inset 0 0 0 1px rgba(34,231,202,.20), 0 0 26px rgba(34,231,202,.12);
     }
     .case-card:hover { transform: translateY(-2px); border-color: rgba(34,231,202,.46); }
-    .case-card h3 { font-size: 24px; margin: 0 0 3px; line-height: 1; letter-spacing: 0; }
-    .case-name { font-size: 18px; font-weight: 900; margin: 0 0 8px; min-height: 50px; }
-    .case-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 12px; color: var(--muted); font-weight: 700; }
-    .case-signal { margin: 11px 0 9px; color: #ffc075; font-weight: 900; min-height: 38px; }
+    .case-card h3 { font-size: 18px; margin: 0 0 3px; line-height: 1; letter-spacing: 0; }
+    .case-name { font-size: 15px; font-weight: 900; margin: 0; }
+    .case-top { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; }
+    .case-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; color: var(--muted); font-weight: 700; margin-top: 9px; }
+    .case-signal { margin: 9px 0; color: #ffc075; font-weight: 900; min-height: 0; }
     .progress-label { display: flex; justify-content: space-between; color: var(--muted); margin: 6px 0 5px; }
     .progress-label b { color: #ffc075; font-size: 20px; line-height: 1; }
+    .card-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+    .card-actions button { padding: 6px 8px; font-size: 12px; }
+    .case-card-detail {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(124,172,255,.12);
+    }
+    .case-card.expanded .case-card-detail { display: block; }
     .steps { display: grid; grid-template-columns: 1fr 118px; gap: 10px; align-items: center; }
     .step-list { display: grid; gap: 8px; border-left: 2px solid rgba(34,231,202,.18); padding-left: 15px; }
     .step-item { position: relative; display: grid; gap: 1px; color: var(--muted); font-size: 12px; }
@@ -286,7 +298,27 @@
     }
     .step-item strong { color: var(--text); font-size: 13px; }
     .radar { width: 118px; height: 118px; opacity: .95; }
-    .workbench { grid-column: 2 / 4; grid-row: 4; display: grid; grid-template-rows: auto auto auto minmax(340px, 1fr); min-height: 620px; }
+    .workbench { grid-column: 1 / -1; grid-row: 5; display: grid; grid-template-rows: auto auto auto minmax(340px, 1fr); min-height: 620px; }
+    .detail-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(34,231,202,.14);
+      background: rgba(4, 17, 28, .52);
+    }
+    .detail-actions .play-controls { justify-content: flex-end; }
+    .review-menu {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,179,86,.18);
+      background: rgba(255,179,86,.06);
+    }
+    .review-menu[hidden] { display: none; }
     .main.page-trace {
       grid-template-columns: minmax(300px, .72fr) minmax(690px, 1.62fr) minmax(300px, .75fr);
     }
@@ -550,10 +582,10 @@
       .topbar { height: auto; flex-wrap: wrap; }
       .page-nav { order: 3; width: 100%; min-width: 0; justify-content: flex-start; overflow-x: auto; }
       .main { grid-template-columns: 1fr; }
-      .left-rail, .case-board, .right-rail, .workbench { grid-column: auto; grid-row: auto; }
+      .left-rail, .queue-rail, .case-board, .right-rail, .fusion-rail, .workbench { grid-column: auto; grid-row: auto; }
       .main.page-trace,
       .main.page-agents { grid-template-columns: 1fr; }
-      .kpis, .case-grid, .demo-lane, .source-grid, .writeback { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .kpis, .demo-lane, .source-grid, .writeback { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .workbench { grid-column: auto; }
       .split, .passport-grid, .learning-grid { grid-template-columns: 1fr; }
       .main.page-trace .case-board,
@@ -646,12 +678,7 @@
             <option value="medium">medium</option>
           </select>
         </div>
-        <div class="actions">
-          <button onclick="stepSelected()">下一步追证</button>
-          <button class="warn" onclick="runSelected()">运行选中案例</button>
-          <button class="primary" onclick="runFullLoop()">运行完整闭环</button>
-          <button onclick="reviewSelected()">人工确认</button>
-        </div>
+        <div class="count">选择案件后，在下方“案件详情”中执行追证、闭环运行和人工确认。</div>
       </section>
 
       <div class="stack left-rail">
@@ -670,14 +697,9 @@
           </div>
         </section>
 
-        <section class="panel">
-          <div class="panel-head">
-            <div class="panel-title">多源数据融合覆盖</div>
-            <span class="count">10 类数据源</span>
-          </div>
-          <div class="source-grid" id="sourceGrid"></div>
-        </section>
+      </div>
 
+      <div class="stack queue-rail">
         <section class="panel">
           <div class="panel-head">
             <div class="panel-title">待处理队列</div>
@@ -711,6 +733,17 @@
           </div>
         </section>
 
+      </div>
+
+      <div class="stack fusion-rail">
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title">多源数据融合覆盖</div>
+            <span class="count">10 类数据源</span>
+          </div>
+          <div class="source-grid" id="sourceGrid"></div>
+        </section>
+
         <section class="panel">
           <div class="panel-head">
             <div class="panel-title">OpenCLAW Action 工具层</div>
@@ -724,8 +757,23 @@
 
       <section class="panel workbench">
         <div class="panel-head">
-          <div class="panel-title" id="workbenchTitle">主动追证工作台</div>
+          <div class="panel-title" id="workbenchTitle">风险案件详情</div>
           <span class="count" id="selectedStatus">请选择案例</span>
+        </div>
+        <div class="detail-actions">
+          <span class="count">案件详情集中展示主动追证流、证据护照、多源融合图谱和模式学习闭环。</span>
+          <div class="play-controls">
+            <button onclick="stepSelected()">下一步追证</button>
+            <button class="warn" onclick="runSelected()">运行选中案例</button>
+            <button class="primary" onclick="runFullLoop()">运行完整闭环</button>
+            <button onclick="toggleReviewMenu()">人工确认</button>
+          </div>
+        </div>
+        <div class="review-menu" id="reviewMenu" hidden>
+          <span class="count">请选择人工复核结论：</span>
+          <button class="primary" onclick="reviewSelected('risk_founded')">风险成立</button>
+          <button onclick="reviewSelected('risk_not_founded')">风险不成立</button>
+          <button class="warn" onclick="reviewSelected('evidence_insufficient')">证据不足</button>
         </div>
         <div class="demo-lane">
           <div class="lane-step"><b>1 多源融合</b><span>订单、支付、退款、物流、评论、设备、IP、补贴台账与外部特征统一入图。</span></div>
@@ -783,6 +831,8 @@
       activePage: initialPage(),
       activeTab: pageToTab(initialPage()),
       selectedCandidateId: null,
+      expandedCaseId: null,
+      reviewMenuOpen: false,
       tracePlayIndex: -1,
       tracePlaybackActive: false,
       tracePlaybackTimer: null
@@ -973,11 +1023,9 @@
 
     function renderPageNav() {
       const nav = document.getElementById('pageNav');
-      nav.innerHTML = pageDefs.map(([id, label]) => `
-        <button class="nav-btn ${state.activePage === id ? 'active' : ''}" onclick="setPage('${id}')">${label}</button>
-      `).join('');
+      nav.innerHTML = '';
       const main = document.getElementById('main');
-      main.className = `main page-${state.activePage}`;
+      main.className = 'main page-overview';
     }
 
     function renderAll() {
@@ -1075,15 +1123,20 @@
         const entities = safeJson(c.primary_entities, {});
         const progress = progressFor(c);
         const active = c.case_id === state.selectedCaseId ? 'active' : '';
+        const expanded = state.expandedCaseId === c.case_id ? 'expanded' : '';
         const steps = caseSteps(c);
         return `
-          <article class="case-card ${active}" onclick="selectCase('${c.case_id}')">
-            <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start">
+          <article class="case-card ${active} ${expanded}" onclick="selectCase('${c.case_id}')">
+            <div class="case-top">
               <div>
                 <h3>${c.case_id}</h3>
                 <div class="case-name">${caseHeadline(c)}</div>
               </div>
-              <span class="pill ${riskLevelClass(c.risk_level)}">${c.risk_level}</span>
+              <div class="card-actions">
+                <span class="pill ${riskLevelClass(c.risk_level)}">${c.risk_level}</span>
+                <button onclick="toggleCaseExpand('${c.case_id}', event)">${state.expandedCaseId === c.case_id ? '收起' : '展开'}</button>
+                <button class="primary" onclick="enterCaseDetail('${c.case_id}', event)">进入详情</button>
+              </div>
             </div>
             <div class="case-meta">
               <span>风险模式：<b>${c.pattern_id}</b></span>
@@ -1091,13 +1144,15 @@
               <span>置信度：<b>${fmt((c.risk_score || 0) * 100, 0)}%</b></span>
               <span>复杂度：<b>${(entities.orders || []).length > 70 ? '高' : '中'}</b></span>
             </div>
-            <div class="case-signal">${topSignals(c)}</div>
             <div class="progress-label"><span>追证进度</span><b>${progress}%</b></div>
             <div class="bar"><span style="width:${progress}%; background:${c.pattern_id === 'EC-SKIM-001' ? 'linear-gradient(90deg,#ff5a6f,#ffb356)' : c.pattern_id === 'EC-FAKE-002' ? 'linear-gradient(90deg,#ffb356,#ffe08a)' : 'linear-gradient(90deg,#22e7ca,#7fffd4)'}"></span></div>
-            <div style="margin:9px 0;color:#ffc075;font-weight:800">• ${statusText(c)} · 已采集 ${evidenceFor(c.case_id).length} 条证据</div>
-            <div class="steps">
-              <div class="step-list">${steps.map(s => `<div class="step-item"><strong>${s}</strong><span>已完成</span></div>`).join('')}</div>
-              ${radarSvg(c)}
+            <div class="case-card-detail">
+              <div class="case-signal">${topSignals(c)}</div>
+              <div style="margin:9px 0;color:#ffc075;font-weight:800">• ${statusText(c)} · 已采集 ${evidenceFor(c.case_id).length} 条证据</div>
+              <div class="steps">
+                <div class="step-list">${steps.map(s => `<div class="step-item"><strong>${s}</strong><span>已完成</span></div>`).join('')}</div>
+                ${radarSvg(c)}
+              </div>
             </div>
           </article>
         `;
@@ -1176,8 +1231,10 @@
 
     function renderWorkbench() {
       const c = state.selectedCase;
-      document.getElementById('workbenchTitle').textContent = c ? `${c.case_id} · ${caseHeadline(c)}` : '主动追证工作台';
+      document.getElementById('workbenchTitle').textContent = c ? `${c.case_id} · ${caseHeadline(c)}` : '风险案件详情';
       document.getElementById('selectedStatus').textContent = c ? `${c.pattern_id} · ${statusText(c)}` : '请选择案例';
+      const reviewMenu = document.getElementById('reviewMenu');
+      if (reviewMenu) reviewMenu.hidden = !state.reviewMenuOpen;
       const tabs = [
         ['trace', '主动追证流'],
         ['passport', '证据护照'],
@@ -1455,8 +1512,24 @@
       return [];
     }
 
+    function toggleCaseExpand(id, event) {
+      event?.stopPropagation();
+      state.expandedCaseId = state.expandedCaseId === id ? null : id;
+      renderCaseCards();
+    }
+
+    async function enterCaseDetail(id, event) {
+      event?.stopPropagation();
+      await selectCase(id);
+      state.activeTab = 'trace';
+      state.reviewMenuOpen = false;
+      renderWorkbench();
+      document.querySelector('.workbench')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     async function selectCase(id) {
       state.selectedCaseId = id;
+      state.expandedCaseId = id;
       state.tracePlayIndex = -1;
       state.tracePlaybackActive = false;
       clearInterval(state.tracePlaybackTimer);
@@ -1478,10 +1551,7 @@
 
     function setTab(id) {
       state.activeTab = id;
-      const tabToPage = { trace: 'trace', graph: 'fusion', passport: 'passport', learning: 'learning' };
-      if (tabToPage[id]) state.activePage = tabToPage[id];
       renderWorkbench();
-      renderPageNav();
     }
 
     function selectCandidate(id) {
@@ -1518,15 +1588,27 @@
       } catch (err) { toast(`完整闭环失败：${err.message || err}`); }
     }
 
-    async function reviewSelected() {
+    function toggleReviewMenu() {
       if (!state.selectedCaseId) return;
+      state.reviewMenuOpen = !state.reviewMenuOpen;
+      renderWorkbench();
+    }
+
+    async function reviewSelected(decision = 'risk_founded') {
+      if (!state.selectedCaseId) return;
+      const decisionText = {
+        risk_founded: '风险成立',
+        risk_not_founded: '风险不成立',
+        evidence_insufficient: '证据不足'
+      }[decision] || decision;
       try {
         await api(`/api/cases/${state.selectedCaseId}/review`, {
           method: 'POST',
-          body: JSON.stringify({ decision: 'risk_founded', note: 'Demo auditor accepted the evidence passport.', reviewer: 'demo_auditor' })
+          body: JSON.stringify({ decision, note: `前端人工复核结论：${decisionText}`, reviewer: 'demo_auditor' })
         });
+        state.reviewMenuOpen = false;
         await refreshAll();
-        toast('人工确认已写入 human_review，案件状态已更新。');
+        toast(`人工确认已写入：${decisionText}，案件状态已更新。`);
       } catch (err) { toast(`人工确认失败：${err.message || err}`); }
     }
 
