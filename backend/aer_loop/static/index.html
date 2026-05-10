@@ -141,6 +141,20 @@
       padding: 12px;
       align-items: start;
     }
+    .main.detail-focus {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto;
+      align-items: stretch;
+    }
+    .main.detail-focus .kpis,
+    .main.detail-focus .controls,
+    .main.detail-focus .left-rail,
+    .main.detail-focus .queue-rail,
+    .main.detail-focus .case-board,
+    .main.detail-focus .right-rail,
+    .main.detail-focus .fusion-rail {
+      display: none;
+    }
     .panel {
       border: 1px solid var(--line);
       background: linear-gradient(180deg, rgba(12, 31, 49, .94), rgba(6, 18, 31, .94));
@@ -304,6 +318,11 @@
       display: block;
       min-height: 0;
     }
+    .main.detail-focus .workbench {
+      grid-column: 1;
+      grid-row: 1;
+      min-height: calc(100vh - 88px);
+    }
     .detail-actions {
       display: flex;
       align-items: center;
@@ -315,6 +334,7 @@
       background: rgba(4, 17, 28, .52);
     }
     .detail-actions .play-controls { justify-content: flex-end; }
+    .detail-return { border-color: rgba(124,172,255,.24); color: #b5d7ff; }
     .review-menu {
       display: flex;
       gap: 8px;
@@ -778,6 +798,7 @@
         <div class="detail-actions">
           <span class="count">案件详情集中展示主动追证流、证据护照、多源融合图谱和模式学习闭环。</span>
           <div class="play-controls">
+            <button class="detail-return" onclick="exitDetail()">返回总览</button>
             <button onclick="stepSelected()">下一步追证</button>
             <button class="warn" onclick="runSelected()">运行选中案例</button>
             <button class="primary" onclick="runFullLoop()">运行完整闭环</button>
@@ -847,6 +868,7 @@
       activeTab: pageToTab(initialPage()),
       selectedCandidateId: null,
       expandedCaseId: null,
+      detailFocus: false,
       reviewMenuOpen: false,
       tracePlayIndex: -1,
       tracePlaybackActive: false,
@@ -1040,7 +1062,7 @@
       const nav = document.getElementById('pageNav');
       nav.innerHTML = '';
       const main = document.getElementById('main');
-      main.className = 'main page-overview';
+      main.className = `main page-overview${state.detailFocus ? ' detail-focus' : ''}`;
     }
 
     function renderAll() {
@@ -1535,11 +1557,18 @@
 
     async function enterCaseDetail(id, event) {
       event?.stopPropagation();
-      await selectCase(id);
+      state.detailFocus = true;
       state.activeTab = 'trace';
       state.reviewMenuOpen = false;
-      renderWorkbench();
-      document.querySelector('.workbench')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      await selectCase(id);
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function exitDetail() {
+      state.detailFocus = false;
+      state.reviewMenuOpen = false;
+      renderAll();
+      window.scrollTo({ top: 0, behavior: 'auto' });
     }
 
     async function selectCase(id) {
