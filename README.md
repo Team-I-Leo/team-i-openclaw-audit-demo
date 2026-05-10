@@ -281,10 +281,3 @@ Slurm 作业：9729073
 OpenAI 兼容 HTTP 模型调用：75
 fallback 调用：0
 ```
-
-## GitHub 发布说明
-
-- `models/` 默认排除，模型权重需要单独下载或挂载。
-- `node_modules/`、Python 字节码、API PID 文件、HPC 服务状态和超大运行文件默认排除。
-- 原始路线校准材料以 `materials/route_calibration_materials.tar.gz` 的形式保留，避免 Windows 下中文路径解压和 GitHub 打包时出现编码问题。
-- 公开发布前需完成比赛披露要求和敏感材料检查。
