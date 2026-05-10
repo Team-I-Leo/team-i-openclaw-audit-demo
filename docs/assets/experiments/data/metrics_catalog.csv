@@ -1,0 +1,11 @@
+highlight,metric,figure,data
+OpenCLAW 受控动作框架,"typed governed action, trace completeness, evidence lineage, replayable trajectory",fig4_openclaw_governance_heatmap.png,governance_benchmark.csv
+多模型智能体协作,local model invocations by role and model tier,fig3_agent_collaboration.png,agent_collaboration.csv
+主动追证,evidence sufficiency over action steps,fig1_active_retrieval_curve.png,active_retrieval_curve.csv
+多源异构数据融合,source ablation vs evidence sufficiency and required dimension coverage,fig2_multisource_fusion_ablation.png,multisource_ablation.csv
+证据图谱,evidence lineage and source-family expansion,fig2_multisource_fusion_ablation.png; fig4_openclaw_governance_heatmap.png,multisource_ablation.csv; governance_benchmark.csv
+反证检索,counter-evidence coverage,fig5_counter_evidence_passport.png,counter_passport_metrics.csv
+证据护照,passport-ready rate and human-review package completeness,fig5_counter_evidence_passport.png,counter_passport_metrics.csv
+人机协同,"human-review package, analyst minutes, cases per analyst-day",fig7_efficiency_throughput.png,efficiency_benchmark.csv
+模式学习,approved candidate promoted to risk_pattern and case_memory,fig6_pattern_learning_writeback.png,learning_writeback_counts.csv
+策略写回,policy_action_weight rows and learned action deltas,fig6_pattern_learning_writeback.png,learning_policy_weights.csv

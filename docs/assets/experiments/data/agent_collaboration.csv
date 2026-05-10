@@ -1,0 +1,9 @@
+agent_id,model_tier,invocations,prompt_chars,response_chars,fallback_rate
+investigation_agent,7B快速路由模型,24,5468.791666666667,370.1666666666667,0.0
+router_agent,7B快速路由模型,24,10037.916666666666,405.75,0.0
+pattern_matcher_agent,14B专家模型,6,4402.333333333333,299.6666666666667,0.0
+case_router_agent,7B快速路由模型,6,4413.333333333333,286.6666666666667,0.0
+risk_signal_agent,7B快速路由模型,6,4097.666666666667,340.3333333333333,0.0
+assertion_agent,7B快速路由模型,3,4034.6666666666665,338.6666666666667,0.0
+passport_agent,14B专家模型,3,8437.666666666666,735.6666666666666,0.0
+pattern_learning_agent,14B专家模型,3,8194.666666666666,561.3333333333334,0.0

@@ -1,0 +1,25 @@
+method,metric,score
+Manual worksheet,Typed governed action,20.0
+Manual worksheet,Trace completeness,35.0
+Manual worksheet,Evidence lineage,30.0
+Manual worksheet,Replayable trajectory,15.0
+Manual worksheet,Passport package,45.0
+Manual worksheet,Model-backed execution,0.0
+Rules-only script,Typed governed action,45.0
+Rules-only script,Trace completeness,50.0
+Rules-only script,Evidence lineage,35.0
+Rules-only script,Replayable trajectory,40.0
+Rules-only script,Passport package,15.0
+Rules-only script,Model-backed execution,0.0
+Single LLM/RAG,Typed governed action,55.0
+Single LLM/RAG,Trace completeness,55.0
+Single LLM/RAG,Evidence lineage,45.0
+Single LLM/RAG,Replayable trajectory,45.0
+Single LLM/RAG,Passport package,55.0
+Single LLM/RAG,Model-backed execution,80.0
+Team-I OpenCLAW,Typed governed action,100.0
+Team-I OpenCLAW,Trace completeness,100.0
+Team-I OpenCLAW,Evidence lineage,100.0
+Team-I OpenCLAW,Replayable trajectory,100.0
+Team-I OpenCLAW,Passport package,100.0
+Team-I OpenCLAW,Model-backed execution,100.0

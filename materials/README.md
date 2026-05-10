@@ -1,12 +1,11 @@
-# Route Calibration Materials
+# 路线校准材料
 
-The original route-calibration materials are stored as:
+原始路线校准材料保存在：
 
 ```text
 materials/route_calibration_materials.tar.gz
 ```
 
-They include the competition prompt, first-round proposal, team discussion material, final business/technical notes, extracted PDF text, and HPC connection notes used during implementation.
+该压缩包包含赛题文件、初赛方案、组队讨论材料、最终业务与技术方案、PDF 抽取文本和 HPC 连接资料等实现过程中使用的材料。
 
-The archive is kept as a single ASCII-path file to avoid Windows tar/path-encoding issues with Chinese filenames during GitHub packaging.
-
+这里保留为一个英文路径名压缩包，是为了避免 Windows 解压和 GitHub 打包时中文文件名出现路径编码问题。

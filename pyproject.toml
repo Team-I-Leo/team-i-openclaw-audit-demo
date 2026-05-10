@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "team-i-openclaw-audit-demo"
+version = "0.1.0"
+description = "Team-I OpenCLAW proactive evidence audit demo for cross-border e-commerce continuous auditing."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "fastapi",
+  "uvicorn",
+  "pydantic>=2",
+  "pandas",
+  "networkx",
+  "numpy",
+  "pyyaml",
+  "openai",
+  "transformers",
+  "torch",
+  "sentence-transformers",
+  "huggingface_hub",
+  "matplotlib",
+  "seaborn",
+]
+
+[tool.setuptools]
+package-dir = {"" = "backend"}
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+
+[tool.setuptools.package-data]
+aer_loop = ["static/**/*"]

@@ -5,6 +5,7 @@ import os
 import time
 import uuid
 import gc
+from pathlib import Path
 from typing import Any
 
 import torch
@@ -13,16 +14,21 @@ from pydantic import BaseModel, Field
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
-MODEL_PATH = os.environ.get("AER_MODEL_PATH", "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct")
+PROJECT_ROOT = Path(os.environ.get("AER_PROJECT_ROOT", Path(__file__).resolve().parents[2]))
+MODELS_DIR = PROJECT_ROOT / "models"
+MODEL_PATH = os.environ.get(
+    "AER_MODEL_PATH",
+    os.environ.get("AER_MODEL_PATH_7B", str(MODELS_DIR / "Qwen2.5-Coder-7B-Instruct")),
+)
 MODEL_ID = os.environ.get("AER_OPENAI_MODEL", "qwen2.5-coder-7b-instruct")
 MAX_NEW_TOKENS = int(os.environ.get("AER_MAX_NEW_TOKENS", "512"))
 DEFAULT_MODEL_MAP = {
-    "qwen2.5-coder-7b-instruct": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
-    "qwen2.5-coder-14b-instruct": "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct",
+    "qwen2.5-coder-7b-instruct": os.environ.get("AER_MODEL_PATH_7B", str(MODELS_DIR / "Qwen2.5-Coder-7B-Instruct")),
+    "qwen2.5-coder-14b-instruct": os.environ.get("AER_MODEL_PATH_14B", str(MODELS_DIR / "Qwen2.5-Coder-14B-Instruct")),
 }
 MODEL_MAP = {**DEFAULT_MODEL_MAP, **json.loads(os.environ.get("AER_MODEL_MAP", "{}"))}
 
-app = FastAPI(title="AER local OpenAI-compatible model server", version="0.1.0")
+app = FastAPI(title="Team-I local OpenAI-compatible model server", version="0.1.0")
 tokenizer = None
 model = None
 loaded_model_id = ""
@@ -111,7 +117,7 @@ def startup() -> None:
 
 @app.get("/v1/models")
 def models() -> dict[str, Any]:
-    return {"object": "list", "data": [{"id": model_id, "object": "model", "owned_by": "aer-loop-hpc2", "root": path} for model_id, path in MODEL_MAP.items()]}
+    return {"object": "list", "data": [{"id": model_id, "object": "model", "owned_by": "team-i", "root": path} for model_id, path in MODEL_MAP.items()]}
 
 
 @app.get("/health")

@@ -1,6 +1,6 @@
 fastapi
 uvicorn
-pydantic
+pydantic>=2
 pandas
 networkx
 numpy
@@ -9,4 +9,6 @@ openai
 transformers
 torch
 sentence-transformers
-
+huggingface_hub
+matplotlib
+seaborn

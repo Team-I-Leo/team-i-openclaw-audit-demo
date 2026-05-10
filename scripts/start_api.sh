@@ -3,7 +3,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 export AER_PROJECT_ROOT="$(pwd)"
-export AER_MODEL_BACKEND="${AER_MODEL_BACKEND:-openai}"
+export AER_MODEL_BACKEND="${AER_MODEL_BACKEND:-fallback}"
 source scripts/env.sh
 
 mkdir -p logs runtime artifacts

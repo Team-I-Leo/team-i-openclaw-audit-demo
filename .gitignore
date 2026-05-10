@@ -6,6 +6,7 @@ __pycache__/
 .ruff_cache/
 .venv/
 venv/
+.env
 
 # Node / OpenCLAW plugin build artifacts
 node_modules/
@@ -44,4 +45,3 @@ logs/*.pid
 Thumbs.db
 .idea/
 .vscode/
-

@@ -1,0 +1,5 @@
+method,analyst_minutes_per_case,evidence_items_per_case,passport_rate,source,active_actions_per_case,cases_per_analyst_day
+Manual audit,45.0,3.0,0.0,scenario assumption,,10.666666666666666
+Rules + worksheet,24.0,4.0,0.0,scenario assumption,,20.0
+Single LLM/RAG,14.0,5.5,0.55,scenario assumption,,34.285714285714285
+Team-I,6.5,9.333333333333334,1.0,measured demo trajectory + review assumption,8.0,73.84615384615384

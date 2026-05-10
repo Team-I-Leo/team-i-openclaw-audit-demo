@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510
+cd "$(dirname "$0")/.."
+export AER_PROJECT_ROOT="$(pwd)"
 mkdir -p logs runtime
 
-DB_PATH="${AER_DB_PATH:-$PWD/runtime/aer_loop_model_smoke_9728842_full_debug.sqlite}"
+DB_PATH="${AER_DB_PATH:-$PWD/runtime/aer_loop_model_smoke_9728967_full_debug.sqlite}"
 API_PORT="${AER_API_PORT:-18081}"
 OPENCLAW_PORT="${AER_OPENCLAW_PORT:-18891}"
 API_PID="runtime/api_${API_PORT}.pid"

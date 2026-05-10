@@ -254,17 +254,15 @@ class LLMClient:
             "qwen2.5-coder-7b-instruct": [
                 os.environ.get("AER_MODEL_PATH_7B"),
                 settings.model_path,
-                "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+                str(project_models / "Qwen2.5-Coder-7B-Instruct"),
             ],
             "qwen2.5-coder-14b-instruct": [
                 os.environ.get("AER_MODEL_PATH_14B"),
                 str(project_models / "Qwen2.5-Coder-14B-Instruct"),
-                "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-14B-Instruct",
             ],
             "qwen2.5-14b-instruct": [
                 os.environ.get("AER_MODEL_PATH_14B"),
                 str(project_models / "Qwen2.5-14B-Instruct"),
-                "/hpc2hdd/home/hqi881/model_downloads/Qwen2.5-14B-Instruct",
             ],
         }
         for candidate in candidates.get(model.lower(), []):

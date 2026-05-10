@@ -9,6 +9,10 @@ def _project_root() -> Path:
     return Path(os.environ.get("AER_PROJECT_ROOT", Path(__file__).resolve().parents[2]))
 
 
+def _model_path(name: str) -> str:
+    return str(_project_root() / "models" / name)
+
+
 @dataclass(frozen=True)
 class Settings:
     project_root: Path = _project_root()
@@ -19,7 +23,7 @@ class Settings:
     model_backend: str = os.environ.get("AER_MODEL_BACKEND", "fallback")
     model_path: str = os.environ.get(
         "AER_MODEL_PATH",
-        "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+        os.environ.get("AER_MODEL_PATH_7B", _model_path("Qwen2.5-Coder-7B-Instruct")),
     )
     openai_base_url: str = os.environ.get("AER_OPENAI_BASE_URL", "")
     openai_api_key: str = os.environ.get("AER_OPENAI_API_KEY", "EMPTY")
@@ -30,8 +34,8 @@ class Settings:
     counter_model: str = os.environ.get("AER_COUNTER_MODEL", "qwen2.5-coder-7b-instruct")
     passport_model: str = os.environ.get("AER_PASSPORT_MODEL", "qwen2.5-coder-14b-instruct")
     pattern_model: str = os.environ.get("AER_PATTERN_MODEL", "qwen2.5-coder-14b-instruct")
-    embedding_model_path: str = os.environ.get("AER_EMBEDDING_MODEL_PATH", "/hpc2hdd/home/hqi881/model_downloads/Qwen3-Embedding-8B")
-    reranker_model_path: str = os.environ.get("AER_RERANKER_MODEL_PATH", "/hpc2hdd/home/hqi881/model_downloads/Qwen3-Reranker-8B")
+    embedding_model_path: str = os.environ.get("AER_EMBEDDING_MODEL_PATH", _model_path("Qwen3-Embedding-8B"))
+    reranker_model_path: str = os.environ.get("AER_RERANKER_MODEL_PATH", _model_path("Qwen3-Reranker-8B"))
     openclaw_gateway_url: str = os.environ.get("AER_OPENCLAW_GATEWAY_URL", "http://127.0.0.1:18789")
     openclaw_token: str = os.environ.get("AER_OPENCLAW_TOKEN", "")
     max_new_tokens: int = int(os.environ.get("AER_MAX_NEW_TOKENS", "384"))

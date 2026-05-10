@@ -1,0 +1,11 @@
+stage,object,count
+Before writeback,Approved candidate,0
+After writeback,Approved candidate,1
+Before writeback,Risk patterns,3
+After writeback,Risk patterns,4
+Before writeback,Case memories,3
+After writeback,Case memories,7
+Before writeback,Policy priors,0
+After writeback,Policy priors,24
+Before writeback,Human approvals,0
+After writeback,Human approvals,1

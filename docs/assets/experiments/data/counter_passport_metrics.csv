@@ -1,0 +1,13 @@
+method,metric,value
+Rules one-shot,Support coverage,0.2280333333333333
+Rules one-shot,Counter coverage,0.0
+Rules one-shot,Passport-ready rate,0.0
+Rules one-shot,Human-review package,0.0
+Static checklist,Support coverage,0.6752666666666666
+Static checklist,Counter coverage,0.0
+Static checklist,Passport-ready rate,0.0
+Static checklist,Human-review package,0.0
+Team-I active loop,Support coverage,0.8963666666666666
+Team-I active loop,Counter coverage,0.7799999999999999
+Team-I active loop,Passport-ready rate,1.0
+Team-I active loop,Human-review package,1.0

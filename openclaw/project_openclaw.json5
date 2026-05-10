@@ -4,7 +4,7 @@
     bind: "loopback",
     auth: {
       mode: "token",
-      token: "aer-loop-demo-local-token",
+      token: "team-i-demo-local-token",
     },
     http: {
       endpoints: {
@@ -15,8 +15,8 @@
   },
   agents: {
     defaults: {
-      workspace: "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510",
-      repoRoot: "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510",
+      workspace: ".",
+      repoRoot: ".",
       model: {
         primary: "aer-local/qwen2.5-coder-7b-instruct",
         fallbacks: ["aer-local/qwen2.5-coder-14b-instruct"],
@@ -69,7 +69,7 @@
         models: [
           {
             id: "qwen2.5-coder-7b-instruct",
-            name: "Qwen2.5-Coder-7B-Instruct on HPC2 A800",
+            name: "Qwen2.5-Coder-7B-Instruct",
             reasoning: false,
             input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
@@ -78,7 +78,7 @@
           },
           {
             id: "qwen2.5-coder-14b-instruct",
-            name: "Qwen2.5-Coder-14B-Instruct on HPC2 A800",
+            name: "Qwen2.5-Coder-14B-Instruct",
             reasoning: false,
             input: ["text"],
             cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },

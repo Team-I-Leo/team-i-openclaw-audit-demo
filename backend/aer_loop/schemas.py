@@ -77,6 +77,8 @@ class AuditCase(BaseModel):
 
 
 class Passport(BaseModel):
+    model_config = {"protected_namespaces": ()}
+
     case_header: dict[str, Any]
     risk_assertion: str
     support_evidence: list[dict[str, Any]]

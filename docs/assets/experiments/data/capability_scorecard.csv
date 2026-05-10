@@ -1,0 +1,41 @@
+method,capability,score
+Manual worksheet,OpenCLAW受控动作,10
+Manual worksheet,多模型Agent,0
+Manual worksheet,主动追证,20
+Manual worksheet,多源融合,30
+Manual worksheet,证据图谱与血缘,20
+Manual worksheet,反证检索,40
+Manual worksheet,证据护照,45
+Manual worksheet,人机协同,100
+Manual worksheet,模式学习,10
+Manual worksheet,策略写回,0
+Rules-only,OpenCLAW受控动作,25
+Rules-only,多模型Agent,0
+Rules-only,主动追证,35
+Rules-only,多源融合,55
+Rules-only,证据图谱与血缘,35
+Rules-only,反证检索,0
+Rules-only,证据护照,0
+Rules-only,人机协同,45
+Rules-only,模式学习,0
+Rules-only,策略写回,0
+Single LLM/RAG,OpenCLAW受控动作,35
+Single LLM/RAG,多模型Agent,55
+Single LLM/RAG,主动追证,45
+Single LLM/RAG,多源融合,50
+Single LLM/RAG,证据图谱与血缘,45
+Single LLM/RAG,反证检索,35
+Single LLM/RAG,证据护照,55
+Single LLM/RAG,人机协同,55
+Single LLM/RAG,模式学习,20
+Single LLM/RAG,策略写回,0
+Team-I,OpenCLAW受控动作,100
+Team-I,多模型Agent,100
+Team-I,主动追证,100
+Team-I,多源融合,100
+Team-I,证据图谱与血缘,95
+Team-I,反证检索,100
+Team-I,证据护照,100
+Team-I,人机协同,100
+Team-I,模式学习,100
+Team-I,策略写回,100

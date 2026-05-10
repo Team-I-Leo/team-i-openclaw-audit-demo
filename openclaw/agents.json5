@@ -1,8 +1,8 @@
 {
   agents: {
     defaults: {
-      workspace: "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510",
-      repoRoot: "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510",
+      workspace: ".",
+      repoRoot: ".",
       skipBootstrap: false,
       contextInjection: "continuation-skip"
     },
