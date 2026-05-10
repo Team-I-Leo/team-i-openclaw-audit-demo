@@ -1,0 +1,15 @@
+{
+  "id": "aer-audit-tools",
+  "name": "AER Audit Tools",
+  "description": "Governed active evidence retrieval tools for Team-I audit demo.",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "apiBaseUrl": {
+        "type": "string",
+        "default": "http://127.0.0.1:18081"
+      }
+    }
+  }
+}

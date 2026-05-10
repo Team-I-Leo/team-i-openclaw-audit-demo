@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node / OpenCLAW plugin build artifacts
+node_modules/
+dist/
+build/
+.turbo/
+
+# Runtime state
+*.pid
+runtime/openclaw-state/
+runtime/artifacts/
+runtime/data/
+.openclaw/
+
+# Large model weights and local caches
+models/
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.gguf
+*.onnx
+*.ckpt
+.cache/
+huggingface/
+
+# Local service logs
+logs/api*.log
+logs/model_server_*.log
+logs/model_server_*.out
+logs/model_server_*.err
+logs/*.pid
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+

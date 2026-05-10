@@ -1,0 +1,63 @@
+{
+  agents: {
+    defaults: {
+      workspace: "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510",
+      repoRoot: "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510",
+      skipBootstrap: false,
+      contextInjection: "continuation-skip"
+    },
+    list: [
+      {
+        id: "aer_assertion_agent",
+        name: "AER Assertion Agent",
+        description: "Generates verifiable risk assertions from fused multi-source evidence.",
+        model: { primary: "aer-local/qwen2.5-coder-7b-instruct" }
+      },
+      {
+        id: "aer_router_agent",
+        name: "AER Router Agent",
+        description: "Selects the next governed audit action based on evidence gaps.",
+        model: { primary: "aer-local/qwen2.5-coder-7b-instruct" }
+      },
+      {
+        id: "aer_investigation_agent",
+        name: "AER Investigation Agent",
+        description: "Runs active evidence retrieval using OpenCLAW audit tools.",
+        model: { primary: "aer-local/qwen2.5-coder-7b-instruct" }
+      },
+      {
+        id: "aer_counter_evidence_agent",
+        name: "AER Counter Evidence Agent",
+        description: "Searches for legitimate business explanations before escalation.",
+        model: { primary: "aer-local/qwen2.5-coder-7b-instruct" }
+      },
+      {
+        id: "aer_passport_agent",
+        name: "AER Evidence Passport Agent",
+        description: "Produces reviewable Evidence Passport JSON and narrative.",
+        model: { primary: "aer-local/qwen2.5-coder-14b-instruct" }
+      },
+      {
+        id: "aer_pattern_learning_agent",
+        name: "AER Pattern Learning Agent",
+        description: "Summarizes candidate risk patterns from reviewed case trajectories.",
+        model: { primary: "aer-local/qwen2.5-coder-14b-instruct" }
+      }
+    ]
+  },
+  tools: {
+    allow: [
+      "aer_expand_infra_graph",
+      "aer_query_refund_cluster",
+      "aer_query_logistics_trace",
+      "aer_query_payment_cluster",
+      "aer_compare_promo_cohort",
+      "aer_query_subsidy_ledger",
+      "aer_analyze_behavior_sequence",
+      "aer_search_historical_cases",
+      "aer_seek_counter_evidence",
+      "aer_request_human_review",
+      "aer_emit_passport"
+    ]
+  }
+}

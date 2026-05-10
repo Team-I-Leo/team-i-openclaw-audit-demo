@@ -1,0 +1,6510 @@
+{
+  "bootstrap": {
+    "data": {
+      "orders": 1416,
+      "users": 3056,
+      "devices": 1412,
+      "ips": 427,
+      "payments": 1416,
+      "refunds": 163,
+      "logistics": 1416,
+      "comments": 673,
+      "gateway_logs": 1416,
+      "device_logs": 244,
+      "subsidy_records": 571,
+      "ieee_transactions": 1416,
+      "logistics_tracks": 4248
+    },
+    "cases": [
+      {
+        "case_id": "AER-001",
+        "pattern_id": "EC-SKIM-001",
+        "risk_score": 0.99,
+        "risk_level": "critical"
+      },
+      {
+        "case_id": "AER-002",
+        "pattern_id": "EC-FAKE-002",
+        "risk_score": 0.99,
+        "risk_level": "critical"
+      },
+      {
+        "case_id": "AER-003",
+        "pattern_id": "EC-ARBI-003",
+        "risk_score": 0.99,
+        "risk_level": "critical"
+      }
+    ]
+  },
+  "case_result": {
+    "case_id": "AER-001",
+    "observations": [
+      {
+        "action": "expand_infra_graph",
+        "case_id": "AER-001",
+        "summary": "Expanded entity-resolution graph across account, device, IP, payment, logistics, and evidence nodes.",
+        "support_evidence": [
+          {
+            "evidence_id": "EVD-AER-001-DEV-001",
+            "case_id": "AER-001",
+            "kind": "support",
+            "dimension": "device_reuse",
+            "description": "14 users and 80 orders share 3 devices; reuse ratio 26.7.",
+            "source": "order_master + device_fingerprint + device_log",
+            "confidence": 0.96,
+            "lineage": {
+              "source_table": "order_master/device_fingerprint",
+              "row_count": 80,
+              "template_id": "GRAPH_DEVICE_01",
+              "nodes": 331
+            }
+          },
+          {
+            "evidence_id": "EVD-AER-001-IP-001",
+            "case_id": "AER-001",
+            "kind": "support",
+            "dimension": "ip_cluster",
+            "description": "80 orders concentrate on 2 datacenter/proxy IP addresses.",
+            "source": "order_master + ip_profile + gateway_log",
+            "confidence": 0.95,
+            "lineage": {
+              "source_table": "ip_profile/gateway_log",
+              "row_count": 2,
+              "template_id": "GRAPH_IP_01"
+            }
+          }
+        ],
+        "counter_evidence": [],
+        "metrics": {
+          "device_reuse_ratio": 26.667,
+          "ip_reuse_ratio": 40.0,
+          "graph_nodes": 331,
+          "graph_edges": 706
+        },
+        "graph_delta": {
+          "nodes": [
+            {
+              "id": "AER-001",
+              "label": "AER-001",
+              "type": "case",
+              "risk_score": 0.99
+            },
+            {
+              "id": "AER-001:assertion",
+              "label": "EC-SKIM-001",
+              "type": "assertion",
+              "text": "AER-001 detects new-account subsidy skimming: shared devices/IPs/payment accounts, fast refunds, low-quality logistics, and weak normal-business counter explanations."
+            },
+            {
+              "id": "O_SKIM_0000",
+              "label": "O_SKIM_0000",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0001",
+              "label": "O_SKIM_0001",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0002",
+              "label": "O_SKIM_0002",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0003",
+              "label": "O_SKIM_0003",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0004",
+              "label": "O_SKIM_0004",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0005",
+              "label": "O_SKIM_0005",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0006",
+              "label": "O_SKIM_0006",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0007",
+              "label": "O_SKIM_0007",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0008",
+              "label": "O_SKIM_0008",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0009",
+              "label": "O_SKIM_0009",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0010",
+              "label": "O_SKIM_0010",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0011",
+              "label": "O_SKIM_0011",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0012",
+              "label": "O_SKIM_0012",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0013",
+              "label": "O_SKIM_0013",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0014",
+              "label": "O_SKIM_0014",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0015",
+              "label": "O_SKIM_0015",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0016",
+              "label": "O_SKIM_0016",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0017",
+              "label": "O_SKIM_0017",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0018",
+              "label": "O_SKIM_0018",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0019",
+              "label": "O_SKIM_0019",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0020",
+              "label": "O_SKIM_0020",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0021",
+              "label": "O_SKIM_0021",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0022",
+              "label": "O_SKIM_0022",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0023",
+              "label": "O_SKIM_0023",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0024",
+              "label": "O_SKIM_0024",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0025",
+              "label": "O_SKIM_0025",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0026",
+              "label": "O_SKIM_0026",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0027",
+              "label": "O_SKIM_0027",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0028",
+              "label": "O_SKIM_0028",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0029",
+              "label": "O_SKIM_0029",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0030",
+              "label": "O_SKIM_0030",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0031",
+              "label": "O_SKIM_0031",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0032",
+              "label": "O_SKIM_0032",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0033",
+              "label": "O_SKIM_0033",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0034",
+              "label": "O_SKIM_0034",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0035",
+              "label": "O_SKIM_0035",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0036",
+              "label": "O_SKIM_0036",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0037",
+              "label": "O_SKIM_0037",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0038",
+              "label": "O_SKIM_0038",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0039",
+              "label": "O_SKIM_0039",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0040",
+              "label": "O_SKIM_0040",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0041",
+              "label": "O_SKIM_0041",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0042",
+              "label": "O_SKIM_0042",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0043",
+              "label": "O_SKIM_0043",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0044",
+              "label": "O_SKIM_0044",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0045",
+              "label": "O_SKIM_0045",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0046",
+              "label": "O_SKIM_0046",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0047",
+              "label": "O_SKIM_0047",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0048",
+              "label": "O_SKIM_0048",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0049",
+              "label": "O_SKIM_0049",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0050",
+              "label": "O_SKIM_0050",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0051",
+              "label": "O_SKIM_0051",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0052",
+              "label": "O_SKIM_0052",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0053",
+              "label": "O_SKIM_0053",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0054",
+              "label": "O_SKIM_0054",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0055",
+              "label": "O_SKIM_0055",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0056",
+              "label": "O_SKIM_0056",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0057",
+              "label": "O_SKIM_0057",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0058",
+              "label": "O_SKIM_0058",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0059",
+              "label": "O_SKIM_0059",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0060",
+              "label": "O_SKIM_0060",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0061",
+              "label": "O_SKIM_0061",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0062",
+              "label": "O_SKIM_0062",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0063",
+              "label": "O_SKIM_0063",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0064",
+              "label": "O_SKIM_0064",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0065",
+              "label": "O_SKIM_0065",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0066",
+              "label": "O_SKIM_0066",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0067",
+              "label": "O_SKIM_0067",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0068",
+              "label": "O_SKIM_0068",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0069",
+              "label": "O_SKIM_0069",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0070",
+              "label": "O_SKIM_0070",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0071",
+              "label": "O_SKIM_0071",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0072",
+              "label": "O_SKIM_0072",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0073",
+              "label": "O_SKIM_0073",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0074",
+              "label": "O_SKIM_0074",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0075",
+              "label": "O_SKIM_0075",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0076",
+              "label": "O_SKIM_0076",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0077",
+              "label": "O_SKIM_0077",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0078",
+              "label": "O_SKIM_0078",
+              "type": "order"
+            },
+            {
+              "id": "O_SKIM_0079",
+              "label": "O_SKIM_0079",
+              "type": "order"
+            },
+            {
+              "id": "U_SKIM_00",
+              "label": "U_SKIM_00",
+              "type": "user"
+            },
+            {
+              "id": "D_SKIM_00",
+              "label": "D_SKIM_00",
+              "type": "device"
+            },
+            {
+              "id": "172.31.88.11",
+              "label": "172.31.88.11",
+              "type": "ip"
+            },
+            {
+              "id": "M_SKIM",
+              "label": "M_SKIM",
+              "type": "merchant"
+            },
+            {
+              "id": "U_SKIM_01",
+              "label": "U_SKIM_01",
+              "type": "user"
+            },
+            {
+              "id": "D_SKIM_01",
+              "label": "D_SKIM_01",
+              "type": "device"
+            },
+            {
+              "id": "172.31.88.12",
+              "label": "172.31.88.12",
+              "type": "ip"
+            },
+            {
+              "id": "U_SKIM_02",
+              "label": "U_SKIM_02",
+              "type": "user"
+            },
+            {
+              "id": "D_SKIM_02",
+              "label": "D_SKIM_02",
+              "type": "device"
+            },
+            {
+              "id": "U_SKIM_03",
+              "label": "U_SKIM_03",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_04",
+              "label": "U_SKIM_04",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_05",
+              "label": "U_SKIM_05",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_06",
+              "label": "U_SKIM_06",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_07",
+              "label": "U_SKIM_07",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_08",
+              "label": "U_SKIM_08",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_09",
+              "label": "U_SKIM_09",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_10",
+              "label": "U_SKIM_10",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_11",
+              "label": "U_SKIM_11",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_12",
+              "label": "U_SKIM_12",
+              "type": "user"
+            },
+            {
+              "id": "U_SKIM_13",
+              "label": "U_SKIM_13",
+              "type": "user"
+            },
+            {
+              "id": "PAY_SKIM_00",
+              "label": "PAY_SKIM_00",
+              "type": "payment_account"
+            },
+            {
+              "id": "PAY_SKIM_01",
+              "label": "PAY_SKIM_01",
+              "type": "payment_account"
+            },
+            {
+              "id": "PAY_SKIM_02",
+              "label": "PAY_SKIM_02",
+              "type": "payment_account"
+            },
+            {
+              "id": "PAY_SKIM_03",
+              "label": "PAY_SKIM_03",
+              "type": "payment_account"
+            },
+            {
+              "id": "R-O_SKIM_0000",
+              "label": "R-O_SKIM_0000",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0001",
+              "label": "R-O_SKIM_0001",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0002",
+              "label": "R-O_SKIM_0002",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0003",
+              "label": "R-O_SKIM_0003",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0004",
+              "label": "R-O_SKIM_0004",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0005",
+              "label": "R-O_SKIM_0005",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0006",
+              "label": "R-O_SKIM_0006",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0007",
+              "label": "R-O_SKIM_0007",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0008",
+              "label": "R-O_SKIM_0008",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0009",
+              "label": "R-O_SKIM_0009",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0010",
+              "label": "R-O_SKIM_0010",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0011",
+              "label": "R-O_SKIM_0011",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0013",
+              "label": "R-O_SKIM_0013",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0014",
+              "label": "R-O_SKIM_0014",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0015",
+              "label": "R-O_SKIM_0015",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0016",
+              "label": "R-O_SKIM_0016",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0017",
+              "label": "R-O_SKIM_0017",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0018",
+              "label": "R-O_SKIM_0018",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0019",
+              "label": "R-O_SKIM_0019",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0020",
+              "label": "R-O_SKIM_0020",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0021",
+              "label": "R-O_SKIM_0021",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0022",
+              "label": "R-O_SKIM_0022",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0023",
+              "label": "R-O_SKIM_0023",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0025",
+              "label": "R-O_SKIM_0025",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0026",
+              "label": "R-O_SKIM_0026",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0028",
+              "label": "R-O_SKIM_0028",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0030",
+              "label": "R-O_SKIM_0030",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0034",
+              "label": "R-O_SKIM_0034",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0036",
+              "label": "R-O_SKIM_0036",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0038",
+              "label": "R-O_SKIM_0038",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0039",
+              "label": "R-O_SKIM_0039",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0041",
+              "label": "R-O_SKIM_0041",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0042",
+              "label": "R-O_SKIM_0042",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0043",
+              "label": "R-O_SKIM_0043",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0044",
+              "label": "R-O_SKIM_0044",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0045",
+              "label": "R-O_SKIM_0045",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0046",
+              "label": "R-O_SKIM_0046",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0047",
+              "label": "R-O_SKIM_0047",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0048",
+              "label": "R-O_SKIM_0048",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0049",
+              "label": "R-O_SKIM_0049",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0051",
+              "label": "R-O_SKIM_0051",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0052",
+              "label": "R-O_SKIM_0052",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0053",
+              "label": "R-O_SKIM_0053",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0054",
+              "label": "R-O_SKIM_0054",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0055",
+              "label": "R-O_SKIM_0055",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0057",
+              "label": "R-O_SKIM_0057",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0058",
+              "label": "R-O_SKIM_0058",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0059",
+              "label": "R-O_SKIM_0059",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0061",
+              "label": "R-O_SKIM_0061",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0062",
+              "label": "R-O_SKIM_0062",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0063",
+              "label": "R-O_SKIM_0063",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0064",
+              "label": "R-O_SKIM_0064",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0066",
+              "label": "R-O_SKIM_0066",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0068",
+              "label": "R-O_SKIM_0068",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0069",
+              "label": "R-O_SKIM_0069",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0070",
+              "label": "R-O_SKIM_0070",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0071",
+              "label": "R-O_SKIM_0071",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0072",
+              "label": "R-O_SKIM_0072",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0073",
+              "label": "R-O_SKIM_0073",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0074",
+              "label": "R-O_SKIM_0074",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0075",
+              "label": "R-O_SKIM_0075",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0076",
+              "label": "R-O_SKIM_0076",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0077",
+              "label": "R-O_SKIM_0077",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0078",
+              "label": "R-O_SKIM_0078",
+              "type": "refund"
+            },
+            {
+              "id": "R-O_SKIM_0079",
+              "label": "R-O_SKIM_0079",
+              "type": "refund"
+            },
+            {
+              "id": "L-O_SKIM_0000",
+              "label": "L-O_SKIM_0000",
+              "type": "logistics",
+              "quality": 0.396
+            },
+            {
+              "id": "ADDR12584",
+              "label": "ADDR12584",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0001",
+              "label": "L-O_SKIM_0001",
+              "type": "logistics",
+              "quality": 0.17
+            },
+            {
+              "id": "ADDR11771",
+              "label": "ADDR11771",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0002",
+              "label": "L-O_SKIM_0002",
+              "type": "logistics",
+              "quality": 0.314
+            },
+            {
+              "id": "ADDR01846",
+              "label": "ADDR01846",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0003",
+              "label": "L-O_SKIM_0003",
+              "type": "logistics",
+              "quality": 0.272
+            },
+            {
+              "id": "ADDR09405",
+              "label": "ADDR09405",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0004",
+              "label": "L-O_SKIM_0004",
+              "type": "logistics",
+              "quality": 0.347
+            },
+            {
+              "id": "ADDR04459",
+              "label": "ADDR04459",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0005",
+              "label": "L-O_SKIM_0005",
+              "type": "logistics",
+              "quality": 0.244
+            },
+            {
+              "id": "ADDR08451",
+              "label": "ADDR08451",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0006",
+              "label": "L-O_SKIM_0006",
+              "type": "logistics",
+              "quality": 0.251
+            },
+            {
+              "id": "ADDR07167",
+              "label": "ADDR07167",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0007",
+              "label": "L-O_SKIM_0007",
+              "type": "logistics",
+              "quality": 0.38
+            },
+            {
+              "id": "ADDR05260",
+              "label": "ADDR05260",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0008",
+              "label": "L-O_SKIM_0008",
+              "type": "logistics",
+              "quality": 0.207
+            },
+            {
+              "id": "ADDR07384",
+              "label": "ADDR07384",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0009",
+              "label": "L-O_SKIM_0009",
+              "type": "logistics",
+              "quality": 0.298
+            },
+            {
+              "id": "ADDR08497",
+              "label": "ADDR08497",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0010",
+              "label": "L-O_SKIM_0010",
+              "type": "logistics",
+              "quality": 0.32
+            },
+            {
+              "id": "ADDR06515",
+              "label": "ADDR06515",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0011",
+              "label": "L-O_SKIM_0011",
+              "type": "logistics",
+              "quality": 0.42
+            },
+            {
+              "id": "ADDR04074",
+              "label": "ADDR04074",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0012",
+              "label": "L-O_SKIM_0012",
+              "type": "logistics",
+              "quality": 0.419
+            },
+            {
+              "id": "ADDR00924",
+              "label": "ADDR00924",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0013",
+              "label": "L-O_SKIM_0013",
+              "type": "logistics",
+              "quality": 0.369
+            },
+            {
+              "id": "ADDR00582",
+              "label": "ADDR00582",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0014",
+              "label": "L-O_SKIM_0014",
+              "type": "logistics",
+              "quality": 0.437
+            },
+            {
+              "id": "ADDR07458",
+              "label": "ADDR07458",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0015",
+              "label": "L-O_SKIM_0015",
+              "type": "logistics",
+              "quality": 0.163
+            },
+            {
+              "id": "ADDR17997",
+              "label": "ADDR17997",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0016",
+              "label": "L-O_SKIM_0016",
+              "type": "logistics",
+              "quality": 0.18
+            },
+            {
+              "id": "ADDR12756",
+              "label": "ADDR12756",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0017",
+              "label": "L-O_SKIM_0017",
+              "type": "logistics",
+              "quality": 0.152
+            },
+            {
+              "id": "ADDR05755",
+              "label": "ADDR05755",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0018",
+              "label": "L-O_SKIM_0018",
+              "type": "logistics",
+              "quality": 0.357
+            },
+            {
+              "id": "ADDR04447",
+              "label": "ADDR04447",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0019",
+              "label": "L-O_SKIM_0019",
+              "type": "logistics",
+              "quality": 0.265
+            },
+            {
+              "id": "ADDR04734",
+              "label": "ADDR04734",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0020",
+              "label": "L-O_SKIM_0020",
+              "type": "logistics",
+              "quality": 0.429
+            },
+            {
+              "id": "ADDR05093",
+              "label": "ADDR05093",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0021",
+              "label": "L-O_SKIM_0021",
+              "type": "logistics",
+              "quality": 0.41
+            },
+            {
+              "id": "ADDR04552",
+              "label": "ADDR04552",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0022",
+              "label": "L-O_SKIM_0022",
+              "type": "logistics",
+              "quality": 0.383
+            },
+            {
+              "id": "ADDR01996",
+              "label": "ADDR01996",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0023",
+              "label": "L-O_SKIM_0023",
+              "type": "logistics",
+              "quality": 0.205
+            },
+            {
+              "id": "ADDR15472",
+              "label": "ADDR15472",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0024",
+              "label": "L-O_SKIM_0024",
+              "type": "logistics",
+              "quality": 0.214
+            },
+            {
+              "id": "ADDR10371",
+              "label": "ADDR10371",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0025",
+              "label": "L-O_SKIM_0025",
+              "type": "logistics",
+              "quality": 0.399
+            },
+            {
+              "id": "ADDR06381",
+              "label": "ADDR06381",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0026",
+              "label": "L-O_SKIM_0026",
+              "type": "logistics",
+              "quality": 0.342
+            },
+            {
+              "id": "ADDR10740",
+              "label": "ADDR10740",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0027",
+              "label": "L-O_SKIM_0027",
+              "type": "logistics",
+              "quality": 0.297
+            },
+            {
+              "id": "ADDR10479",
+              "label": "ADDR10479",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0028",
+              "label": "L-O_SKIM_0028",
+              "type": "logistics",
+              "quality": 0.408
+            },
+            {
+              "id": "ADDR05021",
+              "label": "ADDR05021",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0029",
+              "label": "L-O_SKIM_0029",
+              "type": "logistics",
+              "quality": 0.172
+            },
+            {
+              "id": "ADDR02056",
+              "label": "ADDR02056",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0030",
+              "label": "L-O_SKIM_0030",
+              "type": "logistics",
+              "quality": 0.244
+            },
+            {
+              "id": "ADDR12191",
+              "label": "ADDR12191",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0031",
+              "label": "L-O_SKIM_0031",
+              "type": "logistics",
+              "quality": 0.348
+            },
+            {
+              "id": "ADDR01246",
+              "label": "ADDR01246",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0032",
+              "label": "L-O_SKIM_0032",
+              "type": "logistics",
+              "quality": 0.235
+            },
+            {
+              "id": "ADDR15344",
+              "label": "ADDR15344",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0033",
+              "label": "L-O_SKIM_0033",
+              "type": "logistics",
+              "quality": 0.226
+            },
+            {
+              "id": "ADDR07729",
+              "label": "ADDR07729",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0034",
+              "label": "L-O_SKIM_0034",
+              "type": "logistics",
+              "quality": 0.438
+            },
+            {
+              "id": "ADDR13927",
+              "label": "ADDR13927",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0035",
+              "label": "L-O_SKIM_0035",
+              "type": "logistics",
+              "quality": 0.259
+            },
+            {
+              "id": "ADDR05656",
+              "label": "ADDR05656",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0036",
+              "label": "L-O_SKIM_0036",
+              "type": "logistics",
+              "quality": 0.435
+            },
+            {
+              "id": "ADDR07169",
+              "label": "ADDR07169",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0037",
+              "label": "L-O_SKIM_0037",
+              "type": "logistics",
+              "quality": 0.341
+            },
+            {
+              "id": "ADDR16353",
+              "label": "ADDR16353",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0038",
+              "label": "L-O_SKIM_0038",
+              "type": "logistics",
+              "quality": 0.252
+            },
+            {
+              "id": "ADDR04792",
+              "label": "ADDR04792",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0039",
+              "label": "L-O_SKIM_0039",
+              "type": "logistics",
+              "quality": 0.37
+            },
+            {
+              "id": "ADDR07778",
+              "label": "ADDR07778",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0040",
+              "label": "L-O_SKIM_0040",
+              "type": "logistics",
+              "quality": 0.332
+            },
+            {
+              "id": "ADDR03816",
+              "label": "ADDR03816",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0041",
+              "label": "L-O_SKIM_0041",
+              "type": "logistics",
+              "quality": 0.322
+            },
+            {
+              "id": "ADDR09020",
+              "label": "ADDR09020",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0042",
+              "label": "L-O_SKIM_0042",
+              "type": "logistics",
+              "quality": 0.301
+            },
+            {
+              "id": "ADDR12075",
+              "label": "ADDR12075",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0043",
+              "label": "L-O_SKIM_0043",
+              "type": "logistics",
+              "quality": 0.418
+            },
+            {
+              "id": "ADDR01970",
+              "label": "ADDR01970",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0044",
+              "label": "L-O_SKIM_0044",
+              "type": "logistics",
+              "quality": 0.415
+            },
+            {
+              "id": "ADDR02851",
+              "label": "ADDR02851",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0045",
+              "label": "L-O_SKIM_0045",
+              "type": "logistics",
+              "quality": 0.261
+            },
+            {
+              "id": "ADDR04230",
+              "label": "ADDR04230",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0046",
+              "label": "L-O_SKIM_0046",
+              "type": "logistics",
+              "quality": 0.43
+            },
+            {
+              "id": "ADDR11049",
+              "label": "ADDR11049",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0047",
+              "label": "L-O_SKIM_0047",
+              "type": "logistics",
+              "quality": 0.341
+            },
+            {
+              "id": "ADDR15250",
+              "label": "ADDR15250",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0048",
+              "label": "L-O_SKIM_0048",
+              "type": "logistics",
+              "quality": 0.242
+            },
+            {
+              "id": "ADDR08863",
+              "label": "ADDR08863",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0049",
+              "label": "L-O_SKIM_0049",
+              "type": "logistics",
+              "quality": 0.255
+            },
+            {
+              "id": "ADDR13694",
+              "label": "ADDR13694",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0050",
+              "label": "L-O_SKIM_0050",
+              "type": "logistics",
+              "quality": 0.375
+            },
+            {
+              "id": "ADDR13488",
+              "label": "ADDR13488",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0051",
+              "label": "L-O_SKIM_0051",
+              "type": "logistics",
+              "quality": 0.359
+            },
+            {
+              "id": "ADDR05447",
+              "label": "ADDR05447",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0052",
+              "label": "L-O_SKIM_0052",
+              "type": "logistics",
+              "quality": 0.358
+            },
+            {
+              "id": "ADDR13443",
+              "label": "ADDR13443",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0053",
+              "label": "L-O_SKIM_0053",
+              "type": "logistics",
+              "quality": 0.219
+            },
+            {
+              "id": "ADDR01764",
+              "label": "ADDR01764",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0054",
+              "label": "L-O_SKIM_0054",
+              "type": "logistics",
+              "quality": 0.217
+            },
+            {
+              "id": "ADDR14243",
+              "label": "ADDR14243",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0055",
+              "label": "L-O_SKIM_0055",
+              "type": "logistics",
+              "quality": 0.421
+            },
+            {
+              "id": "ADDR02872",
+              "label": "ADDR02872",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0056",
+              "label": "L-O_SKIM_0056",
+              "type": "logistics",
+              "quality": 0.207
+            },
+            {
+              "id": "ADDR06234",
+              "label": "ADDR06234",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0057",
+              "label": "L-O_SKIM_0057",
+              "type": "logistics",
+              "quality": 0.394
+            },
+            {
+              "id": "ADDR16329",
+              "label": "ADDR16329",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0058",
+              "label": "L-O_SKIM_0058",
+              "type": "logistics",
+              "quality": 0.337
+            },
+            {
+              "id": "ADDR06613",
+              "label": "ADDR06613",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0059",
+              "label": "L-O_SKIM_0059",
+              "type": "logistics",
+              "quality": 0.306
+            },
+            {
+              "id": "ADDR04304",
+              "label": "ADDR04304",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0060",
+              "label": "L-O_SKIM_0060",
+              "type": "logistics",
+              "quality": 0.205
+            },
+            {
+              "id": "ADDR09788",
+              "label": "ADDR09788",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0061",
+              "label": "L-O_SKIM_0061",
+              "type": "logistics",
+              "quality": 0.231
+            },
+            {
+              "id": "ADDR03983",
+              "label": "ADDR03983",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0062",
+              "label": "L-O_SKIM_0062",
+              "type": "logistics",
+              "quality": 0.281
+            },
+            {
+              "id": "ADDR15303",
+              "label": "ADDR15303",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0063",
+              "label": "L-O_SKIM_0063",
+              "type": "logistics",
+              "quality": 0.199
+            },
+            {
+              "id": "ADDR04038",
+              "label": "ADDR04038",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0064",
+              "label": "L-O_SKIM_0064",
+              "type": "logistics",
+              "quality": 0.245
+            },
+            {
+              "id": "ADDR04967",
+              "label": "ADDR04967",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0065",
+              "label": "L-O_SKIM_0065",
+              "type": "logistics",
+              "quality": 0.412
+            },
+            {
+              "id": "ADDR08067",
+              "label": "ADDR08067",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0066",
+              "label": "L-O_SKIM_0066",
+              "type": "logistics",
+              "quality": 0.445
+            },
+            {
+              "id": "ADDR10973",
+              "label": "ADDR10973",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0067",
+              "label": "L-O_SKIM_0067",
+              "type": "logistics",
+              "quality": 0.199
+            },
+            {
+              "id": "ADDR08430",
+              "label": "ADDR08430",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0068",
+              "label": "L-O_SKIM_0068",
+              "type": "logistics",
+              "quality": 0.357
+            },
+            {
+              "id": "ADDR14170",
+              "label": "ADDR14170",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0069",
+              "label": "L-O_SKIM_0069",
+              "type": "logistics",
+              "quality": 0.258
+            },
+            {
+              "id": "ADDR06502",
+              "label": "ADDR06502",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0070",
+              "label": "L-O_SKIM_0070",
+              "type": "logistics",
+              "quality": 0.233
+            },
+            {
+              "id": "ADDR05038",
+              "label": "ADDR05038",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0071",
+              "label": "L-O_SKIM_0071",
+              "type": "logistics",
+              "quality": 0.155
+            },
+            {
+              "id": "ADDR05223",
+              "label": "ADDR05223",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0072",
+              "label": "L-O_SKIM_0072",
+              "type": "logistics",
+              "quality": 0.283
+            },
+            {
+              "id": "ADDR03032",
+              "label": "ADDR03032",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0073",
+              "label": "L-O_SKIM_0073",
+              "type": "logistics",
+              "quality": 0.323
+            },
+            {
+              "id": "ADDR13696",
+              "label": "ADDR13696",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0074",
+              "label": "L-O_SKIM_0074",
+              "type": "logistics",
+              "quality": 0.173
+            },
+            {
+              "id": "ADDR08362",
+              "label": "ADDR08362",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0075",
+              "label": "L-O_SKIM_0075",
+              "type": "logistics",
+              "quality": 0.448
+            },
+            {
+              "id": "ADDR16634",
+              "label": "ADDR16634",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0076",
+              "label": "L-O_SKIM_0076",
+              "type": "logistics",
+              "quality": 0.237
+            },
+            {
+              "id": "ADDR07605",
+              "label": "ADDR07605",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0077",
+              "label": "L-O_SKIM_0077",
+              "type": "logistics",
+              "quality": 0.364
+            },
+            {
+              "id": "ADDR13296",
+              "label": "ADDR13296",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0078",
+              "label": "L-O_SKIM_0078",
+              "type": "logistics",
+              "quality": 0.158
+            },
+            {
+              "id": "ADDR09516",
+              "label": "ADDR09516",
+              "type": "address"
+            },
+            {
+              "id": "L-O_SKIM_0079",
+              "label": "L-O_SKIM_0079",
+              "type": "logistics",
+              "quality": 0.158
+            },
+            {
+              "id": "ADDR07337",
+              "label": "ADDR07337",
+              "type": "address"
+            }
+          ],
+          "edges": [
+            {
+              "source": "AER-001",
+              "target": "AER-001:assertion",
+              "relation": "has_assertion",
+              "weight": 1.0
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0000",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0001",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0002",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0003",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0004",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0005",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0006",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0007",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0008",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0009",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0010",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0011",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0012",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0013",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0014",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0015",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0016",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0017",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0018",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0019",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0020",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0021",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0022",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0023",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0024",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0025",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0026",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0027",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0028",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0029",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0030",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0031",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0032",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0033",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0034",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0035",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0036",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0037",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0038",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0039",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0040",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0041",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0042",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0043",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0044",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0045",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0046",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0047",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0048",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0049",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0050",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0051",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0052",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0053",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0054",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0055",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0056",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0057",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0058",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0059",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0060",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0061",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0062",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0063",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0064",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0065",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0066",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0067",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0068",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0069",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0070",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0071",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0072",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0073",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0074",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0075",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0076",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0077",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0078",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "AER-001",
+              "target": "O_SKIM_0079",
+              "relation": "contains",
+              "weight": 0.4
+            },
+            {
+              "source": "O_SKIM_0000",
+              "target": "U_SKIM_00",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0000",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0000",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0000",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0000",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0000",
+              "target": "R-O_SKIM_0000",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0000",
+              "target": "L-O_SKIM_0000",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0001",
+              "target": "U_SKIM_01",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0001",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0001",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0001",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0001",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0001",
+              "target": "R-O_SKIM_0001",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0001",
+              "target": "L-O_SKIM_0001",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0002",
+              "target": "U_SKIM_02",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0002",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0002",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0002",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0002",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0002",
+              "target": "R-O_SKIM_0002",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0002",
+              "target": "L-O_SKIM_0002",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0003",
+              "target": "U_SKIM_03",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0003",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0003",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0003",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0003",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0003",
+              "target": "R-O_SKIM_0003",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0003",
+              "target": "L-O_SKIM_0003",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0004",
+              "target": "U_SKIM_04",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0004",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0004",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0004",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0004",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0004",
+              "target": "R-O_SKIM_0004",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0004",
+              "target": "L-O_SKIM_0004",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0005",
+              "target": "U_SKIM_05",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0005",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0005",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0005",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0005",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0005",
+              "target": "R-O_SKIM_0005",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0005",
+              "target": "L-O_SKIM_0005",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0006",
+              "target": "U_SKIM_06",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0006",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0006",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0006",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0006",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0006",
+              "target": "R-O_SKIM_0006",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0006",
+              "target": "L-O_SKIM_0006",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0007",
+              "target": "U_SKIM_07",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0007",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0007",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0007",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0007",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0007",
+              "target": "R-O_SKIM_0007",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0007",
+              "target": "L-O_SKIM_0007",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0008",
+              "target": "U_SKIM_08",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0008",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0008",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0008",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0008",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0008",
+              "target": "R-O_SKIM_0008",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0008",
+              "target": "L-O_SKIM_0008",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0009",
+              "target": "U_SKIM_09",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0009",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0009",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0009",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0009",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0009",
+              "target": "R-O_SKIM_0009",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0009",
+              "target": "L-O_SKIM_0009",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0010",
+              "target": "U_SKIM_10",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0010",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0010",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0010",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0010",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0010",
+              "target": "R-O_SKIM_0010",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0010",
+              "target": "L-O_SKIM_0010",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0011",
+              "target": "U_SKIM_11",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0011",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0011",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0011",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0011",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0011",
+              "target": "R-O_SKIM_0011",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0011",
+              "target": "L-O_SKIM_0011",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0012",
+              "target": "U_SKIM_12",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0012",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0012",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0012",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0012",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0012",
+              "target": "L-O_SKIM_0012",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0013",
+              "target": "U_SKIM_13",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0013",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0013",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0013",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0013",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0013",
+              "target": "R-O_SKIM_0013",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0013",
+              "target": "L-O_SKIM_0013",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0014",
+              "target": "U_SKIM_00",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0014",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0014",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0014",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0014",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0014",
+              "target": "R-O_SKIM_0014",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0014",
+              "target": "L-O_SKIM_0014",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0015",
+              "target": "U_SKIM_01",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0015",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0015",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0015",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0015",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0015",
+              "target": "R-O_SKIM_0015",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0015",
+              "target": "L-O_SKIM_0015",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0016",
+              "target": "U_SKIM_02",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0016",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0016",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0016",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0016",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0016",
+              "target": "R-O_SKIM_0016",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0016",
+              "target": "L-O_SKIM_0016",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0017",
+              "target": "U_SKIM_03",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0017",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0017",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0017",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0017",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0017",
+              "target": "R-O_SKIM_0017",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0017",
+              "target": "L-O_SKIM_0017",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0018",
+              "target": "U_SKIM_04",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0018",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0018",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0018",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0018",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0018",
+              "target": "R-O_SKIM_0018",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0018",
+              "target": "L-O_SKIM_0018",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0019",
+              "target": "U_SKIM_05",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0019",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0019",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0019",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0019",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0019",
+              "target": "R-O_SKIM_0019",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0019",
+              "target": "L-O_SKIM_0019",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0020",
+              "target": "U_SKIM_06",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0020",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0020",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0020",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0020",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0020",
+              "target": "R-O_SKIM_0020",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0020",
+              "target": "L-O_SKIM_0020",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0021",
+              "target": "U_SKIM_07",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0021",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0021",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0021",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0021",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0021",
+              "target": "R-O_SKIM_0021",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0021",
+              "target": "L-O_SKIM_0021",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0022",
+              "target": "U_SKIM_08",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0022",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0022",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0022",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0022",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0022",
+              "target": "R-O_SKIM_0022",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0022",
+              "target": "L-O_SKIM_0022",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0023",
+              "target": "U_SKIM_09",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0023",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0023",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0023",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0023",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0023",
+              "target": "R-O_SKIM_0023",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0023",
+              "target": "L-O_SKIM_0023",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0024",
+              "target": "U_SKIM_10",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0024",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0024",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0024",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0024",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0024",
+              "target": "L-O_SKIM_0024",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0025",
+              "target": "U_SKIM_11",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0025",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0025",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0025",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0025",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0025",
+              "target": "R-O_SKIM_0025",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0025",
+              "target": "L-O_SKIM_0025",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0026",
+              "target": "U_SKIM_12",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0026",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0026",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0026",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0026",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0026",
+              "target": "R-O_SKIM_0026",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0026",
+              "target": "L-O_SKIM_0026",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0027",
+              "target": "U_SKIM_13",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0027",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0027",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0027",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0027",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0027",
+              "target": "L-O_SKIM_0027",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0028",
+              "target": "U_SKIM_00",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0028",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0028",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0028",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0028",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0028",
+              "target": "R-O_SKIM_0028",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0028",
+              "target": "L-O_SKIM_0028",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0029",
+              "target": "U_SKIM_01",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0029",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0029",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0029",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0029",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0029",
+              "target": "L-O_SKIM_0029",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0030",
+              "target": "U_SKIM_02",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0030",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0030",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0030",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0030",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0030",
+              "target": "R-O_SKIM_0030",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0030",
+              "target": "L-O_SKIM_0030",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0031",
+              "target": "U_SKIM_03",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0031",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0031",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0031",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0031",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0031",
+              "target": "L-O_SKIM_0031",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0032",
+              "target": "U_SKIM_04",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0032",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0032",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0032",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0032",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0032",
+              "target": "L-O_SKIM_0032",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0033",
+              "target": "U_SKIM_05",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0033",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0033",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0033",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0033",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0033",
+              "target": "L-O_SKIM_0033",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0034",
+              "target": "U_SKIM_06",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0034",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0034",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0034",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0034",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0034",
+              "target": "R-O_SKIM_0034",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0034",
+              "target": "L-O_SKIM_0034",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0035",
+              "target": "U_SKIM_07",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0035",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0035",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0035",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0035",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0035",
+              "target": "L-O_SKIM_0035",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0036",
+              "target": "U_SKIM_08",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0036",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0036",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0036",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0036",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0036",
+              "target": "R-O_SKIM_0036",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0036",
+              "target": "L-O_SKIM_0036",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0037",
+              "target": "U_SKIM_09",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0037",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0037",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0037",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0037",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0037",
+              "target": "L-O_SKIM_0037",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0038",
+              "target": "U_SKIM_10",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0038",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0038",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0038",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0038",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0038",
+              "target": "R-O_SKIM_0038",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0038",
+              "target": "L-O_SKIM_0038",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0039",
+              "target": "U_SKIM_11",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0039",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0039",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0039",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0039",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0039",
+              "target": "R-O_SKIM_0039",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0039",
+              "target": "L-O_SKIM_0039",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0040",
+              "target": "U_SKIM_12",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0040",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0040",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0040",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0040",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0040",
+              "target": "L-O_SKIM_0040",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0041",
+              "target": "U_SKIM_13",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0041",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0041",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0041",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0041",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0041",
+              "target": "R-O_SKIM_0041",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0041",
+              "target": "L-O_SKIM_0041",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0042",
+              "target": "U_SKIM_00",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0042",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0042",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0042",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0042",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0042",
+              "target": "R-O_SKIM_0042",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0042",
+              "target": "L-O_SKIM_0042",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0043",
+              "target": "U_SKIM_01",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0043",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0043",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0043",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0043",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0043",
+              "target": "R-O_SKIM_0043",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0043",
+              "target": "L-O_SKIM_0043",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0044",
+              "target": "U_SKIM_02",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0044",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0044",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0044",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0044",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0044",
+              "target": "R-O_SKIM_0044",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0044",
+              "target": "L-O_SKIM_0044",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0045",
+              "target": "U_SKIM_03",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0045",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0045",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0045",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0045",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0045",
+              "target": "R-O_SKIM_0045",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0045",
+              "target": "L-O_SKIM_0045",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0046",
+              "target": "U_SKIM_04",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0046",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0046",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0046",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0046",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0046",
+              "target": "R-O_SKIM_0046",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0046",
+              "target": "L-O_SKIM_0046",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0047",
+              "target": "U_SKIM_05",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0047",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0047",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0047",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0047",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0047",
+              "target": "R-O_SKIM_0047",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0047",
+              "target": "L-O_SKIM_0047",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0048",
+              "target": "U_SKIM_06",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0048",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0048",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0048",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0048",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0048",
+              "target": "R-O_SKIM_0048",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0048",
+              "target": "L-O_SKIM_0048",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0049",
+              "target": "U_SKIM_07",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0049",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0049",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0049",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0049",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0049",
+              "target": "R-O_SKIM_0049",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0049",
+              "target": "L-O_SKIM_0049",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0050",
+              "target": "U_SKIM_08",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0050",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0050",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0050",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0050",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0050",
+              "target": "L-O_SKIM_0050",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0051",
+              "target": "U_SKIM_09",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0051",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0051",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0051",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0051",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0051",
+              "target": "R-O_SKIM_0051",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0051",
+              "target": "L-O_SKIM_0051",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0052",
+              "target": "U_SKIM_10",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0052",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0052",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0052",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0052",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0052",
+              "target": "R-O_SKIM_0052",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0052",
+              "target": "L-O_SKIM_0052",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0053",
+              "target": "U_SKIM_11",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0053",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0053",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0053",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0053",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0053",
+              "target": "R-O_SKIM_0053",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0053",
+              "target": "L-O_SKIM_0053",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0054",
+              "target": "U_SKIM_12",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0054",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0054",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0054",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0054",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0054",
+              "target": "R-O_SKIM_0054",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0054",
+              "target": "L-O_SKIM_0054",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0055",
+              "target": "U_SKIM_13",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0055",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0055",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0055",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0055",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0055",
+              "target": "R-O_SKIM_0055",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0055",
+              "target": "L-O_SKIM_0055",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0056",
+              "target": "U_SKIM_00",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0056",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0056",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0056",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0056",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0056",
+              "target": "L-O_SKIM_0056",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0057",
+              "target": "U_SKIM_01",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0057",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0057",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0057",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0057",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0057",
+              "target": "R-O_SKIM_0057",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0057",
+              "target": "L-O_SKIM_0057",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0058",
+              "target": "U_SKIM_02",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0058",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0058",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0058",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0058",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0058",
+              "target": "R-O_SKIM_0058",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0058",
+              "target": "L-O_SKIM_0058",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0059",
+              "target": "U_SKIM_03",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0059",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0059",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0059",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0059",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0059",
+              "target": "R-O_SKIM_0059",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0059",
+              "target": "L-O_SKIM_0059",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0060",
+              "target": "U_SKIM_04",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0060",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0060",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0060",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0060",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0060",
+              "target": "L-O_SKIM_0060",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0061",
+              "target": "U_SKIM_05",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0061",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0061",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0061",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0061",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0061",
+              "target": "R-O_SKIM_0061",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0061",
+              "target": "L-O_SKIM_0061",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0062",
+              "target": "U_SKIM_06",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0062",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0062",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0062",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0062",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0062",
+              "target": "R-O_SKIM_0062",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0062",
+              "target": "L-O_SKIM_0062",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0063",
+              "target": "U_SKIM_07",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0063",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0063",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0063",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0063",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0063",
+              "target": "R-O_SKIM_0063",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0063",
+              "target": "L-O_SKIM_0063",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0064",
+              "target": "U_SKIM_08",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0064",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0064",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0064",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0064",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0064",
+              "target": "R-O_SKIM_0064",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0064",
+              "target": "L-O_SKIM_0064",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0065",
+              "target": "U_SKIM_09",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0065",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0065",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0065",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0065",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0065",
+              "target": "L-O_SKIM_0065",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0066",
+              "target": "U_SKIM_10",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0066",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0066",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0066",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0066",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0066",
+              "target": "R-O_SKIM_0066",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0066",
+              "target": "L-O_SKIM_0066",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0067",
+              "target": "U_SKIM_11",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0067",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0067",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0067",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0067",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0067",
+              "target": "L-O_SKIM_0067",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0068",
+              "target": "U_SKIM_12",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0068",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0068",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0068",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0068",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0068",
+              "target": "R-O_SKIM_0068",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0068",
+              "target": "L-O_SKIM_0068",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0069",
+              "target": "U_SKIM_13",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0069",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0069",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0069",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0069",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0069",
+              "target": "R-O_SKIM_0069",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0069",
+              "target": "L-O_SKIM_0069",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0070",
+              "target": "U_SKIM_00",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0070",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0070",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0070",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0070",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0070",
+              "target": "R-O_SKIM_0070",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0070",
+              "target": "L-O_SKIM_0070",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0071",
+              "target": "U_SKIM_01",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0071",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0071",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0071",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0071",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0071",
+              "target": "R-O_SKIM_0071",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0071",
+              "target": "L-O_SKIM_0071",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0072",
+              "target": "U_SKIM_02",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0072",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0072",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0072",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0072",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0072",
+              "target": "R-O_SKIM_0072",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0072",
+              "target": "L-O_SKIM_0072",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0073",
+              "target": "U_SKIM_03",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0073",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0073",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0073",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0073",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0073",
+              "target": "R-O_SKIM_0073",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0073",
+              "target": "L-O_SKIM_0073",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0074",
+              "target": "U_SKIM_04",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0074",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0074",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0074",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0074",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0074",
+              "target": "R-O_SKIM_0074",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0074",
+              "target": "L-O_SKIM_0074",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0075",
+              "target": "U_SKIM_05",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0075",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0075",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0075",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0075",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0075",
+              "target": "R-O_SKIM_0075",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0075",
+              "target": "L-O_SKIM_0075",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0076",
+              "target": "U_SKIM_06",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0076",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0076",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0076",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0076",
+              "target": "PAY_SKIM_00",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0076",
+              "target": "R-O_SKIM_0076",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0076",
+              "target": "L-O_SKIM_0076",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0077",
+              "target": "U_SKIM_07",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0077",
+              "target": "D_SKIM_02",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0077",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0077",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0077",
+              "target": "PAY_SKIM_01",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0077",
+              "target": "R-O_SKIM_0077",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0077",
+              "target": "L-O_SKIM_0077",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0078",
+              "target": "U_SKIM_08",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0078",
+              "target": "D_SKIM_00",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0078",
+              "target": "172.31.88.11",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0078",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0078",
+              "target": "PAY_SKIM_02",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0078",
+              "target": "R-O_SKIM_0078",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0078",
+              "target": "L-O_SKIM_0078",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "O_SKIM_0079",
+              "target": "U_SKIM_09",
+              "relation": "placed_by",
+              "weight": 0.55
+            },
+            {
+              "source": "O_SKIM_0079",
+              "target": "D_SKIM_01",
+              "relation": "used_device",
+              "weight": 0.78
+            },
+            {
+              "source": "O_SKIM_0079",
+              "target": "172.31.88.12",
+              "relation": "from_ip",
+              "weight": 0.72
+            },
+            {
+              "source": "O_SKIM_0079",
+              "target": "M_SKIM",
+              "relation": "sold_by",
+              "weight": 0.45
+            },
+            {
+              "source": "O_SKIM_0079",
+              "target": "PAY_SKIM_03",
+              "relation": "paid_by",
+              "weight": 0.76
+            },
+            {
+              "source": "O_SKIM_0079",
+              "target": "R-O_SKIM_0079",
+              "relation": "refunded",
+              "weight": 0.7
+            },
+            {
+              "source": "O_SKIM_0079",
+              "target": "L-O_SKIM_0079",
+              "relation": "shipped_by",
+              "weight": 0.52
+            },
+            {
+              "source": "L-O_SKIM_0000",
+              "target": "ADDR12584",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0001",
+              "target": "ADDR11771",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0002",
+              "target": "ADDR01846",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0003",
+              "target": "ADDR09405",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0004",
+              "target": "ADDR04459",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0005",
+              "target": "ADDR08451",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0006",
+              "target": "ADDR07167",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0007",
+              "target": "ADDR05260",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0008",
+              "target": "ADDR07384",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0009",
+              "target": "ADDR08497",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0010",
+              "target": "ADDR06515",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0011",
+              "target": "ADDR04074",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0012",
+              "target": "ADDR00924",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0013",
+              "target": "ADDR00582",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0014",
+              "target": "ADDR07458",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0015",
+              "target": "ADDR17997",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0016",
+              "target": "ADDR12756",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0017",
+              "target": "ADDR05755",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0018",
+              "target": "ADDR04447",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0019",
+              "target": "ADDR04734",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0020",
+              "target": "ADDR05093",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0021",
+              "target": "ADDR04552",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0022",
+              "target": "ADDR01996",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0023",
+              "target": "ADDR15472",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0024",
+              "target": "ADDR10371",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0025",
+              "target": "ADDR06381",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0026",
+              "target": "ADDR10740",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0027",
+              "target": "ADDR10479",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0028",
+              "target": "ADDR05021",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0029",
+              "target": "ADDR02056",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0030",
+              "target": "ADDR12191",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0031",
+              "target": "ADDR01246",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0032",
+              "target": "ADDR15344",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0033",
+              "target": "ADDR07729",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0034",
+              "target": "ADDR13927",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0035",
+              "target": "ADDR05656",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0036",
+              "target": "ADDR07169",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0037",
+              "target": "ADDR16353",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0038",
+              "target": "ADDR04792",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0039",
+              "target": "ADDR07778",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0040",
+              "target": "ADDR03816",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0041",
+              "target": "ADDR09020",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0042",
+              "target": "ADDR12075",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0043",
+              "target": "ADDR01970",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0044",
+              "target": "ADDR02851",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0045",
+              "target": "ADDR04230",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0046",
+              "target": "ADDR11049",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0047",
+              "target": "ADDR15250",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0048",
+              "target": "ADDR08863",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0049",
+              "target": "ADDR13694",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0050",
+              "target": "ADDR13488",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0051",
+              "target": "ADDR05447",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0052",
+              "target": "ADDR13443",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0053",
+              "target": "ADDR01764",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0054",
+              "target": "ADDR14243",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0055",
+              "target": "ADDR02872",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0056",
+              "target": "ADDR06234",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0057",
+              "target": "ADDR16329",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0058",
+              "target": "ADDR06613",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0059",
+              "target": "ADDR04304",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0060",
+              "target": "ADDR09788",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0061",
+              "target": "ADDR03983",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0062",
+              "target": "ADDR15303",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0063",
+              "target": "ADDR04038",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0064",
+              "target": "ADDR04967",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0065",
+              "target": "ADDR08067",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0066",
+              "target": "ADDR10973",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0067",
+              "target": "ADDR08430",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0068",
+              "target": "ADDR14170",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0069",
+              "target": "ADDR06502",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0070",
+              "target": "ADDR05038",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0071",
+              "target": "ADDR05223",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0072",
+              "target": "ADDR03032",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0073",
+              "target": "ADDR13696",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0074",
+              "target": "ADDR08362",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0075",
+              "target": "ADDR16634",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0076",
+              "target": "ADDR07605",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0077",
+              "target": "ADDR13296",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0078",
+              "target": "ADDR09516",
+              "relation": "delivered_to",
+              "weight": 0.5
+            },
+            {
+              "source": "L-O_SKIM_0079",
+              "target": "ADDR07337",
+              "relation": "delivered_to",
+              "weight": 0.5
+            }
+          ],
+          "metrics": {
+            "nodes": 331,
+            "edges": 706
+          }
+        },
+        "next_recommended_actions": [
+          "query_payment_cluster",
+          "analyze_behavior_sequence"
+        ],
+        "source_lineage": [
+          {
+            "source_table": "audit_event",
+            "row_count": 80,
+            "template_id": "ENTITY_RESOLUTION_GRAPH"
+          }
+        ]
+      },
+      {
+        "action": "query_refund_cluster",
+        "case_id": "AER-001",
+        "summary": "Refund cluster query compared case refunds with dynamic promotion cohort baseline.",
+        "support_evidence": [
+          {
+            "evidence_id": "EVD-AER-001-RFD-001",
+            "case_id": "AER-001",
+            "kind": "support",
+            "dimension": "refund_abnormal",
+            "description": "65 of 80 orders were refunded; lift is 11.8x cohort baseline and 38 refunds occurred within 24h.",
+            "source": "refund_order + order_master",
+            "confidence": 0.92,
+            "lineage": {
+              "source_table": "refund_order",
+              "row_count": 65,
+              "template_id": "REFUND_CLUSTER_01",
+              "baseline_refund_rate": 0.069
+            }
+          }
+        ],
+        "counter_evidence": [],
+        "metrics": {
+          "refund_count": 65,
+          "refund_rate": 0.812,
+          "fast_refund_count": 38,
+          "refund_lift_vs_cohort": 11.775
+        },
+        "graph_delta": {},
+        "next_recommended_actions": [
+          "query_logistics_trace",
+          "compare_promo_cohort"
+        ],
+        "source_lineage": [
+          {
+            "source_table": "refund_order",
+            "row_count": 65,
+            "template_id": "REFUND_CLUSTER_01"
+          }
+        ]
+      },
+      {
+        "action": "query_payment_cluster",
+        "case_id": "AER-001",
+        "summary": "Payment cluster query found concentrated payment instruments across supposedly independent buyers.",
+        "support_evidence": [
+          {
+            "evidence_id": "EVD-AER-001-PAY-001",
+            "case_id": "AER-001",
+            "kind": "support",
+            "dimension": "payment_cluster",
+            "description": "80 payments collapse to 4 payment accounts; top account appears 20 times.",
+            "source": "payment_record + external_ieee_transaction",
+            "confidence": 0.93,
+            "lineage": {
+              "source_table": "payment_record",
+              "row_count": 80,
+              "template_id": "PAYMENT_CLUSTER_01",
+              "top_accounts": [
+                [
+                  "PAY_SKIM_00",
+                  20
+                ],
+                [
+                  "PAY_SKIM_01",
+                  20
+                ],
+                [
+                  "PAY_SKIM_02",
+                  20
+                ],
+                [
+                  "PAY_SKIM_03",
+                  20
+                ]
+              ]
+            }
+          }
+        ],
+        "counter_evidence": [],
+        "metrics": {
+          "payment_account_count": 4,
+          "payment_reuse_ratio": 20.0,
+          "top_accounts": [
+            [
+              "PAY_SKIM_00",
+              20
+            ],
+            [
+              "PAY_SKIM_01",
+              20
+            ],
+            [
+              "PAY_SKIM_02",
+              20
+            ],
+            [
+              "PAY_SKIM_03",
+              20
+            ]
+          ]
+        },
+        "graph_delta": {},
+        "next_recommended_actions": [
+          "query_subsidy_ledger",
+          "seek_counter_evidence"
+        ],
+        "source_lineage": [
+          {
+            "source_table": "payment_record",
+            "row_count": 80,
+            "template_id": "PAYMENT_CLUSTER_01"
+          }
+        ]
+      },
+      {
+        "action": "seek_counter_evidence",
+        "case_id": "AER-001",
+        "summary": "Counter-evidence search tested normal-business explanations before passport emission.",
+        "support_evidence": [],
+        "counter_evidence": [
+          {
+            "evidence_id": "EVD-AER-001-CTR-NULL-001",
+            "case_id": "AER-001",
+            "kind": "uncertainty",
+            "dimension": "counter_evidence",
+            "description": "No strong old-customer, campus, household, organic campaign, or warehouse-batch counter-evidence was found.",
+            "source": "counter_evidence_tools",
+            "confidence": 0.78,
+            "lineage": {
+              "source_table": "user_account/logistics_order/cohort",
+              "row_count": 94,
+              "template_id": "COUNTER_EVIDENCE_SWEEP",
+              "counter_checks": [
+                "CTR-001",
+                "CTR-002",
+                "CTR-003",
+                "CTR-004",
+                "CTR-005",
+                "CTR-006",
+                "CTR-007",
+                "CTR-008"
+              ]
+            }
+          }
+        ],
+        "metrics": {
+          "counter_items": 1,
+          "old_customer_count": 0,
+          "student_verified_count": 0,
+          "high_quality_shipping_count": 0
+        },
+        "graph_delta": {},
+        "next_recommended_actions": [
+          "emit_passport",
+          "request_human_review"
+        ],
+        "source_lineage": [
+          {
+            "source_table": "counter_evidence_tools",
+            "row_count": 1,
+            "template_id": "COUNTER_EVIDENCE_SWEEP"
+          }
+        ]
+      }
+    ],
+    "passport": {
+      "case_header": {
+        "case_id": "AER-001",
+        "site": "US",
+        "promo_window": "Black Friday 2025",
+        "risk_pattern": "EC-SKIM-001",
+        "risk_level": "critical",
+        "status": "human_review_required"
+      },
+      "risk_assertion": "AER-001 detects new-account subsidy skimming: shared devices/IPs/payment accounts, fast refunds, low-quality logistics, and weak normal-business counter explanations.",
+      "support_evidence": [
+        {
+          "evidence_id": "EVD-AER-001-DEV-001",
+          "case_id": "AER-001",
+          "kind": "support",
+          "dimension": "device_reuse",
+          "description": "14 users and 80 orders share 3 devices; reuse ratio 26.7.",
+          "source": "order_master + device_fingerprint + device_log",
+          "confidence": 0.96,
+          "lineage": {
+            "source_table": "order_master/device_fingerprint",
+            "row_count": 80,
+            "template_id": "GRAPH_DEVICE_01",
+            "nodes": 331
+          }
+        },
+        {
+          "evidence_id": "EVD-AER-001-IP-001",
+          "case_id": "AER-001",
+          "kind": "support",
+          "dimension": "ip_cluster",
+          "description": "80 orders concentrate on 2 datacenter/proxy IP addresses.",
+          "source": "order_master + ip_profile + gateway_log",
+          "confidence": 0.95,
+          "lineage": {
+            "source_table": "ip_profile/gateway_log",
+            "row_count": 2,
+            "template_id": "GRAPH_IP_01"
+          }
+        },
+        {
+          "evidence_id": "EVD-AER-001-PAY-001",
+          "case_id": "AER-001",
+          "kind": "support",
+          "dimension": "payment_cluster",
+          "description": "80 payments collapse to 4 payment accounts; top account appears 20 times.",
+          "source": "payment_record + external_ieee_transaction",
+          "confidence": 0.93,
+          "lineage": {
+            "source_table": "payment_record",
+            "row_count": 80,
+            "template_id": "PAYMENT_CLUSTER_01",
+            "top_accounts": [
+              [
+                "PAY_SKIM_00",
+                20
+              ],
+              [
+                "PAY_SKIM_01",
+                20
+              ],
+              [
+                "PAY_SKIM_02",
+                20
+              ],
+              [
+                "PAY_SKIM_03",
+                20
+              ]
+            ]
+          }
+        },
+        {
+          "evidence_id": "EVD-AER-001-RFD-001",
+          "case_id": "AER-001",
+          "kind": "support",
+          "dimension": "refund_abnormal",
+          "description": "65 of 80 orders were refunded; lift is 11.8x cohort baseline and 38 refunds occurred within 24h.",
+          "source": "refund_order + order_master",
+          "confidence": 0.92,
+          "lineage": {
+            "source_table": "refund_order",
+            "row_count": 65,
+            "template_id": "REFUND_CLUSTER_01",
+            "baseline_refund_rate": 0.069
+          }
+        }
+      ],
+      "counter_evidence": [
+        {
+          "evidence_id": "EVD-AER-001-CTR-NULL-001",
+          "case_id": "AER-001",
+          "kind": "uncertainty",
+          "dimension": "counter_evidence",
+          "description": "No strong old-customer, campus, household, organic campaign, or warehouse-batch counter-evidence was found.",
+          "source": "counter_evidence_tools",
+          "confidence": 0.78,
+          "lineage": {
+            "source_table": "user_account/logistics_order/cohort",
+            "row_count": 94,
+            "template_id": "COUNTER_EVIDENCE_SWEEP",
+            "counter_checks": [
+              "CTR-001",
+              "CTR-002",
+              "CTR-003",
+              "CTR-004",
+              "CTR-005",
+              "CTR-006",
+              "CTR-007",
+              "CTR-008"
+            ]
+          }
+        }
+      ],
+      "evidence_coverage": {
+        "device_reuse": "covered",
+        "ip_cluster": "covered",
+        "payment_cluster": "covered",
+        "refund_abnormal": "covered",
+        "logistics_authenticity": "missing",
+        "promo_cohort_outlier": "missing",
+        "subsidy_abuse": "missing",
+        "behavior_automation": "missing",
+        "counter_evidence": "covered",
+        "_sufficiency_score": "0.567"
+      },
+      "remaining_uncertainty": [
+        "Payment account ownership still requires review.",
+        "Warehouse batch shipping is only partially ruled out."
+      ],
+      "recommended_action": [
+        "Expand investigation into logistics authenticity, promotional cohort outliers, subsidy abuse, and behavior automation to address the uncovered gaps."
+      ],
+      "human_gate": {
+        "required": true,
+        "gate_id": "GATE-02",
+        "reason": "Evidence quality and disposition require auditor review.",
+        "sufficiency_score": 0.567,
+        "counter_score": 0.78
+      },
+      "versions": {
+        "pattern_version": "EC-SKIM-001:demo",
+        "policy_version": "aer_policy_v1",
+        "tool_version": "openclaw_toolset_v1"
+      },
+      "model_narrative": "The case AER-001 involves a pattern of shared infrastructure brushing and subsidy skimming, detected by multiple indicators such as high device and IP reuse, fast refunds, low-quality logistics, and weak normal-business counter-explanations. The investigation has gathered substantial support from evidence including device reuse, IP clustering, payment clustering, and abnormal refund rates. However, critical evidence related to logistics authenticity, promotional cohort outliers, subsidy abuse, and behavior automation remains missing."
+    },
+    "trajectory_count": 14,
+    "evidence_count": 5
+  },
+  "summary": {
+    "db_path": "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/aer_loop_model_quick_9728824_debug.sqlite",
+    "model_backend": "local",
+    "model_path": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+    "cases": [],
+    "model_invocations": [],
+    "evidence_count": 0,
+    "trajectory_count": 0,
+    "thread_count": 0,
+    "passport_count": 0
+  }
+}
+{
+  "db_path": "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/aer_loop_model_quick_9728824_debug.sqlite",
+  "model_backend": "local",
+  "model_path": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+  "cases": [
+    {
+      "case_id": "AER-001",
+      "pattern_id": "EC-SKIM-001",
+      "risk_level": "critical",
+      "risk_score": 0.99,
+      "status": "human_review_required"
+    },
+    {
+      "case_id": "AER-002",
+      "pattern_id": "EC-FAKE-002",
+      "risk_level": "critical",
+      "risk_score": 0.99,
+      "status": "investigation_ready"
+    },
+    {
+      "case_id": "AER-003",
+      "pattern_id": "EC-ARBI-003",
+      "risk_level": "critical",
+      "risk_score": 0.99,
+      "status": "investigation_ready"
+    }
+  ],
+  "model_invocations": [
+    {
+      "agent_id": "assertion_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 1,
+      "count": 1
+    },
+    {
+      "agent_id": "case_router_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 0,
+      "count": 1
+    },
+    {
+      "agent_id": "counter_evidence_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 0,
+      "count": 1
+    },
+    {
+      "agent_id": "investigation_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 0,
+      "count": 3
+    },
+    {
+      "agent_id": "investigation_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 1,
+      "count": 1
+    },
+    {
+      "agent_id": "passport_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 0,
+      "count": 1
+    },
+    {
+      "agent_id": "pattern_learning_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 1,
+      "count": 1
+    },
+    {
+      "agent_id": "pattern_matcher_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 0,
+      "count": 1
+    },
+    {
+      "agent_id": "risk_signal_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 1,
+      "count": 1
+    },
+    {
+      "agent_id": "router_agent",
+      "backend": "local",
+      "model": "/hpc2hdd/home/hqi881/SWE-SQL/model/Qwen2.5-Coder-7B-Instruct",
+      "used_fallback": 0,
+      "count": 3
+    }
+  ],
+  "evidence_count": 5,
+  "trajectory_count": 14,
+  "thread_count": 4,
+  "passport_count": 1
+}

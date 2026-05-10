@@ -1,0 +1,22 @@
+pattern_id: EC-FAKE-002
+pattern_name: Fake logistics and artificial GMV inflation
+version: v1.5
+status: active
+trigger_rules:
+  - T1_new_merchant_spike
+  - T2_low_quality_logistics
+  - T3_review_template_similarity
+required_support_evidence:
+  - merchant_order_spike
+  - logistics_authenticity
+  - comment_similarity
+  - refund_after_confirm
+counter_evidence_checks:
+  - same_city_warehouse_delivery
+  - virtual_goods
+  - delayed_confirm_requested_by_user
+recommended_actions:
+  - query_logistics_trace
+  - compare_promo_cohort
+  - seek_counter_evidence
+

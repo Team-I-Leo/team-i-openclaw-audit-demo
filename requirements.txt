@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pydantic
+pandas
+networkx
+numpy
+pyyaml
+openai
+transformers
+torch
+sentence-transformers
+

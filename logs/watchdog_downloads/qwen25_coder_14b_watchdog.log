@@ -1,0 +1,205 @@
+[2026-05-10 02:56:07] watchdog_start repo=Qwen/Qwen2.5-Coder-14B-Instruct target=/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct
+[2026-05-10 02:56:07] env HF_HUB_ENABLE_HF_TRANSFER=0 HF_HUB_DISABLE_XET=1 STALL_SECONDS=600 CHECK_SECONDS=60 MAX_WORKERS=1
+Python 3.8.10
+[2026-05-10 02:56:07] listing repo files repo=Qwen/Qwen2.5-Coder-14B-Instruct
+16
+[2026-05-10 02:56:10] repo file list saved to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.codex_watchdog/repo_files.txt
+[2026-05-10 02:56:10] file_index=1/16 file=.gitattributes
+[2026-05-10 02:56:10] start file=.gitattributes attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading '.gitattributes' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/wPaCkH-WbT7GsmxMKKrNZTV4nSM=.a6344aac8c09253b3b630fb776ae94478aa0275b.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.gitattributes
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.gitattributes
+[2026-05-10 02:57:10] progress file=.gitattributes snapshot=1520:1778352973.721515
+[2026-05-10 02:57:10] done file=.gitattributes
+[2026-05-10 02:57:10] file_index=2/16 file=LICENSE
+[2026-05-10 02:57:10] start file=LICENSE attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'LICENSE' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/DhCjcNQuMpl4FL346qr3tvNUCgY=.6634c8cc3133b3848ec74b9f275acaaa1ea618ab.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/LICENSE
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/LICENSE
+[2026-05-10 02:58:10] progress file=LICENSE snapshot=12863:1778353031.988330
+[2026-05-10 02:58:10] done file=LICENSE
+[2026-05-10 02:58:10] file_index=3/16 file=README.md
+[2026-05-10 02:58:10] start file=README.md attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'README.md' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/Xn7B-BWUGOee2Y6hCZtEhtFu4BE=.0d7fe07895cdde3f41e154ad17a8212719ceb005.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/README.md
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/README.md
+[2026-05-10 02:59:10] progress file=README.md snapshot=19260:1778353092.062770
+[2026-05-10 02:59:10] done file=README.md
+[2026-05-10 02:59:10] file_index=4/16 file=config.json
+[2026-05-10 02:59:10] start file=config.json attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'config.json' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/8_PA_wEVGiVa2goH2H4KQOQpvVY=.a8fa5a907f7430a47d831eb28dbd69e6f6fd061d.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/config.json
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/config.json
+[2026-05-10 03:00:10] progress file=config.json snapshot=19923:1778353152.200995
+[2026-05-10 03:00:10] done file=config.json
+[2026-05-10 03:00:10] file_index=5/16 file=generation_config.json
+[2026-05-10 03:00:10] start file=generation_config.json attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'generation_config.json' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/3EVKVggOldJcKSsGjSdoUCN1AyQ=.c28f9c697cbc09f047434efec57556505af31111.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/generation_config.json
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/generation_config.json
+[2026-05-10 03:01:10] progress file=generation_config.json snapshot=20166:1778353212.432467
+[2026-05-10 03:01:10] done file=generation_config.json
+[2026-05-10 03:01:10] file_index=6/16 file=merges.txt
+[2026-05-10 03:01:10] start file=merges.txt attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'merges.txt' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/PtHk0z_I45atnj23IIRhTExwT3w=.20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/merges.txt
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/merges.txt
+[2026-05-10 03:02:11] progress file=merges.txt snapshot=1692005:1778353272.973440
+[2026-05-10 03:02:11] done file=merges.txt
+[2026-05-10 03:02:11] file_index=7/16 file=model-00001-of-00006.safetensors
+[2026-05-10 03:02:11] start file=model-00001-of-00006.safetensors attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'model-00001-of-00006.safetensors' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/lPnGVsdaF542Y6w1ufNAL-pphxo=.b14a60aa35c07e58da61cbe6c8b2819e60a043dd98001f14736045c6062e79a0.incomplete'
+[2026-05-10 03:03:11] progress file=model-00001-of-00006.safetensors snapshot=662294885:1778353391.155127
+[2026-05-10 03:04:11] progress file=model-00001-of-00006.safetensors snapshot=1291440485:1778353449.870133
+[2026-05-10 03:05:11] progress file=model-00001-of-00006.safetensors snapshot=1941557605:1778353510.473259
+[2026-05-10 03:06:11] progress file=model-00001-of-00006.safetensors snapshot=2633617765:1778353570.565848
+[2026-05-10 03:07:11] progress file=model-00001-of-00006.safetensors snapshot=3325677925:1778353630.872478
+[2026-05-10 03:08:11] progress file=model-00001-of-00006.safetensors snapshot=4017738085:1778353691.243851
+[2026-05-10 03:09:11] progress file=model-00001-of-00006.safetensors snapshot=4709798245:1778353751.231703
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00001-of-00006.safetensors
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00001-of-00006.safetensors
+[2026-05-10 03:10:11] progress file=model-00001-of-00006.safetensors snapshot=4987903285:1778353774.888727
+[2026-05-10 03:10:11] done file=model-00001-of-00006.safetensors
+[2026-05-10 03:10:11] file_index=8/16 file=model-00002-of-00006.safetensors
+[2026-05-10 03:10:11] start file=model-00002-of-00006.safetensors attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'model-00002-of-00006.safetensors' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/H1O8ZB_QwtWjsrLtliP4_68j6q4=.03b8de22c48a523646ac0a38aa36471529e22cdd1238ce43b44bf5014d64098a.incomplete'
+[2026-05-10 03:11:11] progress file=model-00002-of-00006.safetensors snapshot=5312961845:1778353871.682092
+[2026-05-10 03:12:11] progress file=model-00002-of-00006.safetensors snapshot=5669477685:1778353930.977073
+[2026-05-10 03:13:11] progress file=model-00002-of-00006.safetensors snapshot=6025993525:1778353990.239159
+[2026-05-10 03:14:11] progress file=model-00002-of-00006.safetensors snapshot=6392995125:1778354051.240849
+[2026-05-10 03:15:11] progress file=model-00002-of-00006.safetensors snapshot=6749510965:1778354110.488709
+[2026-05-10 03:16:12] progress file=model-00002-of-00006.safetensors snapshot=7116512565:1778354171.475692
+[2026-05-10 03:17:12] progress file=model-00002-of-00006.safetensors snapshot=7473028405:1778354230.742539
+[2026-05-10 03:18:12] progress file=model-00002-of-00006.safetensors snapshot=7840030005:1778354291.780723
+[2026-05-10 03:19:12] progress file=model-00002-of-00006.safetensors snapshot=8196545845:1778354350.944177
+[2026-05-10 03:20:12] progress file=model-00002-of-00006.safetensors snapshot=8563547445:1778354411.917484
+[2026-05-10 03:21:12] progress file=model-00002-of-00006.safetensors snapshot=8920063285:1778354471.246383
+[2026-05-10 03:22:12] progress file=model-00002-of-00006.safetensors snapshot=9287064885:1778354532.171537
+[2026-05-10 03:23:12] progress file=model-00002-of-00006.safetensors snapshot=9643580725:1778354591.419123
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00002-of-00006.safetensors
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00002-of-00006.safetensors
+[2026-05-10 03:24:12] progress file=model-00002-of-00006.safetensors snapshot=9942750629:1778354639.435356
+[2026-05-10 03:24:12] done file=model-00002-of-00006.safetensors
+[2026-05-10 03:24:12] file_index=9/16 file=model-00003-of-00006.safetensors
+[2026-05-10 03:24:12] start file=model-00003-of-00006.safetensors attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'model-00003-of-00006.safetensors' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/XYxS_-gMKqyeF0pSwDVvLc_63Nc=.97587f9d511af15bce6295a15b10c43f504b16fcddf22db9c87356df17ffff3f.incomplete'
+[2026-05-10 03:25:12] progress file=model-00003-of-00006.safetensors snapshot=10267809189:1778354711.625774
+[2026-05-10 03:26:12] progress file=model-00003-of-00006.safetensors snapshot=10634810789:1778354771.021592
+[2026-05-10 03:27:12] progress file=model-00003-of-00006.safetensors snapshot=11001812389:1778354831.638894
+[2026-05-10 03:28:12] progress file=model-00003-of-00006.safetensors snapshot=11358328229:1778354891.430030
+[2026-05-10 03:29:13] progress file=model-00003-of-00006.safetensors snapshot=11704358309:1778354951.466195
+[2026-05-10 03:30:13] progress file=model-00003-of-00006.safetensors snapshot=12060874149:1778355013.104164
+[2026-05-10 03:31:13] progress file=model-00003-of-00006.safetensors snapshot=12396418469:1778355072.695087
+[2026-05-10 03:32:13] progress file=model-00003-of-00006.safetensors snapshot=12742448549:1778355132.462655
+[2026-05-10 03:33:13] progress file=model-00003-of-00006.safetensors snapshot=13098964389:1778355192.848580
+[2026-05-10 03:34:13] progress file=model-00003-of-00006.safetensors snapshot=13444994469:1778355251.974802
+[2026-05-10 03:35:13] progress file=model-00003-of-00006.safetensors snapshot=13780538789:1778355312.953460
+[2026-05-10 03:36:13] progress file=model-00003-of-00006.safetensors snapshot=14116083109:1778355371.913112
+[2026-05-10 03:37:13] progress file=model-00003-of-00006.safetensors snapshot=14472598949:1778355433.137141
+[2026-05-10 03:38:13] progress file=model-00003-of-00006.safetensors snapshot=14818629029:1778355492.599565
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00003-of-00006.safetensors
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00003-of-00006.safetensors
+[2026-05-10 03:39:13] progress file=model-00003-of-00006.safetensors snapshot=14897598021:1778355504.716941
+[2026-05-10 03:39:13] done file=model-00003-of-00006.safetensors
+[2026-05-10 03:39:13] file_index=10/16 file=model-00004-of-00006.safetensors
+[2026-05-10 03:39:13] start file=model-00004-of-00006.safetensors attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'model-00004-of-00006.safetensors' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/71f3TSsxAmosSx1AFSGJtFrSxfc=.ed34a72606341f8774d21661ad8ec9e59deffad8c63ceebd2f6db86f163bee7d.incomplete'
+[2026-05-10 03:40:13] progress file=model-00004-of-00006.safetensors snapshot=15222656581:1778355613.295884
+[2026-05-10 03:41:13] progress file=model-00004-of-00006.safetensors snapshot=15579172421:1778355672.604003
+[2026-05-10 03:42:13] progress file=model-00004-of-00006.safetensors snapshot=15946174021:1778355733.567031
+[2026-05-10 03:43:14] progress file=model-00004-of-00006.safetensors snapshot=16302689861:1778355792.809872
+[2026-05-10 03:44:14] progress file=model-00004-of-00006.safetensors snapshot=16669691461:1778355853.837729
+[2026-05-10 03:45:14] progress file=model-00004-of-00006.safetensors snapshot=17026207301:1778355913.220453
+[2026-05-10 03:46:14] progress file=model-00004-of-00006.safetensors snapshot=17393208901:1778355974.068055
+[2026-05-10 03:47:14] progress file=model-00004-of-00006.safetensors snapshot=17749724741:1778356033.311851
+[2026-05-10 03:48:14] progress file=model-00004-of-00006.safetensors snapshot=18116726341:1778356094.281733
+[2026-05-10 03:49:14] progress file=model-00004-of-00006.safetensors snapshot=18473242181:1778356153.505262
+[2026-05-10 03:50:14] progress file=model-00004-of-00006.safetensors snapshot=18840243781:1778356214.530668
+[2026-05-10 03:51:14] progress file=model-00004-of-00006.safetensors snapshot=19196759621:1778356273.824203
+[2026-05-10 03:52:14] progress file=model-00004-of-00006.safetensors snapshot=19553275461:1778356333.010803
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00004-of-00006.safetensors
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00004-of-00006.safetensors
+[2026-05-10 03:53:14] progress file=model-00004-of-00006.safetensors snapshot=19852445413:1778356381.012933
+[2026-05-10 03:53:14] done file=model-00004-of-00006.safetensors
+[2026-05-10 03:53:14] file_index=11/16 file=model-00005-of-00006.safetensors
+[2026-05-10 03:53:14] start file=model-00005-of-00006.safetensors attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'model-00005-of-00006.safetensors' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/oSetzz1DFkf7L3TvpxdZ6YtuoKo=.657a6388cfe547498159dfb6507b9c1ead09a6fbab154c22942bbf963aef4208.incomplete'
+[2026-05-10 03:54:14] progress file=model-00005-of-00006.safetensors snapshot=20198475493:1778356453.288521
+[2026-05-10 03:55:14] progress file=model-00005-of-00006.safetensors snapshot=20596934373:1778356514.288281
+[2026-05-10 03:56:15] progress file=model-00005-of-00006.safetensors snapshot=20984907493:1778356573.355067
+[2026-05-10 03:57:15] progress file=model-00005-of-00006.safetensors snapshot=21404337893:1778356633.211107
+[2026-05-10 03:58:15] progress file=model-00005-of-00006.safetensors snapshot=21802796773:1778356693.329224
+[2026-05-10 03:59:15] progress file=model-00005-of-00006.safetensors snapshot=22201255653:1778356753.940461
+[2026-05-10 04:00:15] progress file=model-00005-of-00006.safetensors snapshot=22631171813:1778356815.133306
+[2026-05-10 04:01:15] progress file=model-00005-of-00006.safetensors snapshot=23082059493:1778356875.303624
+[2026-05-10 04:02:15] progress file=model-00005-of-00006.safetensors snapshot=23511975653:1778356935.142162
+[2026-05-10 04:03:15] progress file=model-00005-of-00006.safetensors snapshot=23941891813:1778356994.421032
+[2026-05-10 04:04:15] progress file=model-00005-of-00006.safetensors snapshot=24361322213:1778357054.591623
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00005-of-00006.safetensors
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00005-of-00006.safetensors
+[2026-05-10 04:05:15] progress file=model-00005-of-00006.safetensors snapshot=24807292805:1778357114.866347
+[2026-05-10 04:05:15] done file=model-00005-of-00006.safetensors
+[2026-05-10 04:05:15] file_index=12/16 file=model-00006-of-00006.safetensors
+[2026-05-10 04:05:15] start file=model-00006-of-00006.safetensors attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'model-00006-of-00006.safetensors' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/uHlhOCT17Z6wYlt1x1jlrCcHTyE=.3dbbc07addfc989662fd6bf88798970b278c98630f88eed5d23256fc99365dae.incomplete'
+[2026-05-10 04:06:15] progress file=model-00006-of-00006.safetensors snapshot=25121865605:1778357174.954238
+[2026-05-10 04:07:15] progress file=model-00006-of-00006.safetensors snapshot=25488867205:1778357235.645552
+[2026-05-10 04:08:15] progress file=model-00006-of-00006.safetensors snapshot=25855868805:1778357295.602695
+[2026-05-10 04:09:15] progress file=model-00006-of-00006.safetensors snapshot=26233356165:1778357355.089023
+[2026-05-10 04:10:15] progress file=model-00006-of-00006.safetensors snapshot=26621329285:1778357415.716270
+[2026-05-10 04:11:16] progress file=model-00006-of-00006.safetensors snapshot=26998816645:1778357475.418112
+[2026-05-10 04:12:16] progress file=model-00006-of-00006.safetensors snapshot=27376304005:1778357535.142636
+[2026-05-10 04:13:16] progress file=model-00006-of-00006.safetensors snapshot=27732819845:1778357594.862347
+[2026-05-10 04:14:16] progress file=model-00006-of-00006.safetensors snapshot=28099821445:1778357654.342763
+[2026-05-10 04:15:16] progress file=model-00006-of-00006.safetensors snapshot=28466823045:1778357715.863238
+[2026-05-10 04:16:16] progress file=model-00006-of-00006.safetensors snapshot=28812853125:1778357774.600610
+[2026-05-10 04:17:16] progress file=model-00006-of-00006.safetensors snapshot=29179854725:1778357834.839404
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00006-of-00006.safetensors
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model-00006-of-00006.safetensors
+[2026-05-10 04:18:16] progress file=model-00006-of-00006.safetensors snapshot=29541825965:1778357890.682640
+[2026-05-10 04:18:16] done file=model-00006-of-00006.safetensors
+[2026-05-10 04:18:16] file_index=13/16 file=model.safetensors.index.json
+[2026-05-10 04:18:16] start file=model.safetensors.index.json attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'model.safetensors.index.json' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/yVzAsSxRSINSz-tQbpx-TLpfkLU=.0e9b53532550dfddbf42730aeeb499a3bb7a707f.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model.safetensors.index.json
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/model.safetensors.index.json
+[2026-05-10 04:19:16] progress file=model.safetensors.index.json snapshot=29541873437:1778357900.814016
+[2026-05-10 04:19:16] done file=model.safetensors.index.json
+[2026-05-10 04:19:16] file_index=14/16 file=tokenizer.json
+[2026-05-10 04:19:16] start file=tokenizer.json attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'tokenizer.json' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/HgM_lKo9sdSCfRtVg7MMFS7EKqo=.443909a61d429dff23010e5bddd28ff530edda00.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/tokenizer.json
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/tokenizer.json
+[2026-05-10 04:20:16] progress file=tokenizer.json snapshot=29548905082:1778357958.180239
+[2026-05-10 04:20:16] done file=tokenizer.json
+[2026-05-10 04:20:16] file_index=15/16 file=tokenizer_config.json
+[2026-05-10 04:20:16] start file=tokenizer_config.json attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'tokenizer_config.json' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/vzaExXFZNBay89bvlQv-ZcI6BTg=.acee076f49bf3c0298e15de0909d1da7b392f0c3.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/tokenizer_config.json
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/tokenizer_config.json
+[2026-05-10 04:21:16] progress file=tokenizer_config.json snapshot=29548912387:1778358018.066554
+[2026-05-10 04:21:16] done file=tokenizer_config.json
+[2026-05-10 04:21:16] file_index=16/16 file=vocab.json
+[2026-05-10 04:21:16] start file=vocab.json attempt=1
+[33m⚠️  Warning: 'huggingface-cli download' is deprecated. Use 'hf download' instead.[0m
+Downloading 'vocab.json' to '/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/.cache/huggingface/download/j3m-Hy6QvBddw8RXA1uSWl1AJ0c=.4783fe10ac3adce15ac8f358ef5462739852c569.incomplete'
+Download complete. Moving file to /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/vocab.json
+/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct/vocab.json
+[2026-05-10 04:22:16] progress file=vocab.json snapshot=29551689220:1778358078.285183
+[2026-05-10 04:22:16] done file=vocab.json
+[2026-05-10 04:22:16] watchdog_finished repo=Qwen/Qwen2.5-Coder-14B-Instruct target=/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/models/Qwen2.5-Coder-14B-Instruct

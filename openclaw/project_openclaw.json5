@@ -1,0 +1,118 @@
+{
+  gateway: {
+    mode: "local",
+    bind: "loopback",
+    auth: {
+      mode: "token",
+      token: "aer-loop-demo-local-token",
+    },
+    http: {
+      endpoints: {
+        chatCompletions: { enabled: true },
+        responses: { enabled: true },
+      },
+    },
+  },
+  agents: {
+    defaults: {
+      workspace: "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510",
+      repoRoot: "/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510",
+      model: {
+        primary: "aer-local/qwen2.5-coder-7b-instruct",
+        fallbacks: ["aer-local/qwen2.5-coder-14b-instruct"],
+      },
+      models: {
+        "aer-local/qwen2.5-coder-7b-instruct": { alias: "AER-Qwen-7B" },
+        "aer-local/qwen2.5-coder-14b-instruct": { alias: "AER-Qwen-14B" },
+      },
+      thinkingDefault: "low",
+      timeoutSeconds: 600,
+    },
+    list: [
+      {
+        id: "risk-signal-agent",
+        model: { primary: "aer-local/qwen2.5-coder-7b-instruct" },
+      },
+      {
+        id: "assertion-agent",
+        model: { primary: "aer-local/qwen2.5-coder-7b-instruct" },
+      },
+      {
+        id: "router-agent",
+        model: { primary: "aer-local/qwen2.5-coder-7b-instruct" },
+      },
+      {
+        id: "investigation-agent",
+        model: { primary: "aer-local/qwen2.5-coder-7b-instruct" },
+      },
+      {
+        id: "counter-evidence-agent",
+        model: { primary: "aer-local/qwen2.5-coder-7b-instruct" },
+      },
+      {
+        id: "passport-agent",
+        model: { primary: "aer-local/qwen2.5-coder-14b-instruct" },
+      },
+      {
+        id: "pattern-learning-agent",
+        model: { primary: "aer-local/qwen2.5-coder-14b-instruct" },
+      },
+    ],
+  },
+  models: {
+    mode: "merge",
+    providers: {
+      "aer-local": {
+        baseUrl: "http://127.0.0.1:18088/v1",
+        apiKey: "EMPTY",
+        api: "openai-completions",
+        models: [
+          {
+            id: "qwen2.5-coder-7b-instruct",
+            name: "Qwen2.5-Coder-7B-Instruct on HPC2 A800",
+            reasoning: false,
+            input: ["text"],
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+            contextWindow: 32768,
+            maxTokens: 4096,
+          },
+          {
+            id: "qwen2.5-coder-14b-instruct",
+            name: "Qwen2.5-Coder-14B-Instruct on HPC2 A800",
+            reasoning: false,
+            input: ["text"],
+            cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+            contextWindow: 32768,
+            maxTokens: 4096,
+          },
+        ],
+      },
+    },
+  },
+  plugins: {
+    allow: ["aer-audit-tools"],
+    entries: {
+      "aer-audit-tools": {
+        enabled: true,
+        config: {
+          apiBaseUrl: "http://127.0.0.1:18081",
+        },
+      },
+    },
+  },
+  tools: {
+    allow: [
+      "aer_expand_infra_graph",
+      "aer_query_refund_cluster",
+      "aer_query_logistics_trace",
+      "aer_query_payment_cluster",
+      "aer_compare_promo_cohort",
+      "aer_query_subsidy_ledger",
+      "aer_analyze_behavior_sequence",
+      "aer_search_historical_cases",
+      "aer_seek_counter_evidence",
+      "aer_request_human_review",
+      "aer_emit_passport",
+    ],
+  },
+}

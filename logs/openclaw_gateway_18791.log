@@ -1,0 +1,20 @@
+Config warnings:\n- plugins.entries.aer-audit-tools: plugin aer-audit-tools: plugin id mismatch (manifest uses "aer-audit-tools", entry hints "openclaw-aer-audit-tools")
+│
+◇  Config warnings ──────────────────────────────────────────────────────╮
+│                                                                        │
+│  - plugins.entries.aer-audit-tools: plugin aer-audit-tools: plugin id  │
+│    mismatch (manifest uses "aer-audit-tools", entry hints              │
+│    "openclaw-aer-audit-tools")                                         │
+│                                                                        │
+├────────────────────────────────────────────────────────────────────────╯
+2026-05-10T01:54:02.049+08:00 Config warnings:\n- plugins.entries.aer-audit-tools: plugin aer-audit-tools: plugin id mismatch (manifest uses "aer-audit-tools", entry hints "openclaw-aer-audit-tools")
+2026-05-10T01:54:02.339+08:00 [plugins] aer-audit-tools: loaded without install/load-path provenance; treat as untracked local code and pin trust via plugins.allow or install records (/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/extensions/aer-audit-tools/index.ts)
+2026-05-10T01:54:02.392+08:00 Config warnings:\n- plugins.entries.aer-audit-tools: plugin aer-audit-tools: plugin id mismatch (manifest uses "aer-audit-tools", entry hints "openclaw-aer-audit-tools")
+2026-05-10T01:54:02.435+08:00 [gateway] [plugins] aer-audit-tools: loaded without install/load-path provenance; treat as untracked local code and pin trust via plugins.allow or install records (/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/extensions/aer-audit-tools/index.ts)
+2026-05-10T01:54:02.436+08:00 [gateway] [plugins] plugin id mismatch (manifest uses "aer-audit-tools", entry hints "openclaw-aer-audit-tools") (plugin=aer-audit-tools, source=/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/extensions/aer-audit-tools/index.ts)
+2026-05-10T01:54:02.438+08:00 [gateway] [plugins] loaded without install/load-path provenance; treat as untracked local code and pin trust via plugins.allow or install records (plugin=aer-audit-tools, source=/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/extensions/aer-audit-tools/index.ts)
+2026-05-10T01:54:02.466+08:00 [canvas] host mounted at http://127.0.0.1:18791/__openclaw__/canvas/ (root /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/canvas)
+2026-05-10T01:54:04.491+08:00 Gateway failed to start: another gateway instance is already listening on ws://127.0.0.1:18791
+If the gateway is supervised, stop it with: openclaw gateway stop
+2026-05-10T01:54:04.934+08:00 Port 18791 is already in use.
+2026-05-10T01:54:04.939+08:00 - Port is in use but process details are unavailable (install lsof or run as an admin user).

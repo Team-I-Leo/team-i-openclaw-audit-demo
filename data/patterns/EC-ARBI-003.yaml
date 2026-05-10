@@ -1,0 +1,22 @@
+pattern_id: EC-ARBI-003
+pattern_name: Subsidy arbitrage with fast refund loop
+version: v1.2
+status: active
+trigger_rules:
+  - T1_newbie_coupon_threshold
+  - T2_fast_refund_after_subsidy
+  - T3_payment_path_cluster
+required_support_evidence:
+  - coupon_threshold_match
+  - refund_abnormal
+  - payment_cluster
+  - subsidy_recall_gap
+counter_evidence_checks:
+  - product_quality_issue
+  - normal_after_sales_policy
+  - platform_rule_allowed_refund
+recommended_actions:
+  - query_refund_cluster
+  - query_payment_cluster
+  - seek_counter_evidence
+

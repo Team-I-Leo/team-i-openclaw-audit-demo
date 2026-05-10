@@ -1,0 +1,19 @@
+2026-05-10T03:32:47.756+08:00 [plugins] aer-audit-tools: loaded without install/load-path provenance; treat as untracked local code and pin trust via plugins.allow or install records (/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/extensions/aer-audit-tools/index.ts)
+2026-05-10T03:32:47.855+08:00 [gateway] [plugins] aer-audit-tools: loaded without install/load-path provenance; treat as untracked local code and pin trust via plugins.allow or install records (/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/extensions/aer-audit-tools/index.ts)
+2026-05-10T03:32:47.857+08:00 [gateway] [plugins] loaded without install/load-path provenance; treat as untracked local code and pin trust via plugins.allow or install records (plugin=aer-audit-tools, source=/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/extensions/aer-audit-tools/index.ts)
+2026-05-10T03:32:47.881+08:00 [canvas] host mounted at http://127.0.0.1:18892/__openclaw__/canvas/ (root /hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/canvas)
+2026-05-10T03:32:48.390+08:00 [heartbeat] started
+2026-05-10T03:32:48.394+08:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-05-10T03:32:48.398+08:00 [gateway] agent model: aer-local/qwen2.5-coder-7b-instruct
+2026-05-10T03:32:48.400+08:00 [gateway] listening on ws://127.0.0.1:18892, ws://[::1]:18892 (PID 230552)
+2026-05-10T03:32:48.403+08:00 [gateway] log file: /tmp/openclaw/openclaw-2026-05-10.log
+2026-05-10T03:32:48.458+08:00 [browser/server] Browser control listening on http://127.0.0.1:18894/ (auth=token)
+2026-05-10T03:32:53.656+08:00 [bonjour] gateway name conflict resolved; newName="mgmt-4 (OpenClaw) (5)"
+2026-05-10T03:32:53.660+08:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-05-10T09:53:04.396+08:00 [reload] config change detected; evaluating reload (agents.defaults.compaction, agents.list)
+2026-05-10T09:53:04.420+08:00 [reload] config change applied (dynamic reads: agents.defaults.compaction, agents.list)
+2026-05-10T10:05:05.739+08:00 [gateway] signal SIGTERM received
+2026-05-10T10:05:05.746+08:00 [gateway] received SIGTERM; shutting down
+2026-05-10T10:05:05.752+08:00 [gateway] signal SIGTERM received
+2026-05-10T10:05:05.755+08:00 [gateway] received SIGTERM during shutdown; ignoring
+2026-05-10T10:05:05.779+08:00 [gmail-watcher] gmail watcher stopped

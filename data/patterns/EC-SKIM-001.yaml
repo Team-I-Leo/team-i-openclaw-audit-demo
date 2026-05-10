@@ -1,0 +1,36 @@
+pattern_id: EC-SKIM-001
+pattern_name: Shared infrastructure brushing and subsidy skimming
+version: v2.3
+status: active
+risk_assertion_template: >
+  In {business_window}, a group of newly registered accounts around {target_scope}
+  shows shared device/IP infrastructure, synchronized order behavior, high subsidy
+  usage, and abnormal refunds. The group may be conducting coordinated brushing
+  and subsidy skimming.
+trigger_rules:
+  - T1_infrastructure_reuse
+  - T2_behavior_sync
+  - T3_business_result_anomaly
+required_support_evidence:
+  - device_reuse
+  - ip_cluster
+  - refund_abnormal
+  - payment_cluster
+  - logistics_authenticity
+counter_evidence_checks:
+  - promo_natural_traffic
+  - old_customer_repeat_purchase
+  - warehouse_batch_shipping
+  - family_shared_device
+  - campus_ip_cluster
+recommended_actions:
+  - expand_infra_graph
+  - query_refund_cluster
+  - query_payment_cluster
+  - query_logistics_trace
+  - compare_promo_cohort
+  - seek_counter_evidence
+human_gates:
+  - GATE-02 evidence quality review
+  - GATE-03 disposition decision review
+

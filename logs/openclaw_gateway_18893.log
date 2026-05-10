@@ -1,0 +1,6 @@
+2026-05-10T10:04:17.043+08:00 [plugins] aer-audit-tools: loaded without install/load-path provenance; treat as untracked local code and pin trust via plugins.allow or install records (/hpc2hdd/home/hqi881/projects/deloitte-aer-loop-openclaw-20260510/runtime/openclaw-state/extensions/aer-audit-tools/index.ts)
+2026-05-10T10:04:21.720+08:00 Gateway failed to start: gateway already running (pid 230552); lock timeout after 5000ms
+If the gateway is supervised, stop it with: openclaw gateway stop
+2026-05-10T10:04:22.464+08:00 Port 18893 is already in use.
+2026-05-10T10:04:22.470+08:00 - pid 3936369 hqi881: openclaw-gateway (127.0.0.1:18893)
+2026-05-10T10:04:22.474+08:00 - Gateway already running locally. Stop it (openclaw gateway stop) or use a different port.
