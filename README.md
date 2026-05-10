@@ -186,20 +186,22 @@ python scripts/download_models.py --model 7b --resume
 python scripts/download_models.py --model 14b --resume
 ```
 
-启动 API 和前端：
+启动 API 和前端。只查看前端演示和已提交的演示数据时，不需要下载 7B/14B 模型；API 会读取仓库内置 SQLite 演示库，并使用确定性 fallback 后端支撑交互回放：
 
 ```bash
 export PYTHONPATH="$PWD/backend:${PYTHONPATH:-}"
 export AER_DB_PATH="$PWD/runtime/aer_loop_model_smoke_9728967_full_debug.sqlite"
-export AER_MODEL_BACKEND=local
-python -m uvicorn app:app --app-dir backend --host 127.0.0.1 --port 18083
+export AER_MODEL_BACKEND=fallback
+python -m uvicorn app:app --app-dir backend --host 127.0.0.1 --port 18081
 ```
 
 浏览器打开：
 
 ```text
-http://127.0.0.1:18083/
+http://127.0.0.1:18081/
 ```
+
+如果需要重新运行模型驱动的 Agent 推理闭环，再按下一节配置本地模型或 OpenAI 兼容模型服务。
 
 ## 模型配置
 
