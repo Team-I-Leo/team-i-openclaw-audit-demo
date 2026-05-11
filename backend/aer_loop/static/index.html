@@ -556,6 +556,37 @@
       cursor: pointer;
     }
     .candidate.active { border-color: rgba(34,231,202,.48); background: rgba(34,231,202,.08); }
+    .overview-candidate-panel .candidate-list { max-height: 318px; padding: 12px; }
+    .overview-candidate-panel .candidate {
+      display: grid;
+      gap: 8px;
+      min-height: 92px;
+    }
+    .candidate-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .candidate-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+    .weak-pool { display: grid; gap: 8px; padding: 12px; max-height: 266px; overflow: auto; }
+    .weak-item {
+      display: grid;
+      gap: 7px;
+      border: 1px solid rgba(255, 179, 86, .18);
+      background: linear-gradient(180deg, rgba(255,179,86,.075), rgba(255,255,255,.032));
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .weak-item strong { display: flex; justify-content: space-between; gap: 10px; }
+    .weak-item p { margin: 0; color: var(--muted); }
+    .signal-tags { display: flex; flex-wrap: wrap; gap: 6px; }
     .writeback {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -730,6 +761,22 @@
               <tbody id="orderStream"></tbody>
             </table>
           </div>
+        </section>
+
+        <section class="panel overview-candidate-panel">
+          <div class="panel-head">
+            <div class="panel-title">新风险模式候选</div>
+            <span class="count" id="candidateOverviewCount">-- 个</span>
+          </div>
+          <div class="candidate-list" id="candidateOverviewCards"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div class="panel-title">弱信号观察池</div>
+            <span class="count" id="weakPoolCount">-- 项</span>
+          </div>
+          <div class="weak-pool" id="weakSignalPool"></div>
         </section>
 
       </div>
@@ -990,6 +1037,38 @@
       return status || '追证中';
     }
 
+    function jsArg(value) {
+      return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    function signalEntries(c, levels = ['weak', 'medium']) {
+      const signals = safeJson(c.signal_strength, {});
+      return Object.entries(signals || {}).filter(([, level]) => levels.includes(String(level).toLowerCase()));
+    }
+
+    function weakPoolItems() {
+      const items = state.cases.map(c => {
+        const signals = signalEntries(c);
+        const score = Number(c.risk_score || 0);
+        const isObservation = String(c.risk_level || '').toLowerCase().includes('medium')
+          || String(c.status || '').toLowerCase().includes('monitor')
+          || signals.length > 0
+          || score < 0.78;
+        return {
+          case: c,
+          signals,
+          score,
+          isObservation
+        };
+      }).filter(x => x.isObservation);
+      if (items.length) return items.sort((a, b) => a.score - b.score);
+      return state.cases
+        .slice()
+        .sort((a, b) => Number(a.risk_score || 0) - Number(b.risk_score || 0))
+        .slice(0, 2)
+        .map(c => ({ case: c, signals: [], score: Number(c.risk_score || 0), isObservation: true }));
+    }
+
     async function refreshAll() {
       try {
         document.getElementById('runtimeStatus').textContent = '加载数据中';
@@ -1069,6 +1148,8 @@
       renderPageNav();
       renderKpis();
       renderOrderStream();
+      renderWeakSignalPool();
+      renderCandidateOverview();
       renderSources();
       renderQueue();
       renderCaseCards();
@@ -1127,6 +1208,56 @@
           <td><span class="pill ${idx % 3 === 0 ? 'red' : idx % 3 === 1 ? 'amber' : 'green'}">${r.signal}</span></td>
         </tr>
       `).join('');
+    }
+
+    function renderWeakSignalPool() {
+      const items = weakPoolItems();
+      const countEl = document.getElementById('weakPoolCount');
+      const body = document.getElementById('weakSignalPool');
+      if (!body) return;
+      countEl.textContent = `${items.length} 项`;
+      body.innerHTML = items.map(({ case: c, signals, score }) => {
+        const tags = signals.length
+          ? signals.slice(0, 7).map(([name, level]) => `<span class="pill ${String(level).toLowerCase() === 'weak' ? 'amber' : 'blue'}">${name} · ${level}</span>`).join('')
+          : `<span class="pill blue">低强度波动</span><span class="pill amber">持续观察</span>`;
+        return `
+          <div class="weak-item" onclick="selectCase('${jsArg(c.case_id)}')" style="cursor:pointer">
+            <strong><span>${c.case_id} · ${shortPatternName(c.pattern_id)}</span><span class="pill ${riskLevelClass(c.risk_level)}">${fmt(score * 100, 0)}%</span></strong>
+            <p>${topSignals(c)}</p>
+            <div class="signal-tags">${tags}</div>
+            <div class="muted">观察策略：暂不进入强处置，保留证据线索；当信号连续增强或触发反证缺口时自动升档。</div>
+          </div>
+        `;
+      }).join('') || `<div class="empty">暂无弱信号观察项</div>`;
+    }
+
+    function renderCandidateOverview() {
+      const candidates = state.candidates || [];
+      const body = document.getElementById('candidateOverviewCards');
+      const countEl = document.getElementById('candidateOverviewCount');
+      if (!body) return;
+      countEl.textContent = `${candidates.length} 个`;
+      const selected = candidates.find(c => c.candidate_id === state.selectedCandidateId) || candidates[0];
+      body.innerHTML = candidates.map(c => {
+        const active = selected && selected.candidate_id === c.candidate_id ? 'active' : '';
+        const supporting = (c.supporting_cases || []).slice(0, 4).map(x => `<span class="pill blue">${x}</span>`).join('');
+        const signals = (c.common_signals || []).slice(0, 6).map(x => `<span class="pill green">${x}</span>`).join('');
+        return `
+          <div class="candidate ${active}" onclick="focusCandidate('${jsArg(c.candidate_id)}', event)">
+            <div style="display:flex;justify-content:space-between;gap:8px">
+              <b>${c.candidate_id}</b>
+              <span class="pill ${c.status === 'approved' ? 'green' : c.status === 'rejected' ? 'red' : 'amber'}">${c.status || 'under_review'}</span>
+            </div>
+            <div class="muted">${c.name || 'learned pattern candidate'}</div>
+            <div class="candidate-meta">${supporting || '<span class="pill">离线候选</span>'}</div>
+            <div class="signal-tags">${signals || '<span class="pill amber">等待人工确认</span>'}</div>
+            <div class="candidate-actions">
+              <span class="muted">反证项 ${(c.required_counter_checks || []).length} 个</span>
+              <button class="primary" onclick="approveCandidate('${jsArg(c.candidate_id)}', event)" ${c.status === 'approved' ? 'disabled' : ''}>审核通过并写回</button>
+            </div>
+          </div>
+        `;
+      }).join('') || `<div class="empty">暂无新风险模式候选</div>`;
     }
 
     function renderSources() {
@@ -1457,48 +1588,54 @@
     }
 
     function renderLearningTab() {
-      const candidates = state.candidates || [];
-      const selected = candidates.find(c => c.candidate_id === state.selectedCandidateId) || candidates[0];
-      const weights = state.policyWeights || [];
+      const c = state.selectedCase;
+      if (!c) {
+        document.getElementById('tabBody').innerHTML = `<div class="empty">请选择一个风险案件查看命中模式</div>`;
+        return;
+      }
+      const signals = Object.entries(safeJson(c.signal_strength, {}) || {});
+      const requirements = Object.entries(safeJson(c.evidence_requirements, {}) || {});
+      const scores = safeJson(c.scores, {});
+      const currentWeights = (state.policyWeights || []).filter(w => w.pattern_id === c.pattern_id);
       document.getElementById('tabBody').innerHTML = `
         <div class="learning-grid">
           <div class="subpanel">
-            <div class="subhead"><h4>候选模式</h4><span class="pill amber">${candidates.length} 个</span></div>
-            <div class="candidate-list">${candidates.map(c => `
-              <div class="candidate ${selected && selected.candidate_id === c.candidate_id ? 'active' : ''}" onclick="selectCandidate('${c.candidate_id}')">
-                <div style="display:flex;justify-content:space-between;gap:8px">
-                  <b>${c.candidate_id}</b>
-                  <span class="pill ${c.status === 'approved' ? 'green' : c.status === 'rejected' ? 'red' : 'amber'}">${c.status}</span>
-                </div>
-                <div class="muted">${c.name || 'learned pattern candidate'}</div>
-                <div style="margin-top:8px">${(c.supporting_cases || []).map(x => `<span class="pill blue">${x}</span>`).join('')}</div>
+            <div class="subhead"><h4>当前案件命中模式</h4><span class="pill ${riskLevelClass(c.risk_level)}">${c.case_id}</span></div>
+            <div class="candidate active" style="cursor:default">
+              <div style="display:flex;justify-content:space-between;gap:8px">
+                <b>${c.pattern_id}</b>
+                <span class="pill ${riskLevelClass(c.risk_level)}">${c.risk_level}</span>
               </div>
-            `).join('') || `<div class="empty">暂无候选模式</div>`}</div>
+              <div class="muted">${c.pattern_name || shortPatternName(c.pattern_id)}</div>
+              <div class="candidate-meta">
+                <span class="pill blue">置信度 ${fmt((c.risk_score || 0) * 100, 0)}%</span>
+                <span class="pill green">单案件模式</span>
+              </div>
+            </div>
+            <div class="writeback" style="grid-template-columns:1fr;margin-top:10px">
+              <div class="write-step"><b>规则特征</b><span class="muted">${topSignals(c)}</span></div>
+              <div class="write-step"><b>模式断言</b><span class="muted">${c.assertion || '当前案件已命中该模式的核心规则特征。'}</span></div>
+              <div class="write-step"><b>关键分值</b><span class="muted">statistical=${fmt(scores.statistical, 3)} · relational=${fmt(scores.relational, 3)} · behavior=${fmt(scores.narrative_behavior, 3)}</span></div>
+            </div>
           </div>
           <div class="subpanel">
             <div class="subhead">
-              <h4>人工确认写回闭环</h4>
-              <button class="primary" onclick="approveCandidate()" ${selected ? '' : 'disabled'}>审核通过并写回</button>
+              <h4>该模式下的证据要求与动作先验</h4>
+              <span class="pill blue">${requirements.length} 个证据维度</span>
             </div>
-            ${selected ? `
-              <h3 style="margin:0 0 8px">${selected.name || selected.candidate_id}</h3>
-              <div class="muted">candidate_id=${selected.candidate_id} · supporting_cases=${(selected.supporting_cases || []).join(', ') || '--'}</div>
-              <div style="margin:10px 0">${(selected.common_signals || []).slice(0, 8).map(x => `<span class="pill green">${x}</span>`).join('')}</div>
-              <div class="writeback">
-                <div class="write-step"><b>candidate_pattern</b><span class="muted">模型提出候选风险模式，状态进入 under_review。</span></div>
-                <div class="write-step"><b>human_review</b><span class="muted">审计员通过或驳回，保留 reviewer 与 note。</span></div>
-                <div class="write-step"><b>risk_pattern</b><span class="muted">通过后晋升为 approved learned pattern。</span></div>
-                <div class="write-step"><b>case_memory</b><span class="muted">写入历史案例记忆，供 pattern_matcher 使用。</span></div>
-                <div class="write-step"><b>policy_action_weight</b><span class="muted">更新 action prior，router 后续排序读取 learned_policy_delta。</span></div>
-              </div>
-            ` : `<div class="empty">请选择候选模式</div>`}
-            <div class="subhead" style="margin-top:14px"><h4>Policy 权重更新</h4><span class="pill blue">${weights.length} 行</span></div>
-            <div class="timeline" style="max-height:178px">${weights.slice(0, 12).map(w => `
+            <div class="signal-tags" style="margin-bottom:12px">
+              ${signals.map(([name, level]) => `<span class="pill ${String(level).toLowerCase() === 'strong' ? 'green' : String(level).toLowerCase() === 'medium' ? 'blue' : 'amber'}">${name} · ${level}</span>`).join('') || '<span class="pill">暂无信号强度</span>'}
+            </div>
+            <div class="writeback" style="grid-template-columns:repeat(3,1fr)">
+              ${requirements.slice(0, 9).map(([name, weight]) => `<div class="write-step"><b>${name}</b><span class="muted">required weight=${fmt(weight, 2)}</span></div>`).join('') || '<div class="empty">暂无证据要求定义</div>'}
+            </div>
+            <div class="subhead" style="margin-top:14px"><h4>当前模式 Policy 权重</h4><span class="pill blue">${currentWeights.length} 行</span></div>
+            <div class="timeline" style="max-height:178px">${currentWeights.slice(0, 12).map(w => `
               <div class="route-row">
                 <div><b>${w.pattern_id}</b><div class="muted">${actionLabels[w.action_name] || w.action_name} · source=${w.source_candidate_id}</div></div>
                 <span class="pill green">+${fmt(w.weight_delta, 3)}</span>
               </div>
-            `).join('') || `<div class="empty">暂无 policy 权重</div>`}</div>
+            `).join('') || `<div class="empty">该模式暂无人工确认后的 policy 权重</div>`}</div>
           </div>
         </div>
       `;
@@ -1598,9 +1735,10 @@
       renderWorkbench();
     }
 
-    function selectCandidate(id) {
+    function focusCandidate(id, event) {
+      event?.stopPropagation();
       state.selectedCandidateId = id;
-      renderLearningTab();
+      renderCandidateOverview();
     }
 
     async function stepSelected() {
@@ -1656,17 +1794,18 @@
       } catch (err) { toast(`人工确认失败：${err.message || err}`); }
     }
 
-    async function approveCandidate() {
-      const id = state.selectedCandidateId || state.candidates[0]?.candidate_id;
+    async function approveCandidate(candidateId, event) {
+      event?.stopPropagation();
+      const id = candidateId || state.selectedCandidateId || state.candidates[0]?.candidate_id;
       if (!id) return;
+      state.selectedCandidateId = id;
       try {
         const payload = await api(`/api/patterns/candidates/${encodeURIComponent(id)}/review`, {
           method: 'POST',
           body: JSON.stringify({ decision: 'approve', note: 'Approved from frontend demo.', reviewer: 'demo_auditor' })
         });
         await refreshAll();
-        state.activeTab = 'learning';
-        renderWorkbench();
+        renderCandidateOverview();
         toast(`候选模式已写回：risk_pattern=${payload.risk_pattern_id || id}`);
       } catch (err) { toast(`模式写回失败：${err.message || err}`); }
     }
