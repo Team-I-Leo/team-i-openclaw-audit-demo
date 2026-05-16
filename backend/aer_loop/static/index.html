@@ -346,9 +346,12 @@
     }
     .review-menu[hidden] { display: none; }
     .main.page-trace,
-    .main.page-passport,
-    .main.page-learning {
+    .main.page-passport {
       grid-template-columns: minmax(300px, .72fr) minmax(690px, 1.62fr);
+    }
+    .main.page-learning,
+    .main.page-governance {
+      grid-template-columns: 1fr;
     }
     .main.page-trace .order-stream,
     .main.page-trace .queue-panel,
@@ -358,16 +361,31 @@
     .main.page-passport .queue-panel,
     .main.page-passport .weak-panel,
     .main.page-passport .candidate-panel,
+    .main.page-governance .order-stream,
+    .main.page-governance .queue-panel,
+    .main.page-governance .weak-panel,
+    .main.page-governance .candidate-panel { display: none; }
+    .main.page-learning .ai-status-panel,
+    .main.page-learning .controls,
     .main.page-learning .order-stream,
     .main.page-learning .queue-panel,
+    .main.page-learning .case-board,
     .main.page-learning .weak-panel,
-    .main.page-learning .candidate-panel { display: none; }
+    .main.page-learning .candidate-panel,
+    .main.page-governance .ai-status-panel,
+    .main.page-governance .controls,
+    .main.page-governance .order-stream,
+    .main.page-governance .queue-panel,
+    .main.page-governance .case-board,
+    .main.page-governance .weak-panel,
+    .main.page-governance .candidate-panel { display: none; }
     .main.page-trace .case-board,
     .main.page-passport .case-board,
-    .main.page-learning .case-board { grid-column: 1; grid-row: 3; }
+    .main.page-governance .case-board { grid-column: 1; grid-row: 3; }
     .main.page-trace .workbench,
-    .main.page-passport .workbench,
-    .main.page-learning .workbench { grid-column: 2; grid-row: 3 / 5; min-height: 760px; }
+    .main.page-passport .workbench { grid-column: 2; grid-row: 3 / 5; min-height: 760px; }
+    .main.page-learning .workbench,
+    .main.page-governance .workbench { grid-column: 1 / -1; grid-row: 1 / -1; min-height: calc(100vh - 80px); }
     .demo-lane {
       display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -612,6 +630,159 @@
       color: #dffcff;
       font-weight: 800;
     }
+
+    /* AI 运行态势面板 */
+    .ai-status-panel {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .ai-status-card {
+      border: 1px solid rgba(124, 172, 255, .16);
+      background: linear-gradient(180deg, rgba(19, 41, 63, .9), rgba(8, 21, 35, .92));
+      border-radius: 8px;
+      padding: 12px 14px;
+      min-height: 90px;
+      position: relative;
+      overflow: hidden;
+    }
+    .ai-status-card::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; top: 0; height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      opacity: .7;
+    }
+    .ai-status-card .label { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 6px; }
+    .ai-status-card strong { display: block; font-size: 22px; line-height: 1.05; margin-top: 7px; font-weight: 900; }
+    .ai-status-card .note { color: var(--dim); font-size: 11px; margin-top: 5px; }
+    .agent-pulse {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); box-shadow: 0 0 12px var(--green);
+      animation: pulse 1.6s ease-in-out infinite;
+    }
+    .agent-pulse.amber { background: var(--amber); box-shadow: 0 0 12px var(--amber); }
+    .agent-pulse.blue { background: var(--blue); box-shadow: 0 0 12px var(--blue); }
+    .agent-pulse.purple { background: var(--purple); box-shadow: 0 0 12px var(--purple); }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .5; transform: scale(.8); }
+    }
+    .heatmap-bar {
+      height: 4px; border-radius: 999px;
+      background: linear-gradient(90deg, var(--green), var(--amber), var(--red));
+      margin-top: 6px; position: relative;
+    }
+    .heatmap-marker {
+      position: absolute; top: -3px; width: 10px; height: 10px; border-radius: 50%;
+      background: var(--text); box-shadow: 0 0 8px var(--text);
+      transition: left .8s ease;
+    }
+
+    /* 推理轨迹 */
+    .reasoning-trace {
+      display: grid; gap: 8px; max-height: 560px; overflow: auto; padding-right: 4px;
+    }
+    .trace-log {
+      display: grid; grid-template-columns: 72px 1fr; gap: 10px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.035);
+      border-radius: 8px; padding: 10px;
+      animation: fadeInUp .35s ease both;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .trace-log .ts { color: var(--dim); font-size: 11px; font-family: ui-monospace, monospace; }
+    .trace-log .agent-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 800; color: var(--cyan);
+      margin-bottom: 4px;
+    }
+    .trace-log .agent-tag::before {
+      content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan);
+    }
+    .trace-log p { margin: 0; color: var(--muted); line-height: 1.55; }
+    .trace-log p b { color: var(--text); }
+    .trace-log .evidence-tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 1px 6px; border-radius: 999px; border: 1px solid rgba(47,230,143,.25);
+      background: rgba(47,230,143,.08); color: var(--green); font-size: 11px; font-weight: 700;
+      margin-top: 6px; margin-right: 4px;
+    }
+    .trace-log .counter-tag {
+      border-color: rgba(255,179,86,.25); background: rgba(255,179,86,.08); color: var(--amber);
+    }
+    .trace-log .confidence-up { color: var(--red); font-weight: 900; }
+
+    /* 增强图谱 */
+    .glow-node {
+      animation: nodeGlow 2.4s ease-in-out infinite;
+    }
+    @keyframes nodeGlow {
+      0%, 100% { opacity: .92; }
+      50% { opacity: .55; }
+    }
+    .risk-spread {
+      animation: spreadPulse 2s ease-in-out infinite;
+    }
+    @keyframes spreadPulse {
+      0%, 100% { stroke-opacity: .18; }
+      50% { stroke-opacity: .45; }
+    }
+
+    /* 模式进化 */
+    .evolution-flow {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+      margin: 10px 0; position: relative;
+    }
+    .evolution-flow::before {
+      content: "";
+      position: absolute; top: 24px; left: 10%; right: 10%; height: 2px;
+      background: linear-gradient(90deg, var(--dim), var(--cyan), var(--dim));
+      opacity: .35;
+    }
+    .evo-step {
+      border: 1px solid rgba(255,255,255,.08); border-radius: 8px;
+      padding: 10px; background: rgba(255,255,255,.035); min-height: 86px;
+      position: relative; z-index: 1; text-align: center;
+    }
+    .evo-step b { color: var(--cyan); display: block; margin-bottom: 6px; font-size: 13px; }
+    .evo-step.active { border-color: rgba(34,231,202,.55); box-shadow: 0 0 20px rgba(34,231,202,.10); }
+    .evo-arrow {
+      position: absolute; top: 18px; right: -12px; color: var(--dim); font-size: 14px; z-index: 2;
+    }
+
+    /* 决策治理 */
+    .governance-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .replay-timeline {
+      display: grid; gap: 6px; max-height: 420px; overflow: auto;
+    }
+    .replay-event {
+      display: grid; grid-template-columns: 70px 1fr;
+      gap: 8px; padding: 8px; border-radius: 6px;
+      border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.025);
+    }
+    .replay-event:hover { border-color: rgba(34,231,202,.25); }
+    .policy-version {
+      display: grid; gap: 8px;
+    }
+    .version-card {
+      border: 1px solid rgba(124,172,255,.14); border-radius: 8px;
+      padding: 10px; background: rgba(255,255,255,.035);
+      position: relative; overflow: hidden;
+    }
+    .version-card::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: linear-gradient(180deg, var(--cyan), var(--blue));
+    }
+    .version-card .ver { color: var(--cyan); font-weight: 900; font-size: 14px; }
+    .version-card .date { color: var(--dim); font-size: 11px; }
+
     .trace-steps {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -649,6 +820,75 @@
     .step-status { font-size: 11px; color: var(--muted); }
     .step-detail { min-height: 0; }
     .cyan-text { color: var(--cyan); font-weight: 900; }
+
+    /* 智能追证融合视图 */
+    .phase-block {
+      border: 1px solid rgba(124, 172, 255, .12);
+      background: rgba(4, 15, 25, .52);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color .25s ease, box-shadow .25s ease;
+      margin-bottom: 10px;
+    }
+    .phase-block:hover { border-color: rgba(34,231,202,.22); }
+    .phase-block.expanded {
+      border-color: rgba(34,231,202,.35);
+      box-shadow: 0 0 18px rgba(34,231,202,.08);
+    }
+    .phase-block.completed { border-left: 3px solid var(--green); }
+    .phase-block.skipped { border-left: 3px solid var(--amber); }
+    .phase-block.pending { border-left: 3px solid var(--dim); }
+    .phase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: background .18s ease;
+    }
+    .phase-header:hover { background: rgba(34,231,202,.04); }
+    .phase-header h4 { margin: 0; font-size: 14px; }
+    .phase-header .phase-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: grid; place-items: center;
+      color: #071018; font-weight: 900; font-size: 12px;
+      background: linear-gradient(180deg, var(--dim), #3a4f5e);
+      flex-shrink: 0;
+    }
+    .phase-block.completed .phase-num { background: linear-gradient(180deg, var(--green), #1cb876); }
+    .phase-block.skipped .phase-num { background: linear-gradient(180deg, var(--amber), #c98a3c); }
+    .phase-header-left { display: flex; align-items: center; gap: 10px; }
+    .phase-content {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .35s ease, opacity .25s ease, padding .25s ease;
+      padding: 0 12px;
+    }
+    .phase-block.expanded .phase-content {
+      max-height: 1200px;
+      opacity: 1;
+      padding: 0 12px 12px;
+    }
+    .phase-connector {
+      display: flex; justify-content: center; margin: -6px 0 4px;
+    }
+    .phase-connector::after {
+      content: ""; width: 2px; height: 14px;
+      background: linear-gradient(180deg, var(--dim), rgba(34,231,202,.25));
+    }
+    .phase-block.expanded + .phase-connector::after {
+      background: linear-gradient(180deg, rgba(34,231,202,.45), rgba(34,231,202,.15));
+    }
+    .phase-traces {
+      margin-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 10px;
+    }
+    .phase-traces .trace-log {
+      animation: fadeInUp .35s ease both;
+    }
     .review-panel-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .review-form { margin-top: 12px; padding: 12px; border: 1px solid rgba(124,172,255,.14); border-radius: 8px; background: rgba(4,15,25,.56); }
     .review-form textarea { width: 100%; min-height: 60px; background: rgba(8,27,42,.86); border: 1px solid var(--line); color: var(--text); border-radius: 7px; padding: 8px; font: inherit; resize: vertical; outline: none; }
@@ -674,14 +914,17 @@
       .main.page-passport .case-board,
       .main.page-passport .workbench,
       .main.page-learning .case-board,
-      .main.page-learning .workbench {
+      .main.page-learning .workbench,
+      .main.page-governance .case-board,
+      .main.page-governance .workbench {
         grid-column: auto;
         grid-row: auto;
         max-height: none;
       }
       .main.page-trace .order-stream,
-      .main.page-passport .order-stream,
-      .main.page-learning .order-stream { display: grid; }
+      .main.page-passport .order-stream { display: grid; }
+      .main.page-learning .order-stream,
+      .main.page-governance .order-stream { display: none; }
     }
     @media (max-width: 680px) {
       html, body, .app { width: 100%; max-width: 100%; overflow-x: hidden; }
@@ -714,8 +957,8 @@
       <div class="brand">
         <div class="mark">D.</div>
         <div>
-          <h1>跨境电商连续审计 · <span>Team-I 主动追证指挥中心</span></h1>
-          <div class="subline">OpenCLAW 工具编排 · 证据护照 · 人工确认写回模式库</div>
+          <h1>连续追证持续进化的风控系统</h1>
+          <div class="subline">OpenCLAW 受控动作 · 证据级可追溯 · 模式进化 · Human-in-the-Loop</div>
         </div>
       </div>
       <nav class="page-nav" id="pageNav" aria-label="演示页面导航"></nav>
@@ -728,7 +971,7 @@
     </header>
 
     <main class="main page-overview" id="main">
-      <section class="kpis" id="kpis"></section>
+      <section class="ai-status-panel" id="kpis"></section>
 
       <section class="controls">
         <div class="filters">
@@ -738,7 +981,7 @@
           <select id="progressFilter" onchange="renderAll()">
             <option value="all">追证进度：全部</option>
             <option value="investigating">主动追证与反证检索中</option>
-            <option value="passport">证据护照已生成</option>
+            <option value="passport">风险报告已生成</option>
             <option value="review">等待人工复核</option>
           </select>
           <select id="levelFilter" onchange="renderAll()">
@@ -748,7 +991,7 @@
             <option value="medium">中</option>
           </select>
         </div>
-        <div class="count">选择案件后，在下方“案件详情”中执行追证、闭环运行和人工确认。</div>
+        <div class="count">选择案件后，在下方 Evidence Workbench 中执行主动追证、运行闭环与 Human-in-the-Loop 复核。</div>
       </section>
 
       <section class="panel order-stream">
@@ -771,23 +1014,15 @@
           <div class="panel-title">待处理风险案件</div>
           <span class="count" id="queueCount">-- 项</span>
         </div>
-        <div class="queue">
+        <div class="stream">
           <table>
-            <thead><tr><th>案件编号</th><th>风险模式</th><th>关联账号</th><th>关联订单</th><th>置信度</th><th>状态</th></tr></thead>
+            <thead>
+              <tr><th>案件编号</th><th>风险模式</th><th>用户数</th><th>订单数</th><th>置信度</th><th>状态</th></tr>
+            </thead>
             <tbody id="queueRows"></tbody>
           </table>
         </div>
       </section>
-
-      <section class="panel candidate-panel">
-        <div class="panel-head">
-          <div class="panel-title">新风险模式候选</div>
-          <span class="count" id="candidateOverviewCount">-- 个</span>
-        </div>
-        <div class="candidate-list" id="candidateOverviewCards"></div>
-      </section>
-
-
 
       <section class="panel workbench">
         <div class="panel-head">
@@ -795,13 +1030,13 @@
           <span class="count" id="selectedStatus">请选择案例</span>
         </div>
         <div class="detail-actions">
-          <span class="count">案件详情集中展示主动追证流、证据护照、多源融合图谱和模式学习闭环。</span>
+          <span class="count">Evidence Workbench：主动追证流 · AI推理轨迹 · 多源融合图谱 · 风险报告 · 模式进化 · 决策治理</span>
           <div class="play-controls">
             <button class="detail-return" onclick="exitDetail()">返回总览</button>
             <button onclick="stepSelected()">下一步追证</button>
             <button class="warn" onclick="runSelected()">运行选中案例</button>
             <button class="primary" onclick="runFullLoop()">运行完整闭环</button>
-            <button onclick="toggleReviewMenu()">人工确认</button>
+            <button onclick="toggleReviewMenu()">Human-in-the-Loop</button>
           </div>
         </div>
         <div class="review-menu" id="reviewMenu" hidden></div>
@@ -815,22 +1050,17 @@
 
   <script>
     const pageDefs = [
-      ['overview', '总览'],
-      ['trace', '主动追证'],
-      ['agents', 'Agent 协作'],
-      ['fusion', '多源融合'],
-      ['passport', '审计报告'],
-      ['learning', '模式学习']
+      ['overview', '首页'],
+      ['learning', '风险模式库'],
+      ['governance', '治理决策']
     ];
 
     function pageToTab(page) {
       return {
-        trace: 'trace',
-        agents: 'trace',
-        fusion: 'graph',
-        passport: 'passport',
-        learning: 'learning'
-      }[page] || 'trace';
+        overview: 'orders',
+        learning: 'learning',
+        governance: 'governance'
+      }[page] || 'orders';
     }
 
     function initialPage() {
@@ -859,11 +1089,16 @@
       reviewMenuOpen: false,
       tracePlayIndex: -1,
       tracePlaybackActive: false,
+      governanceFilter: {},
       tracePlaybackTimer: null,
       highlightedOrderId: null,
       selectedTraceStep: 0,
       reviewMode: null,
-      caseResultMap: {}
+      caseResultMap: {},
+      userRole: 'admin',
+      patternDetailId: null,
+      patternDetailType: null,
+      patternEditing: false
     };
 
     const actionLabels = {
@@ -953,8 +1188,8 @@
 
     function statusText(c) {
       const status = String(c.status || '');
-      if (status.includes('human_review')) return '等待人工复核';
-      if (status.includes('reviewed')) return '已确认';
+      if (status.includes('human_review')) return 'Human Review 队列';
+      if (status.includes('reviewed')) return 'Human Confirmed';
       if (status.includes('investigation')) return '主动追证中';
       return status || '追证中';
     }
@@ -1130,7 +1365,7 @@
               </div>
               <div class="passport-box">
                 <h4>9. 建议下一步动作</h4>
-                <ul>${(p?.recommended_action || ['提交人工复核', '保留证据链', '禁止自动处置']).map(x => `<li>${x}</li>`).join('')}</ul>
+                <ul>${(Array.isArray(p?.recommended_action) ? p.recommended_action : ['提交人工复核', '保留证据链', '禁止自动处置']).map(x => `<li>${x}</li>`).join('')}</ul>
               </div>
             </div>
             <div class="passport-grid">
@@ -1153,7 +1388,7 @@
 
     function selectTraceStep(index) {
       state.selectedTraceStep = index;
-      renderTraceTab();
+      renderEvidenceLoopTab();
     }
 
     async function enterOrderDetail(oid, caseId, event) {
@@ -1195,6 +1430,7 @@
         state.candidates = candidates;
         state.patterns = patterns;
         state.policyWeights = policyWeights;
+        ensureMockData();
         const detailRows = await Promise.all(cases.map(c => api(`/api/cases/${c.case_id}`).catch(() => null)));
         state.caseDetails = {};
         detailRows.forEach(row => { if (row && row.case_id) state.caseDetails[row.case_id] = row; });
@@ -1209,6 +1445,238 @@
         document.getElementById('runtimeStatus').textContent = '数据连接异常';
         toast(`加载失败：${err.message || err}`);
       }
+    }
+
+    function ensureMockData() {
+      if ((state.patterns || []).length < 10) {
+        const extras = [
+          {
+            pattern_id: 'EC-PHISH-004', pattern_name: '钓鱼链接骗券欺诈', version: 'v1.0', status: 'active',
+            definition: {
+              scenario_description: '黑产通过伪造平台活动页面或钓鱼链接，诱导用户点击并领取优惠券，随后通过批量注册的僵尸账号将券变现。典型链路：伪造短信/站内信→诱导点击短链接→跳转至仿冒领券页→批量账号领券→用于刷单订单抵扣。',
+              trigger_rules: [
+                { rule_id: 'T1', rule_name: '异常跳转链接检测', timing: '实时/准实时', time_window: '7天', conditions: ['短链跳转率>=80%', '域名信誉分<30', '落地页与平台官方域名相似度>0.85'] },
+                { rule_id: 'T2', rule_name: '批量领券行为', timing: '离线聚合', time_window: '30天', conditions: ['同一设备30天内领券>20张', '券码使用地址集中度>=90%', '领券后5分钟内发生下单'] }
+              ],
+              required_support_evidence: {
+                basic_package: { description: '证明钓鱼链路', evidence: ['EVD-URL-恶意域名', 'EVD-DEV-设备指纹'] },
+                business_package: { description: '证明批量变现', evidence: ['EVD-ORD-异常订单', 'EVD-PAY-支付账户', 'EVD-SUB-补贴使用'] }
+              },
+              counter_evidence_checks: [
+                { id: 'CTR-014', name: '企业正常营销', method: '检查是否为平台认证商家', status: '待验证' },
+                { id: 'CTR-015', name: '内部员工测试', method: '检查IP是否为办公网', status: '待验证' }
+              ],
+              human_gates: [{ gate_id: 'GATE-01', name: '初筛' }, { gate_id: 'GATE-02', name: '资金路径复核' }],
+              disposition_levels: { L1: { name: '监控观察', auto: true }, L2: { name: '限制领券', auto: true }, L3: { name: '冻结资金', auto: false, gate: 'GATE-02' } },
+              related_patterns: [{ pattern_id: 'EC-SKIM-001', relation: '伴随触发', reason: '骗券后常伴随刷单变现' }]
+            }
+          },
+          {
+            pattern_id: 'EC-ACCT-005', pattern_name: '批量注册养号', version: 'v1.1', status: 'active',
+            definition: {
+              scenario_description: '黑产通过接码平台、改机工具批量注册平台账号，经过短期养号（模拟浏览、收藏、加购）后用于刷单、骗补或刷评。典型链路：接码平台获取手机号→改机工具绕过设备风控→批量注册→脚本模拟正常行为7-14天→投入刷单或骗补任务。',
+              trigger_rules: [
+                { rule_id: 'T1', rule_name: '设备指纹聚集', timing: '实时', conditions: ['同一设备24小时内注册>=5个账号', '设备指纹关联已知改机工具库'] },
+                { rule_id: 'T2', rule_name: '养号行为机械化', timing: '离线', conditions: ['注册后前7天行为路径相似度>=0.9', '操作间隔标准差<=3秒', '无真实下单或仅下最低金额订单'] }
+              ],
+              required_support_evidence: {
+                basic_package: { evidence: ['EVD-DEV-改机工具', 'EVD-IP-聚集'] },
+                business_package: { evidence: ['EVD-BEH-路径相似', 'EVD-ORD-最低金额'] }
+              },
+              counter_evidence_checks: [
+                { id: 'CTR-016', name: '家庭共享设备', method: '检查设备多用户切换记录', status: '待验证' },
+                { id: 'CTR-017', name: '校园/公司集中注册', method: '检查IP Geo是否为校园或写字楼', status: '待验证' }
+              ],
+              human_gates: [{ gate_id: 'GATE-01', name: '初筛' }],
+              disposition_levels: { L1: { name: '监控观察', auto: true }, L2: { name: '限制功能', auto: true } },
+              related_patterns: [{ pattern_id: 'EC-SKIM-001', relation: '前置行为', reason: '养号是团伙刷单的前置环节' }]
+            }
+          },
+          {
+            pattern_id: 'EC-CASH-006', pattern_name: '虚假提现洗钱', version: 'v1.0', status: 'active',
+            definition: {
+              scenario_description: '黑产通过虚假交易制造平台余额，随后利用虚假提现或转账路径完成资金洗白。典型链路：控制商家账号发布虚拟商品→刷手账号购买→商家账号获得货款→提现至受控银行卡→层层转账分散。',
+              trigger_rules: [
+                { rule_id: 'T1', rule_name: '提现账户异常', timing: '实时', conditions: ['提现银行卡30天内关联>=3个商家账号', '提现金额呈整数规律（如999、1999）'] },
+                { rule_id: 'T2', rule_name: '虚拟商品高占比', timing: '离线', conditions: ['商家虚拟商品订单占比>=80%', '虚拟商品订单退款率<=5%（无真实售后）'] }
+              ],
+              required_support_evidence: {
+                basic_package: { evidence: ['EVD-PAY-提现账户', 'EVD-ORD-虚拟商品'] },
+                business_package: { evidence: ['EVD-LOG-资金路径', 'EVD-ADR-收货地址'] }
+              },
+              counter_evidence_checks: [
+                { id: 'CTR-018', name: '正常虚拟商品', method: '检查是否为平台认证虚拟服务商', status: '待验证' },
+                { id: 'CTR-019', name: '企业集中提现', method: '检查是否为同一法人主体下的连锁店铺', status: '待验证' }
+              ],
+              human_gates: [{ gate_id: 'GATE-01', name: '初筛' }, { gate_id: 'GATE-03', name: '司法报案决策' }],
+              disposition_levels: { L1: { name: '监控', auto: true }, L3: { name: '冻结资金', auto: false }, L4: { name: '司法报案', auto: false, gate: 'GATE-03' } },
+              related_patterns: [{ pattern_id: 'EC-SKIM-001', relation: '下游', reason: '刷单骗补资金常通过虚假提现洗白' }]
+            }
+          },
+          {
+            pattern_id: 'EC-REVIEW-007', pattern_name: '恶意差评勒索', version: 'v1.0', status: 'active',
+            definition: {
+              scenario_description: '黑产以恶意差评威胁商家，要求支付"保护费"或退款不退货。典型链路：批量账号购买低价商品→收货后给出1星差评并附威胁话术→商家联系后要求转账→删除差评或追加好评。',
+              trigger_rules: [
+                { rule_id: 'T1', rule_name: '差评话术模板化', timing: '离线', conditions: ['差评内容与已知勒索话术库相似度>=0.8', '差评后24小时内商家投诉率>=30%'] },
+                { rule_id: 'T2', rule_name: '退款不退货', timing: '实时', conditions: ['同一用户30天内"仅退款不退货"成功率>=70%', '退款金额占订单金额比例>=80%'] }
+              ],
+              required_support_evidence: {
+                basic_package: { evidence: ['EVD-CMT-差评内容', 'EVD-UBH-退款率'] },
+                business_package: { evidence: ['EVD-MSG-勒索话术', 'EVD-PAY-转账记录'] }
+              },
+              counter_evidence_checks: [
+                { id: 'CTR-020', name: '真实质量问题', method: '检查商品是否存在批量质量投诉', status: '待验证' },
+                { id: 'CTR-021', name: '正常售后维权', method: '检查用户历史是否为高信誉老客', status: '待验证' }
+              ],
+              human_gates: [{ gate_id: 'GATE-01', name: '初筛' }],
+              disposition_levels: { L1: { name: '监控', auto: true }, L2: { name: '限制评价', auto: true } },
+              related_patterns: []
+            }
+          },
+          {
+            pattern_id: 'EC-PRICE-008', pattern_name: '价格异常操控', version: 'v1.0', status: 'active',
+            definition: {
+              scenario_description: '黑产通过操控商品价格（如先涨后降、虚假原价）配合刷单，制造促销假象骗取平台流量补贴。典型链路：商家将商品价格临时上调200%→发布大额优惠券→刷手用券购买→价格恢复→平台按虚假原价计算补贴。',
+              trigger_rules: [
+                { rule_id: 'T1', rule_name: '价格波动异常', timing: '离线', conditions: ['商品7天内价格波动幅度>=200%', '价格峰值与促销窗口精确重合'] },
+                { rule_id: 'T2', rule_name: '补贴套利比例', timing: '实时', conditions: ['平台补贴金额占实际支付金额>=50%', '使用该券的订单退款率>=60%'] }
+              ],
+              required_support_evidence: {
+                basic_package: { evidence: ['EVD-ORD-价格日志', 'EVD-SUB-补贴台账'] },
+                business_package: { evidence: ['EVD-CMT-好评模板', 'EVD-RFD-退款时效'] }
+              },
+              counter_evidence_checks: [
+                { id: 'CTR-022', name: '平台官方调价', method: '检查价格调整是否为平台大促官方行为', status: '待验证' },
+                { id: 'CTR-023', name: '季节性定价', method: '检查是否为生鲜/季节性商品正常波动', status: '待验证' }
+              ],
+              human_gates: [{ gate_id: 'GATE-01', name: '初筛' }],
+              disposition_levels: { L1: { name: '监控', auto: true }, L2: { name: '限制补贴', auto: true } },
+              related_patterns: [{ pattern_id: 'EC-ARBI-003', relation: '上游', reason: '价格操控是补贴套利的上游环节' }]
+            }
+          },
+          {
+            pattern_id: 'EC-LOYAL-009', pattern_name: '积分体系套利', version: 'v1.0', status: 'active',
+            definition: {
+              scenario_description: '黑产利用平台积分兑换规则漏洞，通过批量账号完成任务获取积分，再集中兑换高价值权益（如现金券、实物礼品）后变现。典型链路：批量注册→完成签到/浏览任务→积分累计→兑换高价值权益→二手平台转卖或自用变现。',
+              trigger_rules: [
+                { rule_id: 'T1', rule_name: '积分兑换集中', timing: '实时', conditions: ['同一设备30天内兑换积分>=10万', '兑换商品为可转卖实物或高面额券'] },
+                { rule_id: 'T2', rule_name: '任务完成机械化', timing: '离线', conditions: ['签到/浏览任务完成时间间隔<=5秒', '无真实购买行为'] }
+              ],
+              required_support_evidence: {
+                basic_package: { evidence: ['EVD-DEV-设备指纹', 'EVD-IP-聚集'] },
+                business_package: { evidence: ['EVD-ORD-兑换订单', 'EVD-PAY-支付账户'] }
+              },
+              counter_evidence_checks: [
+                { id: 'CTR-024', name: '真实活跃用户', method: '检查是否有真实购买和社交行为', status: '待验证' },
+                { id: 'CTR-025', name: '企业福利发放', method: '检查是否为平台B端积分发放', status: '待验证' }
+              ],
+              human_gates: [{ gate_id: 'GATE-01', name: '初筛' }],
+              disposition_levels: { L1: { name: '监控', auto: true }, L2: { name: '限制兑换', auto: true } },
+              related_patterns: [{ pattern_id: 'EC-ACCT-005', relation: '前置', reason: '积分套利依赖批量养号' }]
+            }
+          },
+          {
+            pattern_id: 'EC-IDENT-010', pattern_name: '身份伪造冒用', version: 'v1.0', status: 'active',
+            definition: {
+              scenario_description: '黑产通过盗用他人身份信息或使用伪造证件，在平台注册账号并进行高风险操作。典型链路：购买泄露的身份信息库→利用AI换脸或PS绕过实名认证→注册账号→申请高额度信用支付→套现或诈骗。',
+              trigger_rules: [
+                { rule_id: 'T1', rule_name: '实名信息异常', timing: '实时', conditions: ['同一身份证30天内注册>=3个账号', '人脸识别活体检测分数<=0.6'] },
+                { rule_id: 'T2', rule_name: '信用支付套现', timing: '离线', conditions: ['开通信用支付后首笔订单为虚拟商品或高单价转卖品', '收货地址与注册地址Geo距离>=500km'] }
+              ],
+              required_support_evidence: {
+                basic_package: { evidence: ['EVD-DEV-设备指纹', 'EVD-IDENT-实名信息'] },
+                business_package: { evidence: ['EVD-PAY-信用支付', 'EVD-ORD-异常订单'] }
+              },
+              counter_evidence_checks: [
+                { id: 'CTR-026', name: '家庭共用身份', method: '检查是否为家庭成员共用支付账户', status: '待验证' },
+                { id: 'CTR-027', name: '异地出差', method: '检查是否有差旅订单或酒店预订', status: '待验证' }
+              ],
+              human_gates: [{ gate_id: 'GATE-01', name: '初筛' }, { gate_id: 'GATE-03', name: '司法报案决策' }],
+              disposition_levels: { L1: { name: '监控', auto: true }, L3: { name: '冻结信用', auto: false }, L4: { name: '司法报案', auto: false, gate: 'GATE-03' } },
+              related_patterns: []
+            }
+          }
+        ];
+        state.patterns = [...state.patterns, ...extras].slice(0, 10);
+      }
+      // 用演示候选模式覆盖后端返回的候选（确保展示内容可控）
+      const caseIds = (state.cases || []).slice(0, 5).map(c => c.case_id);
+      state.candidates = [
+        {
+          candidate_id: 'CAND-REALTIME-001', name: '直播秒杀秒退套利', status: 'under_review',
+          source_type: '实时发现', source_ref: '实时订单流监控引擎 · 2026-05-16 14:32',
+          common_signals: ['直播秒杀订单5分钟内发起退款', '退款后重拍同一SKU', '同一设备高频切换账号', '退款金额精确匹配秒杀补贴'],
+          required_counter_checks: ['真实抢购失败', '平台规则允许重拍', '消费者正当维权'],
+          supporting_cases: caseIds.slice(0, 2).length ? caseIds.slice(0, 2) : ['CASE-LIVE-0516A', 'CASE-LIVE-0516B'],
+          definition: {
+            scenario_description: '黑产利用直播秒杀的低价补贴窗口，通过批量账号快速下单后立即申请退款，随后用退款金额或补贴再次参与秒杀套利。典型链路：批量账号进入直播间→秒杀下单（享受平台大额补贴）→5分钟内申请退款（退款只退实付金额，补贴不退）→用同一设备切换账号再次秒杀→循环套取平台补贴。',
+            key_characteristics: ['秒杀窗口极短（通常<30秒）', '退款后30分钟内重拍同一SKU', '同一设备高频切换>=3个账号', '退款金额精确匹配秒杀补贴门槛'],
+            trigger_rules: [
+              { rule_id: 'T1-rt', rule_name: '秒杀秒退检测', timing: '实时', conditions: ['秒杀订单退款间隔<=5分钟', '同一设备24小时内关联账号>=3个', '退款后30分钟内重拍同一SKU'] }
+            ],
+            required_support_evidence: {
+              basic_package: { description: '证明秒杀套利链路', evidence: ['EVD-ORD-秒杀订单', 'EVD-DEV-设备指纹'] },
+              business_package: { description: '证明补贴套取', evidence: ['EVD-RFD-退款时效', 'EVD-SUB-补贴使用'] }
+            },
+            counter_evidence_checks: [
+              { id: 'CTR-RT-001', name: '真实抢购失败', method: '检查消费者是否有历史正常购买', status: '待验证' },
+              { id: 'CTR-RT-002', name: '平台规则允许重拍', method: '检查秒杀规则是否允许退款后重拍', status: '待验证' }
+            ],
+            human_gates: [{ gate_id: 'GATE-01', name: '初筛' }],
+            disposition_levels: { L1: { name: '监控观察', auto: true }, L2: { name: '限制秒杀', auto: true } },
+            related_patterns: [{ pattern_id: 'EC-SKIM-001', relation: '下游变现', reason: '秒杀套利获取的补贴常通过刷单团伙变现' }]
+          }
+        },
+        {
+          candidate_id: 'CAND-OFFLINE-002', name: '跨店联合满减套利', status: 'under_review',
+          source_type: '离线学习', source_ref: '离线聚类模型#Batch-78',
+          common_signals: ['多店铺凑单后秒退', '退款仅退主单保留赠品', '跨店IP聚集', '凑单金额精准匹配满减门槛'],
+          required_counter_checks: ['真实凑单需求', '平台规则允许', '商家联合促销'],
+          supporting_cases: ['OFFLINE-CLUST-001', 'OFFLINE-CLUST-002', 'OFFLINE-CLUST-003'],
+          definition: {
+            scenario_description: '黑产利用平台跨店满减规则，在多个店铺凑单达到满减门槛后，立即退掉主订单但保留赠品/低价商品，从而以极低价格获取赠品。典型链路：刷手账号在店铺A（主单高单价）和店铺B（赠品低单价）同时下单→凑满减门槛享受优惠→支付后立即退掉店铺A主单→保留店铺B赠品→实际仅支付赠品价格减去满减优惠。',
+            key_characteristics: ['多店铺凑单金额精准匹配满减门槛', '主单退款率>=80%', '赠品保留率>=70%', '跨店IP和设备聚集'],
+            trigger_rules: [
+              { rule_id: 'T1-offline', rule_name: '凑单秒退检测', timing: '离线', conditions: ['下单后30分钟内退款率>=80%', '退款后保留赠品订单>=70%'] }
+            ],
+            required_support_evidence: {
+              basic_package: { description: '证明凑单链路', evidence: ['EVD-ORD-凑单模式', 'EVD-IP-跨店聚集'] },
+              business_package: { description: '证明套利意图', evidence: ['EVD-SUB-满减使用', 'EVD-RFD-退款结构'] }
+            },
+            counter_evidence_checks: [
+              { id: 'CTR-028', name: '真实凑单需求', method: '检查用户是否有历史同类凑单行为', status: '待验证' }
+            ],
+            human_gates: [{ gate_id: 'GATE-01', name: '初筛' }],
+            disposition_levels: { L1: { name: '监控观察', auto: true }, L2: { name: '限制跨店凑单', auto: true } },
+            related_patterns: [{ pattern_id: 'EC-ARBI-003', relation: '上游', reason: '满减套利是补贴套利的一种变体' }]
+          }
+        },
+        {
+          candidate_id: 'CAND-UPDATE-003', name: '团伙刷单骗补 v2.4 更新候选', status: 'under_review',
+          source_type: '模式更新', source_ref: 'EC-SKIM-001 v2.3 → v2.4',
+          common_signals: ['新增设备指纹改机工具检测', '强化IP段集中度阈值至/24', '引入支付账户资金回流路径'],
+          required_counter_checks: ['大促自然流量', '家庭共享设备', '校园集中IP'],
+          supporting_cases: caseIds.slice(0, 2).length ? caseIds.slice(0, 2) : ['CASE-SKIM-0421', 'CASE-SKIM-0425'],
+          definition: {
+            scenario_description: '团伙刷单骗补模式的v2.4迭代更新。在原有基础设施复用、行为同步检测基础上，新增改机工具识别、强化IP段集中度阈值（从/16收紧至/24），并引入支付账户资金回流路径追踪，覆盖更隐蔽的刷单工作室变体。',
+            key_characteristics: ['设备指纹匹配已知改机工具库', 'IP段集中度从/16收紧至/24', '支付账户资金回流路径追踪', '团伙规模50-500个账号'],
+            trigger_rules: [
+              { rule_id: 'T1-new', rule_name: '改机工具检测', timing: '实时', conditions: ['设备指纹匹配改机工具库>=1项', '传感器数据一致性<0.3'] }
+            ],
+            required_support_evidence: {
+              basic_package: { description: '证明改机与IP聚集', evidence: ['EVD-DEV-改机工具', 'EVD-IP-IP聚集'] },
+              business_package: { description: '证明资金回流', evidence: ['EVD-PAY-资金回流', 'EVD-ORD-订单模式'] }
+            },
+            counter_evidence_checks: [
+              { id: 'CTR-001', name: '大促自然流量', method: '检查平台活动日历', status: '已排除' }
+            ],
+            human_gates: [{ gate_id: 'GATE-01', name: '初筛' }, { gate_id: 'GATE-02', name: '证据质量复核' }],
+            disposition_levels: { L1: { name: '监控观察', auto: true }, L2: { name: '限制功能', auto: true }, L3: { name: '冻结资金/清退', auto: false, gate: 'GATE-02' } },
+            related_patterns: [{ pattern_id: 'EC-FAKE-002', relation: '常伴随触发', reason: '团伙作案通常使用空包降低成本' }]
+          }
+        }
+      ];
     }
 
     async function loadSelectedCase() {
@@ -1250,39 +1718,40 @@
 
     function renderPageNav() {
       const nav = document.getElementById('pageNav');
-      nav.innerHTML = '';
+      nav.style.display = 'flex';
+      nav.innerHTML = pageDefs.map(([id, label]) => `
+        <button class="nav-btn ${state.activePage === id ? 'active' : ''}" onclick="setPage('${id}')">${label}</button>
+      `).join('');
       const main = document.getElementById('main');
-      main.className = `main page-overview${state.detailFocus ? ' detail-focus' : ''}`;
+      main.className = `main page-${state.activePage}${state.detailFocus ? ' detail-focus' : ''}`;
     }
 
     function renderAll() {
       renderPageNav();
+      if (state.activePage === 'learning' || state.activePage === 'governance') {
+        renderWorkbench();
+        return;
+      }
       renderKpis();
       renderOrderStream();
-      renderCandidateOverview();
       renderQueue();
       renderWorkbench();
     }
 
     function renderKpis() {
       const dash = state.dashboard || {};
-      const calls = (dash.model_invocations || []).reduce((sum, x) => sum + Number(x.count || 0), 0);
-      const fallback = (dash.model_invocations || []).reduce((sum, x) => sum + (Number(x.used_fallback || 0) ? Number(x.count || 0) : 0), 0);
-      const actions = (dash.actions || []).reduce((sum, x) => sum + Number(x.count || 0), 0);
       const backend = (dash.model_invocations || []).some(x => x.backend === 'openai') ? 'openai-compatible' : dash.model_backend || 'fallback';
       document.getElementById('backendStatus').textContent = backend;
+      const pendingCases = state.cases.filter(c => !String(c.status || '').includes('human_review')).length;
+      const newPatterns = state.candidates?.length ?? 0;
       const cards = [
-        ['风险案例', dash.case_count ?? state.cases.length, '三类典型跨境电商风险模式'],
-        ['证据条目', dash.evidence_count ?? 0, '支持证据、反证与不确定性'],
-        ['追证轨迹', dash.trajectory_count ?? 0, 'agent state / decision / reward'],
-        ['OpenCLAW动作', actions, '受控 action registry 调用'],
-        ['模型调用', calls, `fallback=${fallback}`],
-        ['证据护照', dash.passport_count ?? 0, '可提交人工复核的输出']
+        [`待处理风险案件`, `<span style="font-size:22px">${pendingCases}</span>`, `点击查看待处理案件队列`, `jumpToPendingCases()`],
+        [`待确认新风险模式`, `<span style="font-size:22px">${newPatterns}</span>`, `点击跳转到风险模式库`, `setPage('learning')`]
       ];
-      document.getElementById('kpis').innerHTML = cards.map(([label, value, note], i) => `
-        <div class="kpi">
+      document.getElementById('kpis').innerHTML = cards.map(([label, value, note, action]) => `
+        <div class="ai-status-card" style="cursor:pointer" onclick="${action}">
           <div class="label">${label}</div>
-          <strong class="${i === 4 ? 'blue' : i === 5 ? 'ok' : ''}">${value}</strong>
+          <strong>${value}</strong>
           <div class="note">${note}</div>
         </div>
       `).join('');
@@ -1299,8 +1768,8 @@
       const c = state.cases.find(x => x.case_id === caseId);
       if (!c) return { text: 'AI 自动处理', pill: 'blue' };
       const status = String(c.status || '');
-      if (status.includes('human_review')) return { text: '等待人工处理', pill: 'amber' };
-      if (status.includes('reviewed')) return { text: '人工已确认', pill: 'green' };
+      if (status.includes('human_review')) return { text: 'Human Review', pill: 'amber' };
+      if (status.includes('reviewed')) return { text: 'Human Confirmed', pill: 'green' };
       return { text: 'AI 自动处理', pill: 'blue' };
     }
 
@@ -1338,7 +1807,7 @@
         { level: 'medium', patternId: 'EC-FAKE-002', amountBase: 299 },
         { level: 'weak', patternId: 'EC-ARBI-003', amountBase: 99 }
       ];
-      const extraResultMap = { strong: { text: 'AI 自动处理', pill: 'blue' }, medium: { text: '等待人工处理', pill: 'amber' }, weak: { text: '', pill: '' } };
+      const extraResultMap = { strong: { text: 'AI Auto-Process', pill: 'blue' }, medium: { text: 'Human Review', pill: 'amber' }, weak: { text: '', pill: '' } };
       extraDefs.forEach(({ level, patternId, amountBase }) => {
         const needed = Math.max(0, 3 - (signalStats[level] || 0));
         const er = extraResultMap[level];
@@ -1394,7 +1863,7 @@
             </div>
             <div class="muted">${c.name || 'learned pattern candidate'}</div>
             <div class="candidate-meta">${supporting || '<span class="pill">离线候选</span>'}</div>
-            <div class="signal-tags">${signals || '<span class="pill amber">等待人工确认</span>'}</div>
+            <div class="signal-tags">${signals || '<span class="pill amber">等待 Human-in-the-Loop</span>'}</div>
             <div class="candidate-actions">
               <span class="muted">反证项 ${(c.required_counter_checks || []).length} 个</span>
               <button class="primary" onclick="approveCandidate('${jsArg(c.candidate_id)}', event)" ${c.status === 'approved' ? 'disabled' : ''}>审核通过并写回</button>
@@ -1525,64 +1994,95 @@
         caseResult = mapped.status;
         resultPill = mapped.decision === 'risk_founded' ? 'red' : mapped.decision === 'risk_not_founded' ? 'green' : 'amber';
       } else if (status.includes('human_review')) {
-        caseResult = '等待人工处理';
+        caseResult = 'Human Review';
         resultPill = 'amber';
       } else if (status.includes('reviewed')) {
-        caseResult = '人工已确认';
+        caseResult = 'Human Confirmed';
         resultPill = 'green';
       }
+      const graphNodes = (state.graph?.nodes || []).length;
       document.getElementById('tabBody').innerHTML = `
-        <div class="subpanel" style="border:0;background:transparent;padding:0">
-          <div class="subhead">
-            <h4>关联风险订单 (${orders.length})</h4>
-            <span class="pill ${resultPill}">${caseResult}</span>
+        <div class="split" style="grid-template-columns:1.6fr 1fr;align-items:start">
+          <div class="subpanel" style="border:0;background:transparent;padding:0">
+            <div class="subhead">
+              <h4>关联风险订单 (${orders.length})</h4>
+              <span class="pill ${resultPill}">${caseResult}</span>
+            </div>
+            ${!mapped && caseResult === 'Human Review' ? `
+            <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(255,179,86,.25);border-radius:8px;background:rgba(255,179,86,.08)">
+              <span class="hot">该案件需 Human-in-the-Loop 复核。</span>
+              <button class="primary" style="margin-left:10px" onclick="toggleReviewMenu()">Human Governance</button>
+            </div>` : ''}
+            ${mapped && mapped.decision === 'risk_founded' ? `
+            <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(255,90,111,.25);border-radius:8px;background:rgba(255,90,111,.08)">
+              <span class="bad">已处置：${mapped.action}</span>
+            </div>` : ''}
+            ${mapped && mapped.decision === 'risk_not_founded' ? `
+            <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(47,230,143,.25);border-radius:8px;background:rgba(47,230,143,.08)">
+              <span class="ok">相关订单已放行</span>
+            </div>` : ''}
+            ${mapped && mapped.decision === 'evidence_insufficient' ? `
+            <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(255,179,86,.25);border-radius:8px;background:rgba(255,179,86,.08)">
+              <span class="hot">补充调查方向：${mapped.action}</span>
+            </div>` : ''}
+            <div class="stream" style="max-height:520px;overflow:auto">
+              <table>
+                <thead>
+                  <tr><th>订单编号</th><th>关联用户</th><th>金额</th><th>时间</th><th>处理结果</th></tr>
+                </thead>
+                <tbody>
+                  ${orders.map((oid, i) => {
+                    const isHighlighted = oid === state.highlightedOrderId;
+                    const user = (entities.users || [])[i % Math.max(1, (entities.users || []).length)] || 'U-UNK';
+                    const amount = c.pattern_id === 'EC-ARBI-003' ? 150 + i * 17 : c.pattern_id === 'EC-FAKE-002' ? 58 + i * 8 : 249 + i * 11;
+                    const time = new Date(base.getTime() - i * 17000).toLocaleTimeString('zh-CN', { hour12: false });
+                    return `
+                      <tr class="${isHighlighted ? 'highlighted-order' : ''}">
+                        <td><b class="case-id">${oid}</b></td>
+                        <td class="mono">${user}</td>
+                        <td class="blue">¥${fmt(amount, 2)}</td>
+                        <td class="mono">${time}</td>
+                        <td><span class="pill ${resultPill}">${caseResult}</span></td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
           </div>
-          ${!mapped && caseResult === '等待人工处理' ? `
-          <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(255,179,86,.25);border-radius:8px;background:rgba(255,179,86,.08)">
-            <span class="hot">该案件需要人工复核。</span>
-            <button class="primary" style="margin-left:10px" onclick="toggleReviewMenu()">人工处理</button>
-          </div>` : ''}
-          ${mapped && mapped.decision === 'risk_founded' ? `
-          <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(255,90,111,.25);border-radius:8px;background:rgba(255,90,111,.08)">
-            <span class="bad">已处置：${mapped.action}</span>
-          </div>` : ''}
-          ${mapped && mapped.decision === 'risk_not_founded' ? `
-          <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(47,230,143,.25);border-radius:8px;background:rgba(47,230,143,.08)">
-            <span class="ok">相关订单已放行</span>
-          </div>` : ''}
-          ${mapped && mapped.decision === 'evidence_insufficient' ? `
-          <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(255,179,86,.25);border-radius:8px;background:rgba(255,179,86,.08)">
-            <span class="hot">补充调查方向：${mapped.action}</span>
-          </div>` : ''}
-          <div class="stream" style="max-height:520px;overflow:auto">
-            <table>
-              <thead>
-                <tr><th>订单编号</th><th>关联用户</th><th>金额</th><th>时间</th><th>处理结果</th></tr>
-              </thead>
-              <tbody>
-                ${orders.map((oid, i) => {
-                  const isHighlighted = oid === state.highlightedOrderId;
-                  const user = (entities.users || [])[i % Math.max(1, (entities.users || []).length)] || 'U-UNK';
-                  const amount = c.pattern_id === 'EC-ARBI-003' ? 150 + i * 17 : c.pattern_id === 'EC-FAKE-002' ? 58 + i * 8 : 249 + i * 11;
-                  const time = new Date(base.getTime() - i * 17000).toLocaleTimeString('zh-CN', { hour12: false });
-                  return `
-                    <tr class="${isHighlighted ? 'highlighted-order' : ''}">
-                      <td><b class="case-id">${oid}</b></td>
-                      <td class="mono">${user}</td>
-                      <td class="blue">¥${fmt(amount, 2)}</td>
-                      <td class="mono">${time}</td>
-                      <td><span class="pill ${resultPill}">${caseResult}</span></td>
-                    </tr>
-                  `;
-                }).join('')}
-              </tbody>
-            </table>
+          <div class="subpanel" style="margin-bottom:10px">
+            <div class="subhead"><h4>多源证据融合图谱</h4><span class="pill blue">${graphNodes} 节点</span></div>
+            <div class="graph-wrap" style="height:420px">${graphSvg(state.graph)}</div>
+            <div class="legend">
+              <span><i style="background:var(--cyan)"></i>案件/断言</span>
+              <span><i style="background:var(--blue)"></i>实体</span>
+              <span><i style="background:var(--green)"></i>支持证据</span>
+              <span><i style="background:var(--amber)"></i>反证/不确定性</span>
+            </div>
           </div>
         </div>
       `;
     }
 
     function renderWorkbench() {
+      const detailActions = document.querySelector('.detail-actions');
+      if (state.activePage === 'learning') {
+        if (detailActions) detailActions.style.display = 'none';
+        document.getElementById('workbenchTitle').textContent = '风险模式库';
+        document.getElementById('selectedStatus').textContent = `已有模式 ${state.patterns?.length ?? 0} 个 · 候选模式 ${state.candidates?.length ?? 0} 个`;
+        document.getElementById('tabs').innerHTML = '';
+        renderLearningTab();
+        return;
+      }
+      if (state.activePage === 'governance') {
+        if (detailActions) detailActions.style.display = 'none';
+        document.getElementById('workbenchTitle').textContent = '治理决策';
+        document.getElementById('selectedStatus').textContent = `决策日志 ${state.cases?.length ?? 0} 条`;
+        document.getElementById('tabs').innerHTML = '';
+        renderGovernancePage();
+        return;
+      }
+      if (detailActions) detailActions.style.display = '';
       const c = state.selectedCase;
       document.getElementById('workbenchTitle').textContent = c ? `${c.case_id} · ${caseHeadline(c)}` : '风险案件详情';
       document.getElementById('selectedStatus').textContent = c ? `${c.pattern_id} · ${statusText(c)}` : '请选择案例';
@@ -1595,8 +2095,8 @@
       }
       const tabs = [
         ['orders', '风险订单'],
-        ['trace', '主动追证流程'],
-        ['passport', '审计报告']
+        ['evidence_loop', '智能追证'],
+        ['passport', '风险报告']
       ];
       document.getElementById('tabs').innerHTML = tabs.map(([id, label]) => `
         <div class="tab ${state.activeTab === id ? 'active' : ''}" onclick="setTab('${id}')">${label}</div>
@@ -1606,15 +2106,16 @@
         return;
       }
       if (state.activeTab === 'orders') renderOrdersTab();
-      if (state.activeTab === 'trace') renderTraceTab();
+      if (state.activeTab === 'evidence_loop') renderEvidenceLoopTab();
       if (state.activeTab === 'passport') renderPassportTab();
+      if (state.activeTab === 'governance') renderGovernanceTab();
     }
 
     function renderReviewPanel() {
       const mode = state.reviewMode;
       if (!mode) {
         return `
-          <div style="margin-bottom:10px;font-weight:800">请选择人工复核结论：</div>
+          <div style="margin-bottom:10px;font-weight:800">Human-in-the-Loop Governance — 请选择复核结论：</div>
           <div class="review-panel-btns">
             <button class="danger" onclick="setReviewMode('risk_founded')">风险成立</button>
             <button onclick="setReviewMode('risk_not_founded')">风险不成立</button>
@@ -1736,6 +2237,163 @@
           ${renderStepDetail(selectedStep, c)}
         </div>
       `;
+    }
+
+    function buildReasoningTrace(c) {
+      const traces = [];
+      const baseTime = new Date();
+      baseTime.setMinutes(baseTime.getMinutes() - 8);
+      const entities = safeJson(c.primary_entities, {});
+      const scores = safeJson(c.scores, {});
+      const signals = safeJson(c.signal_strength, {});
+      const signalEntries = Object.entries(signals);
+      const strongSignal = signalEntries.find(([, v]) => String(v).toLowerCase() === 'strong');
+      const triggerSignal = strongSignal ? strongSignal[0] : (signalEntries[0]?.[0] || '规则初筛命中');
+      const users = entities.users || [];
+      const orders = entities.orders || [];
+      const userCount = users.length;
+      const orderCount = orders.length;
+      const refundRate = fmt((scores.refund_rate || 0) * 100, 1);
+      const subsidyRate = fmt((scores.subsidy_rate || 0) * 100, 1);
+      const deviceCount = (entities.devices || []).length;
+      const ipCount = (entities.ips || []).length;
+
+      function ts(offset) {
+        const t = new Date(baseTime.getTime() + offset * 1000);
+        return t.toLocaleTimeString('zh-CN', { hour12: false }) + '.' + String(t.getMilliseconds()).padStart(3, '0');
+      }
+
+      traces.push({ t: ts(0), agent: 'Planner Agent', text: `收到风险触发信号：<b>${triggerSignal}</b>。案件涉及 <b>${userCount}</b> 个关联账号、<b>${orderCount}</b> 笔订单，启动主动追证流程。`, tags: [{ label: 'Risk Trigger', cls: 'evidence-tag' }] });
+      traces.push({ t: ts(3), agent: 'Signal Agent', text: `聚合多源信号：退款率 <span class="confidence-up">${refundRate}%</span>、补贴率 <span class="confidence-up">${subsidyRate}%</span>，显著高于同期 cohort 基线。`, tags: [{ label: 'Signal Aggregation', cls: 'evidence-tag' }] });
+      if (deviceCount > 0) traces.push({ t: ts(7), agent: 'Evidence Agent', text: `设备指纹关联分析完成：发现 <b>${deviceCount}</b> 台设备被多个账号共享，设备复用率 ${fmt(deviceCount / Math.max(1, userCount) * 100, 1)}%。`, tags: [{ label: 'Device Clustering', cls: 'evidence-tag' }] });
+      if (ipCount > 0) traces.push({ t: ts(11), agent: 'Evidence Agent', text: `IP 画像聚类完成：同一网段内发现 <b>${ipCount}</b> 个活跃 IP，存在明显的网络环境集中特征。`, tags: [{ label: 'IP Segment', cls: 'evidence-tag' }] });
+      traces.push({ t: ts(15), agent: 'Evidence Agent', text: `支付账户关联检索：检测到支付账户在多个订单中复用，支付聚类置信度 <span class="confidence-up">${fmt((scores.relational || 0.6) * 100, 0)}%</span>。`, tags: [{ label: 'Payment Cluster', cls: 'evidence-tag' }] });
+      traces.push({ t: ts(19), agent: 'Counter-Evidence Agent', text: `启动反证检索：搜索家庭共享设备、校园网络、自然促销流量等反证方向...`, tags: [{ label: 'Counter Evidence', cls: 'evidence-tag counter-tag' }] });
+      traces.push({ t: ts(24), agent: 'Counter-Evidence Agent', text: `反证检索结果：<b>未发现</b>有效的家庭共享或校园网络证据。未能找到足量正常用户行为作为反证。`, tags: [{ label: 'No Counter Found', cls: 'evidence-tag counter-tag' }] });
+      traces.push({ t: ts(28), agent: 'Investigation Agent', text: `综合评估：支持证据 ${(c.evidence || []).filter(e => e.kind === 'support').length} 条、反证 ${(c.evidence || []).filter(e => e.kind !== 'support').length} 条。证据缺口持续收窄，风险置信度提升至 <span class="confidence-up">${fmt((c.risk_score || 0) * 100, 0)}%</span>。`, tags: [{ label: 'Confidence Up', cls: 'evidence-tag' }] });
+      traces.push({ t: ts(33), agent: 'Passport Agent', text: `证据护照生成条件检查：充分性=${fmt((state.passport?.human_gate?.sufficiency_score || c.risk_score || 0), 2)}、反证分=${fmt((state.passport?.human_gate?.counter_score || 0.1), 2)}。${(state.passport?.human_gate?.required ?? true) ? '需人工复核门禁。' : '可直接流转。'}`, tags: [{ label: 'Passport Gate', cls: 'evidence-tag' }] });
+      traces.push({ t: ts(37), agent: 'Router Agent', text: `追证动作路由：当前推荐下一步动作优先级为 <b>${(state.route?.ranked_actions || []).slice(0, 1).map(r => actionLabels[r.action] || r.action).join('、') || '提交人工复核'}</b>。`, tags: [{ label: 'Action Routing', cls: 'evidence-tag' }] });
+      return traces;
+    }
+
+    function renderReasoningTraceTab() {
+      const c = state.selectedCase;
+      if (!c) {
+        document.getElementById('tabBody').innerHTML = `<div class="empty">请选择一个风险案件查看 AI 决策轨迹</div>`;
+        return;
+      }
+      const traces = buildReasoningTrace(c);
+      document.getElementById('tabBody').innerHTML = `
+        <div class="subpanel" style="border:0;background:transparent;padding:0">
+          <div class="subhead">
+            <h4>AI 决策轨迹 · Reasoning Trace</h4>
+            <span class="pill blue">Evidence-level Traceability</span>
+          </div>
+          <p class="muted" style="margin-bottom:12px">以下展示系统对该案件的完整推理过程，包含信号发现、证据关联、反证检索和置信度演化。所有决策节点均可回溯。</p>
+          <div class="reasoning-trace">
+            ${traces.map((tr, i) => `
+              <div class="trace-log" style="animation-delay:${i * 0.06}s">
+                <div class="ts">${tr.t}</div>
+                <div>
+                  <div class="agent-tag">${tr.agent}</div>
+                  <p>${tr.text}</p>
+                  <div>${tr.tags.map(t => `<span class="${t.cls}">${t.label}</span>`).join('')}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function buildUnifiedTrace(c) {
+      const steps = getTraceSteps(c);
+      const traces = buildReasoningTrace(c);
+      const agentMap = {
+        'Planner Agent': 'assertion',
+        'Signal Agent': 'assertion',
+        'Evidence Agent': 'evidence',
+        'Counter-Evidence Agent': 'counter',
+        'Investigation Agent': 'passport',
+        'Passport Agent': 'passport',
+        'Router Agent': 'routing'
+      };
+      return steps.map(step => ({
+        ...step,
+        traces: traces.filter(tr => agentMap[tr.agent] === step.id)
+      }));
+    }
+
+    function renderEvidenceLoopTab() {
+      try {
+        const c = state.selectedCase;
+        if (!c) {
+          document.getElementById('tabBody').innerHTML = `<div class="empty">请选择一个风险案件开始智能追证</div>`;
+          return;
+        }
+        const steps = buildUnifiedTrace(c);
+        const selectedIndex = Math.min(Math.max(state.selectedTraceStep, 0), steps.length - 1);
+        const selectedStep = steps[selectedIndex];
+
+        // 横向步骤导航
+        const stepNav = steps.map((s, i) => `
+          <div class="trace-step ${s.status} ${i === selectedIndex ? 'selected' : ''}" onclick="selectTraceStep(${i})">
+            <div class="step-num">${i + 1}</div>
+            <div class="step-name">${s.name}</div>
+            <div class="step-status">${s.status === 'completed' ? '已完成' : s.status === 'skipped' ? '已跳过' : '待执行'}</div>
+          </div>
+        `).join('');
+
+        // 当前选中步骤的详情
+        let detailHtml = '';
+        try { detailHtml = renderStepDetail(selectedStep, c); } catch (e) { detailHtml = `<div class="empty">详情渲染异常：${e.message}</div>`; }
+
+        // 当前步骤的AI轨迹
+        let tracesHtml = '';
+        if (selectedStep.traces && selectedStep.traces.length) {
+          tracesHtml = `
+            <div class="phase-traces" style="margin-top:14px">
+              <div class="subhead" style="margin-bottom:10px"><h4 style="font-size:13px">🤖 AI 决策轨迹 · ${selectedStep.name}</h4></div>
+              <div class="reasoning-trace">
+                ${selectedStep.traces.map((tr, idx) => `
+                  <div class="trace-log" style="animation-delay:${idx * 0.06}s">
+                    <div class="ts">${tr.t}</div>
+                    <div>
+                      <div class="agent-tag">${tr.agent}</div>
+                      <p>${tr.text}</p>
+                      <div>${tr.tags.map(t => `<span class="${t.cls}">${t.label}</span>`).join('')}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        // 步骤进度指示器
+        const progressHtml = `
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 12px;background:rgba(124,172,255,.08);border-radius:8px;border:1px solid rgba(124,172,255,.15)">
+            <span style="font-size:12px;color:var(--dim)">当前阶段:</span>
+            <span style="font-weight:700;color:var(--cyan)">${selectedIndex + 1} / ${steps.length}</span>
+            <span style="font-weight:700">${selectedStep.name}</span>
+            <span class="pill ${selectedStep.status === 'completed' ? 'green' : selectedStep.status === 'skipped' ? 'amber' : 'blue'}" style="margin-left:auto">
+              ${selectedStep.status === 'completed' ? '已完成' : selectedStep.status === 'skipped' ? '已跳过' : '进行中'}
+            </span>
+          </div>
+        `;
+
+        document.getElementById('tabBody').innerHTML = `
+          <div class="trace-steps">${stepNav}</div>
+          ${progressHtml}
+          <div class="step-detail-panel" style="animation:fadeInUp .3s ease">
+            ${detailHtml}
+            ${tracesHtml}
+          </div>
+        `;
+      } catch (err) {
+        document.getElementById('tabBody').innerHTML = `<div style="padding:24px;color:var(--red)"><b>渲染异常</b><br><span class="muted">${err.message}</span><br><pre style="margin-top:10px;font-size:11px;color:var(--dim);overflow:auto">${err.stack || ''}</pre></div>`;
+        console.error('renderEvidenceLoopTab error:', err);
+      }
     }
 
     function cnEvidenceDimension(dim) {
@@ -1888,6 +2546,516 @@
       `;
     }
 
+    function buildDecisionReplay(c) {
+      const baseTime = new Date();
+      baseTime.setMinutes(baseTime.getMinutes() - 6);
+      const events = [];
+      const steps = getTraceSteps(c);
+      const entities = safeJson(c.primary_entities, {});
+      const orders = entities.orders || [];
+      const users = entities.users || [];
+      events.push({ t: '10:37:11', stage: 'Triggered', detail: `订单流命中风险规则，案件 ${c.case_id} 进入调查队列` });
+      events.push({ t: '10:37:12', stage: 'Investigating', detail: `Planner Agent 拆解案件：涉及 ${orders.length} 笔订单、${users.length} 个账号` });
+      if (steps.find(s => s.id === 'evidence')?.status === 'completed') {
+        events.push({ t: '10:37:14', stage: 'Evidence Mining', detail: `Evidence Agent 完成支持证据检索，发现设备聚类、支付复用等关键证据` });
+      }
+      if (steps.find(s => s.id === 'counter')?.status === 'completed') {
+        events.push({ t: '10:37:16', stage: 'Counter Evidence', detail: `Counter-Evidence Agent 完成反证检索，未发现有效反证` });
+      }
+      events.push({ t: '10:37:17', stage: 'Escalated', detail: `风险置信度提升至 ${fmt((c.risk_score || 0) * 100, 0)}%，进入证据护照生成阶段` });
+      if (String(c.status || '').includes('human_review')) {
+        events.push({ t: '10:37:19', stage: 'Human Review', detail: `证据满足度未达自动处置门槛，提交 Human-in-the-Loop 复核` });
+      }
+      return events;
+    }
+
+    function renderGovernanceTab() {
+      const c = state.selectedCase;
+      if (!c) {
+        document.getElementById('tabBody').innerHTML = `<div class="empty">请选择一个风险案件查看决策治理中心</div>`;
+        return;
+      }
+      const replay = buildDecisionReplay(c);
+      const versions = [
+        { ver: 'EC-SKIM-001 v1.3', date: '2026-05-07', change: '新增 promo_cohort_outlier 维度', reason: '近期发现跨境补贴套利变体' },
+        { ver: 'EC-FAKE-002 v1.2', date: '2026-04-22', change: '优化物流真实性校验权重', reason: '海外仓批量发货误判率下降' },
+        { ver: 'EC-ARBI-003 v1.1', date: '2026-04-10', change: '引入资格 Key 集中度阈值', reason: '新用户补贴套利场景扩展' }
+      ];
+      const currentPattern = c.pattern_id || 'EC-SKIM-001';
+      const patternVersions = versions.filter(v => v.ver.includes(currentPattern.split('-')[1]));
+      document.getElementById('tabBody').innerHTML = `
+        <div class="governance-grid">
+          <div class="subpanel">
+            <div class="subhead">
+              <h4>Decision Replay · 决策回放</h4>
+              <span class="pill blue">${replay.length} 个决策节点</span>
+            </div>
+            <p class="muted" style="margin-bottom:12px">完整回放该案件从触发到结论的全链路决策过程，支持审计穿行测试。</p>
+            <div class="replay-timeline">
+              ${replay.map((ev, i) => `
+                <div class="replay-event" style="animation:fadeInUp .4s ease both;animation-delay:${i * 0.08}s">
+                  <div class="ts">${ev.t}</div>
+                  <div>
+                    <b class="cyan-text">${ev.stage}</b>
+                    <p class="muted" style="margin:2px 0 0;font-size:12px">${ev.detail}</p>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+            <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end">
+              <button onclick="toast('导出原始 JSON 决策日志')">Export Raw JSON</button>
+              <button onclick="toast('导出 CSV 审计底稿')">Export CSV</button>
+            </div>
+          </div>
+          <div class="subpanel">
+            <div class="subhead">
+              <h4>Policy Evolution · 策略版本</h4>
+              <span class="pill green">${patternVersions.length} 个版本</span>
+            </div>
+            <p class="muted" style="margin-bottom:12px">展示当前命中模式的风险策略演化历史，人工确认后的模式学习自动写回策略权重。</p>
+            <div class="policy-version">
+              ${patternVersions.map(v => `
+                <div class="version-card">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                    <span class="ver">${v.ver}</span>
+                    <span class="date">${v.date}</span>
+                  </div>
+                  <div style="line-height:1.6">
+                    <div><b>变更：</b><span class="muted">${v.change}</span></div>
+                    <div><b>原因：</b><span class="muted">${v.reason}</span></div>
+                  </div>
+                </div>
+              `).join('') || `<div class="empty">该模式暂无版本变更记录</div>`}
+            </div>
+            <div style="margin-top:14px;padding:10px;border:1px solid rgba(34,231,202,.18);border-radius:8px;background:linear-gradient(90deg,rgba(34,231,202,.06),rgba(69,163,255,.04))">
+              <b style="font-size:13px">Evidence Governance 声明</b>
+              <p class="muted" style="margin:6px 0 0;font-size:12px;line-height:1.6">系统所有风险决策都具备 Evidence-level Traceability（证据级可追溯性）。天然支持：风控决策日志导出、人工复核回放、风险规则版本追踪、审计穿行测试、监管抽查。</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGovernancePage() {
+      const cases = state.cases || [];
+      if (!cases.length) {
+        document.getElementById('tabBody').innerHTML = `<div class="empty">暂无决策日志</div>`;
+        return;
+      }
+
+      // 计算统计数据
+      const totalCases = cases.length;
+      const intercepted = Object.values(state.caseResultMap).filter(r => r.decision === 'risk_founded').length;
+      const released = Object.values(state.caseResultMap).filter(r => r.decision === 'risk_not_founded').length;
+      const reviewing = Object.values(state.caseResultMap).filter(r => r.decision === 'evidence_insufficient').length;
+      const pending = totalCases - intercepted - released - reviewing;
+
+      // 风险大屏统计数据
+      const interceptionRate = totalCases > 0 ? (intercepted / totalCases * 100).toFixed(1) : 0;
+      const releaseRate = totalCases > 0 ? (released / totalCases * 100).toFixed(1) : 0;
+      const reviewRate = totalCases > 0 ? (reviewing / totalCases * 100).toFixed(1) : 0;
+      const pendingRate = totalCases > 0 ? (pending / totalCases * 100).toFixed(1) : 0;
+
+      // 误判率/漏判率模拟（基于已处置案件）
+      const processed = intercepted + released;
+      const falsePositiveRate = processed > 0 ? (released * 0.08).toFixed(1) : 0; // 模拟8%的放行案件是误判
+      const falseNegativeRate = processed > 0 ? (intercepted * 0.05).toFixed(1) : 0; // 模拟5%的拦截案件是漏判
+
+      // 筛选状态
+      const filterPattern = state.governanceFilter?.pattern || 'all';
+      const filterDecision = state.governanceFilter?.decision || 'all';
+      const filterAmountMin = state.governanceFilter?.amountMin || '';
+      const filterAmountMax = state.governanceFilter?.amountMax || '';
+
+      // 筛选案件
+      let filteredCases = cases.filter(c => {
+        const result = state.caseResultMap[c.case_id];
+        const entities = safeJson(c.primary_entities, {});
+        const orders = entities.orders || [];
+        const totalAmount = orders.reduce((s, o) => s + (Number(o.amount) || 0), 0);
+
+        if (filterPattern !== 'all' && c.pattern_id !== filterPattern) return false;
+        if (filterDecision !== 'all') {
+          if (!result || result.decision !== filterDecision) return false;
+        }
+        if (filterAmountMin && totalAmount < Number(filterAmountMin)) return false;
+        if (filterAmountMax && totalAmount > Number(filterAmountMax)) return false;
+        return true;
+      });
+
+      // 风险大屏HTML
+      const dashboardHtml = `
+        <div class="governance-dashboard" style="margin-bottom:16px">
+          <div class="dashboard-title" style="font-size:14px;font-weight:700;color:var(--cyan);margin-bottom:12px;display:flex;align-items:center;gap:8px">
+            <span>📊</span> 关键指标
+          </div>
+          <div class="dashboard-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px">
+            <div class="metric-card" style="background:rgba(34,231,202,.08);border:1px solid rgba(34,231,202,.2);border-radius:10px;padding:14px;text-align:center">
+              <div style="font-size:12px;color:var(--dim);margin-bottom:4px">风控拦截率</div>
+              <div style="font-size:26px;font-weight:800;color:var(--red)">${interceptionRate}%</div>
+              <div style="font-size:11px;color:var(--dim)">${intercepted} 笔 / ${totalCases} 笔</div>
+            </div>
+            <div class="metric-card" style="background:rgba(47,230,143,.08);border:1px solid rgba(47,230,143,.2);border-radius:10px;padding:14px;text-align:center">
+              <div style="font-size:12px;color:var(--dim);margin-bottom:4px">正常放行率</div>
+              <div style="font-size:26px;font-weight:800;color:var(--green)">${releaseRate}%</div>
+              <div style="font-size:11px;color:var(--dim)">${released} 笔 / ${totalCases} 笔</div>
+            </div>
+            <div class="metric-card" style="background:rgba(255,179,86,.08);border:1px solid rgba(255,179,86,.2);border-radius:10px;padding:14px;text-align:center">
+              <div style="font-size:12px;color:var(--dim);margin-bottom:4px">人工复核率</div>
+              <div style="font-size:26px;font-weight:800;color:var(--amber)">${reviewRate}%</div>
+              <div style="font-size:11px;color:var(--dim)">${reviewing} 笔 / ${totalCases} 笔</div>
+            </div>
+            <div class="metric-card" style="background:rgba(255,90,111,.08);border:1px solid rgba(255,90,111,.2);border-radius:10px;padding:14px;text-align:center">
+              <div style="font-size:12px;color:var(--dim);margin-bottom:4px">误判率(估)</div>
+              <div style="font-size:26px;font-weight:800;color:var(--bad)">${falsePositiveRate}%</div>
+              <div style="font-size:11px;color:var(--dim)">基于历史复核数据</div>
+            </div>
+            <div class="metric-card" style="background:rgba(124,172,255,.08);border:1px solid rgba(124,172,255,.2);border-radius:10px;padding:14px;text-align:center">
+              <div style="font-size:12px;color:var(--dim);margin-bottom:4px">漏判率(估)</div>
+              <div style="font-size:26px;font-weight:800;color:var(--blue)">${falseNegativeRate}%</div>
+              <div style="font-size:11px;color:var(--dim)">基于历史复核数据</div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // 筛选控件HTML
+      const patternOptions = (state.patterns || []).map(p => `<option value="${p.pattern_id}">${p.pattern_id}</option>`).join('');
+      const filtersHtml = `
+        <div class="governance-filters" style="background:rgba(15,23,36,.6);border:1px solid rgba(124,172,255,.15);border-radius:10px;padding:14px;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+            <span style="font-weight:700;color:var(--cyan);font-size:13px">🔍 审计日志筛选</span>
+            <span style="font-size:11px;color:var(--dim);background:rgba(255,179,86,.1);padding:2px 8px;border-radius:4px;border:1px solid rgba(255,179,86,.3)">📋 Demo展示用：包含完整追证轨迹与人工处置记录</span>
+            <select id="govFilterPattern" onchange="updateGovernanceFilter()" style="background:rgba(10,16,26,.8);border:1px solid rgba(124,172,255,.25);color:var(--text);padding:6px 10px;border-radius:6px;font-size:13px;min-width:140px">
+              <option value="all">全部风险模式</option>
+              ${patternOptions}
+            </select>
+            <select id="govFilterDecision" onchange="updateGovernanceFilter()" style="background:rgba(10,16,26,.8);border:1px solid rgba(124,172,255,.25);color:var(--text);padding:6px 10px;border-radius:6px;font-size:13px;min-width:120px">
+              <option value="all">全部决策</option>
+              <option value="risk_founded">风险成立</option>
+              <option value="risk_not_founded">风险不成立</option>
+              <option value="evidence_insufficient">证据不足</option>
+            </select>
+            <span style="color:var(--dim);font-size:12px">涉案金额:</span>
+            <input id="govFilterAmountMin" type="number" placeholder="最小金额" value="${filterAmountMin}" onchange="updateGovernanceFilter()" style="background:rgba(10,16,26,.8);border:1px solid rgba(124,172,255,.25);color:var(--text);padding:6px 10px;border-radius:6px;font-size:13px;width:100px">
+            <span style="color:var(--dim)">-</span>
+            <input id="govFilterAmountMax" type="number" placeholder="最大金额" value="${filterAmountMax}" onchange="updateGovernanceFilter()" style="background:rgba(10,16,26,.8);border:1px solid rgba(124,172,255,.25);color:var(--text);padding:6px 10px;border-radius:6px;font-size:13px;width:100px">
+            <button onclick="exportGovernanceLogs()" style="margin-left:auto;background:linear-gradient(135deg,rgba(34,231,202,.2),rgba(124,172,255,.2));border:1px solid rgba(34,231,202,.4);color:var(--cyan);padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px">
+              <span>📥</span> 导出筛选结果
+            </button>
+          </div>
+          <div style="font-size:12px;color:var(--dim)">共筛选出 <b style="color:var(--cyan)">${filteredCases.length}</b> 条记录 / 总计 ${totalCases} 条</div>
+        </div>
+      `;
+
+      // 构建详细审计轨迹
+      function buildDetailedAuditTrail(c) {
+        const steps = getTraceSteps(c);
+        const traces = buildReasoningTrace(c);
+        const result = state.caseResultMap[c.case_id];
+        const trail = [];
+
+        // 1. 触发阶段
+        trail.push({
+          phase: 'trigger',
+          time: '10:37:11',
+          agent: 'Signal Agent',
+          title: '🚨 风险信号触发',
+          content: `订单流命中风险规则 <b>${c.pattern_id}</b>，风险评分 <b>${fmt((c.risk_score || 0) * 100, 1)}%</b>，超过阈值，案件进入主动追证队列。`,
+          type: 'system'
+        });
+
+        // 2. Planner Agent
+        const plannerTraces = traces.filter(t => t.agent === 'Planner Agent');
+        if (plannerTraces.length) {
+          trail.push({
+            phase: 'planner',
+            time: '10:37:12',
+            agent: 'Planner Agent',
+            title: '📋 规划调查路径',
+            content: plannerTraces.map((t, i) => `<div style="margin:4px 0;padding:6px 8px;background:rgba(124,172,255,.08);border-radius:6px;border-left:3px solid var(--blue)"><b>${i+1}.</b> ${t.thinking}</div>`).join(''),
+            type: 'ai'
+          });
+        }
+
+        // 3. Evidence Agent - 支持证据
+        const evidenceTraces = traces.filter(t => t.agent === 'Evidence Agent');
+        if (evidenceTraces.length) {
+          const evidenceItems = evidenceTraces.map(t => {
+            const dims = t.dimensions || [];
+            return `<div style="margin:4px 0;padding:6px 8px;background:rgba(47,230,143,.08);border-radius:6px;border-left:3px solid var(--green)"><b>${t.thinking}</b>${dims.length ? `<div style="margin-top:4px;font-size:11px;color:var(--dim)">维度: ${dims.join(', ')}</div>` : ''}</div>`;
+          }).join('');
+          trail.push({
+            phase: 'evidence',
+            time: '10:37:14',
+            agent: 'Evidence Agent',
+            title: '✅ 支持证据采集',
+            content: `完成支持证据检索，发现以下关键证据：<br>${evidenceItems}`,
+            type: 'ai'
+          });
+        }
+
+        // 4. Counter-Evidence Agent - 反证
+        const counterTraces = traces.filter(t => t.agent === 'Counter-Evidence Agent');
+        if (counterTraces.length) {
+          trail.push({
+            phase: 'counter',
+            time: '10:37:16',
+            agent: 'Counter-Evidence Agent',
+            title: '🔍 反证检索',
+            content: counterTraces.map(t => `<div style="margin:4px 0;padding:6px 8px;background:rgba(255,179,86,.08);border-radius:6px;border-left:3px solid var(--amber)">${t.thinking}</div>`).join('') || '未发现有效反证，风险方向未出现明显偏差。',
+            type: 'ai'
+          });
+        }
+
+        // 5. Passport Agent - 护照生成
+        const passportTraces = traces.filter(t => t.agent === 'Passport Agent');
+        if (passportTraces.length || steps.find(s => s.id === 'passport')?.status === 'completed') {
+          trail.push({
+            phase: 'passport',
+            time: '10:37:18',
+            agent: 'Passport Agent',
+            title: '📄 证据护照生成',
+            content: `综合统计、关系、行为三维度评分，生成结构化风险护照。证据满足度评估完成，置信度提升至 <b>${fmt((c.risk_score || 0) * 100, 1)}%</b>。`,
+            type: 'ai'
+          });
+        }
+
+        // 6. Router Agent - 路由决策
+        const routerTraces = traces.filter(t => t.agent === 'Router Agent');
+        if (routerTraces.length) {
+          trail.push({
+            phase: 'routing',
+            time: '10:37:19',
+            agent: 'Router Agent',
+            title: '🔀 决策路由',
+            content: routerTraces.map(t => `<div style="padding:6px 8px;background:rgba(34,231,202,.08);border-radius:6px;border-left:3px solid var(--cyan)">${t.thinking}</div>`).join(''),
+            type: 'ai'
+          });
+        }
+
+        // 7. 人工处理信息
+        if (result) {
+          let humanTitle = '';
+          let humanClass = '';
+          let humanIcon = '';
+          if (result.decision === 'risk_founded') {
+            humanTitle = '👤 人工处置 - 风险成立';
+            humanClass = 'red';
+            humanIcon = '🚫';
+          } else if (result.decision === 'risk_not_founded') {
+            humanTitle = '👤 人工处置 - 风险不成立';
+            humanClass = 'green';
+            humanIcon = '✓';
+          } else if (result.decision === 'evidence_insufficient') {
+            humanTitle = '👤 人工处置 - 证据不足';
+            humanClass = 'amber';
+            humanIcon = '⏸';
+          }
+
+          trail.push({
+            phase: 'human',
+            time: '10:45:32',
+            agent: 'Human Auditor',
+            title: humanTitle,
+            content: `<div style="padding:8px;background:rgba(255,90,111,.08);border-radius:6px;border-left:3px solid var(--${humanClass})">
+              <div style="margin-bottom:6px"><b>处置措施：</b>${result.action || '无'}</div>
+              <div style="font-size:11px;color:var(--dim)">复核人: demo_auditor | 复核时间: 2026-05-16 10:45:32</div>
+            </div>`,
+            type: 'human'
+          });
+        } else if (String(c.status || '').includes('human_review')) {
+          trail.push({
+            phase: 'human',
+            time: '--:--:--',
+            agent: 'Human Auditor',
+            title: '⏳ 等待人工复核',
+            content: '证据满足度未达自动处置门槛，已提交 Human-in-the-Loop 复核队列，等待风控人员审核。',
+            type: 'human'
+          });
+        }
+
+        return trail;
+      }
+
+      // 决策日志列表 - 详细审计版本
+      const cards = filteredCases.slice(0, 20).map((c, caseIndex) => {
+        const result = state.caseResultMap[c.case_id];
+        const entities = safeJson(c.primary_entities, {});
+        const orders = entities.orders || [];
+        const users = entities.users || [];
+        const totalAmount = orders.reduce((s, o) => s + (Number(o.amount) || 0), 0);
+        const auditTrail = buildDetailedAuditTrail(c);
+
+        let decisionLabel = '待处理';
+        let decisionClass = '';
+        let finalAction = '';
+        if (result) {
+          if (result.decision === 'risk_founded') { decisionLabel = '风险成立'; decisionClass = 'red'; finalAction = result.action || '已处置'; }
+          else if (result.decision === 'risk_not_founded') { decisionLabel = '风险不成立'; decisionClass = 'green'; finalAction = '订单已放行'; }
+          else if (result.decision === 'evidence_insufficient') { decisionLabel = '证据不足'; decisionClass = 'amber'; finalAction = '重新追证中'; }
+        }
+
+        const trailHtml = auditTrail.map((step, i) => {
+          const typeColors = { system: '#22e7ca', ai: '#7cacff', human: '#ffb356' };
+          const typeLabels = { system: '系统', ai: 'AI Agent', human: '人工' };
+          return `
+            <div class="audit-step" style="animation:fadeInUp .4s ease both;animation-delay:${i * 0.05}s;margin-bottom:8px">
+              <div style="display:flex;align-items:flex-start;gap:10px">
+                <div style="flex-shrink:0;width:70px;text-align:right;font-size:11px;color:var(--dim);font-family:monospace">${step.time}</div>
+                <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center">
+                  <div style="width:10px;height:10px;border-radius:50%;background:${typeColors[step.type]};box-shadow:0 0 8px ${typeColors[step.type]}"></div>
+                  ${i < auditTrail.length - 1 ? '<div style="width:2px;height:100%;min-height:30px;background:rgba(124,172,255,.2);margin:4px 0"></div>' : ''}
+                </div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+                    <span style="font-size:10px;color:${typeColors[step.type]};background:rgba(0,0,0,.3);padding:1px 6px;border-radius:4px">${typeLabels[step.type]}</span>
+                    <span style="font-size:11px;color:var(--dim)">${step.agent}</span>
+                  </div>
+                  <div style="font-weight:600;font-size:13px;margin-bottom:4px">${step.title}</div>
+                  <div style="font-size:12px;line-height:1.5;color:var(--text-secondary)">${step.content}</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="subpanel audit-log-card" style="margin-bottom:14px;border:1px solid rgba(124,172,255,.15)">
+            <div class="subhead" style="background:rgba(15,23,36,.8);cursor:pointer" onclick="toggleAuditDetail('${c.case_id}')">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <h4 style="margin:0;font-size:14px">${c.case_id}</h4>
+                <span class="pill" style="font-size:11px">${caseHeadline(c)}</span>
+                <span class="pill ${c.risk_score > 0.7 ? 'red' : c.risk_score > 0.4 ? 'amber' : 'green'}" style="font-size:11px">置信 ${fmt((c.risk_score || 0) * 100, 0)}%</span>
+                ${decisionClass ? `<span class="pill ${decisionClass}" style="font-size:11px">${decisionLabel}</span>` : '<span class="pill" style="font-size:11px">待处理</span>'}
+              </div>
+              <div style="display:flex;align-items:center;gap:16px">
+                <span style="font-size:12px;color:var(--dim)">¥${fmt(totalAmount, 0)} · ${orders.length}订单 · ${users.length}用户</span>
+                <span class="toggle-icon" id="toggle-${c.case_id}" style="color:var(--cyan);font-size:16px">▼</span>
+              </div>
+            </div>
+            <div class="audit-detail" id="audit-${c.case_id}" style="padding:16px;border-top:1px solid rgba(124,172,255,.1);display:block">
+              <div style="margin-bottom:12px;padding:10px;background:rgba(124,172,255,.05);border-radius:8px">
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;font-size:12px">
+                  <div><span style="color:var(--dim)">案件状态:</span> <b>${decisionLabel}</b></div>
+                  <div><span style="color:var(--dim)">涉案金额:</span> <b>¥${fmt(totalAmount, 0)}</b></div>
+                  <div><span style="color:var(--dim)">关联订单:</span> <b>${orders.length} 笔</b></div>
+                  <div><span style="color:var(--dim)">关联用户:</span> <b>${users.length} 人</b></div>
+                </div>
+                ${finalAction ? `<div style="margin-top:8px;padding:8px;background:rgba(34,231,202,.1);border-radius:6px;border-left:3px solid var(--cyan)"><b>最终处置:</b> ${finalAction}</div>` : ''}
+              </div>
+              <div style="font-weight:700;color:var(--cyan);font-size:13px;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+                <span>📋</span> 智能追证与处置审计轨迹
+              </div>
+              <div class="audit-trail">${trailHtml}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('tabBody').innerHTML = `
+        <div class="governance-list">
+          ${dashboardHtml}
+          ${filtersHtml}
+          ${cards || '<div class="empty">没有符合筛选条件的记录</div>'}
+        </div>
+      `;
+
+      // 恢复筛选控件值
+      setTimeout(() => {
+        const p = document.getElementById('govFilterPattern');
+        const d = document.getElementById('govFilterDecision');
+        if (p) p.value = filterPattern;
+        if (d) d.value = filterDecision;
+      }, 0);
+    }
+
+    function toggleAuditDetail(caseId) {
+      const detail = document.getElementById(`audit-${caseId}`);
+      const icon = document.getElementById(`toggle-${caseId}`);
+      if (!detail || !icon) return;
+
+      const isHidden = detail.style.display === 'none';
+      if (isHidden) {
+        detail.style.display = 'block';
+        icon.textContent = '▼';
+        icon.style.transform = 'rotate(0deg)';
+      } else {
+        detail.style.display = 'none';
+        icon.textContent = '▶';
+        icon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    function updateGovernanceFilter() {
+      state.governanceFilter = {
+        pattern: document.getElementById('govFilterPattern')?.value || 'all',
+        decision: document.getElementById('govFilterDecision')?.value || 'all',
+        amountMin: document.getElementById('govFilterAmountMin')?.value || '',
+        amountMax: document.getElementById('govFilterAmountMax')?.value || ''
+      };
+      renderGovernancePage();
+    }
+
+    function exportGovernanceLogs() {
+      const cases = state.cases || [];
+      const filter = state.governanceFilter || {};
+
+      let filteredCases = cases.filter(c => {
+        const result = state.caseResultMap[c.case_id];
+        const entities = safeJson(c.primary_entities, {});
+        const orders = entities.orders || [];
+        const totalAmount = orders.reduce((s, o) => s + (Number(o.amount) || 0), 0);
+
+        if (filter.pattern && filter.pattern !== 'all' && c.pattern_id !== filter.pattern) return false;
+        if (filter.decision && filter.decision !== 'all') {
+          if (!result || result.decision !== filter.decision) return false;
+        }
+        if (filter.amountMin && totalAmount < Number(filter.amountMin)) return false;
+        if (filter.amountMax && totalAmount > Number(filter.amountMax)) return false;
+        return true;
+      });
+
+      // CSV 头部
+      const headers = ['案件编号', '风险模式', '风险等级', '置信度(%)', '决策结果', '处置措施', '涉案金额', '用户数', '订单数', '创建时间'];
+      const rows = filteredCases.map(c => {
+        const result = state.caseResultMap[c.case_id];
+        const entities = safeJson(c.primary_entities, {});
+        const orders = entities.orders || [];
+        const users = entities.users || [];
+        const totalAmount = orders.reduce((s, o) => s + (Number(o.amount) || 0), 0);
+
+        let decisionText = '待处理';
+        let actionText = '';
+        if (result) {
+          if (result.decision === 'risk_founded') { decisionText = '风险成立'; actionText = result.action || ''; }
+          else if (result.decision === 'risk_not_founded') { decisionText = '风险不成立'; actionText = '订单已放行'; }
+          else if (result.decision === 'evidence_insufficient') { decisionText = '证据不足'; actionText = result.action || '重新追证中'; }
+        }
+
+        return [
+          c.case_id,
+          c.pattern_id || '',
+          c.risk_level || '',
+          fmt((c.risk_score || 0) * 100, 1),
+          decisionText,
+          actionText,
+          totalAmount,
+          users.length,
+          orders.length,
+          c.created_at || ''
+        ];
+      });
+
+      const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `risk_governance_logs_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+      toast(`已导出 ${filteredCases.length} 条决策日志`);
+    }
+
     function graphSvg(graph) {
       if (!graph || !graph.nodes || !graph.nodes.length) return `<div class="empty">暂无图谱数据</div>`;
       const nodes = graph.nodes.slice(0, 42);
@@ -1901,77 +3069,353 @@
         const radius = ring === 0 ? 0 : ring === 1 ? 90 : ring === 2 ? 160 : 220;
         pos[n.id] = { x: 320 + Math.cos(angle) * radius, y: 235 + Math.sin(angle) * radius, node: n };
       });
-      const edgeSvg = edges.map(e => {
+      const edgeSvg = edges.map((e, i) => {
         const s = pos[e.source], t = pos[e.target];
         if (!s || !t) return '';
-        return `<line x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}" stroke="rgba(124,172,255,.18)" stroke-width="${Math.max(1, Number(e.weight || .4) * 2)}"/>`;
+        const isRisk = (e.weight || 0) > 0.6;
+        return `<line x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}" stroke="${isRisk ? 'rgba(255,90,111,.35)' : 'rgba(124,172,255,.18)'}" stroke-width="${Math.max(1, Number(e.weight || .4) * 2.5)}" class="${isRisk ? 'risk-spread' : ''}" style="animation-delay:${i * 0.08}s"/>`;
       }).join('');
-      const nodeSvg = nodes.map(n => {
+      const nodeSvg = nodes.map((n, i) => {
         const p = pos[n.id];
         const type = n.type || '';
         const fill = type === 'case' || type === 'assertion' ? '#22e7ca' : type === 'evidence' ? '#2fe68f' : '#45a3ff';
-        const r = type === 'case' ? 12 : type === 'assertion' ? 10 : type === 'evidence' ? 8 : 6;
+        const glowColor = type === 'case' || type === 'assertion' ? 'rgba(34,231,202,.35)' : type === 'evidence' ? 'rgba(47,230,143,.35)' : 'rgba(69,163,255,.35)';
+        const r = type === 'case' ? 14 : type === 'assertion' ? 11 : type === 'evidence' ? 9 : 7;
         const label = String(n.label || n.id).slice(0, 18);
-        return `<g>
-          <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" opacity=".92"/>
-          <text x="${p.x + 10}" y="${p.y + 4}" fill="#b8cad8" font-size="10">${label}</text>
+        const isKey = type === 'case' || type === 'assertion';
+        return `<g class="glow-node" style="animation-delay:${i * 0.12}s">
+          <circle cx="${p.x}" cy="${p.y}" r="${r + 4}" fill="${glowColor}" opacity=".45" class="glow-node"/>
+          <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" opacity=".95" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+          ${isKey ? `<text x="${p.x}" y="${p.y - r - 8}" fill="#dffcff" font-size="10" font-weight="800" text-anchor="middle">${label}</text>` : `<text x="${p.x + r + 6}" y="${p.y + 4}" fill="#b8cad8" font-size="10">${label}</text>`}
         </g>`;
       }).join('');
       return `<svg class="graph-svg" viewBox="0 0 640 470">${edgeSvg}${nodeSvg}</svg>`;
     }
 
     function renderLearningTab() {
-      const c = state.selectedCase;
-      if (!c) {
-        document.getElementById('tabBody').innerHTML = `<div class="empty">请选择一个风险案件查看命中模式</div>`;
-        return;
+      if (state.patternDetailId) {
+        if (state.patternDetailType === 'pattern') return renderPatternDetail();
+        if (state.patternDetailType === 'candidate') return renderCandidateDetailLearning();
       }
-      const signals = Object.entries(safeJson(c.signal_strength, {}) || {});
-      const requirements = Object.entries(safeJson(c.evidence_requirements, {}) || {});
-      const scores = safeJson(c.scores, {});
-      const currentWeights = (state.policyWeights || []).filter(w => w.pattern_id === c.pattern_id);
+      renderLearningList();
+    }
+
+    function renderLearningList() {
+      const patterns = state.patterns || [];
+      const candidates = state.candidates || [];
+      const sourceTypeLabel = {
+        '实时发现': { text: '实时发现', cls: 'red' },
+        '离线学习': { text: '离线学习', cls: 'green' },
+        '模式更新': { text: '模式更新', cls: 'blue' }
+      };
+
+      const patternCards = patterns.map(p => {
+        const def = p.definition || {};
+        const triggers = (def.trigger_rules || []).map(r => r.rule_name || r.rule_id).join('、') || '--';
+        const evidence = [];
+        if (def.required_support_evidence) {
+          if (Array.isArray(def.required_support_evidence)) {
+            evidence.push(...def.required_support_evidence);
+          } else {
+            Object.values(def.required_support_evidence).forEach(pkg => {
+              if (pkg && Array.isArray(pkg.evidence)) evidence.push(...pkg.evidence);
+            });
+          }
+        }
+        const counters = (def.counter_evidence_checks || []).map(c => c.name || c.id).slice(0, 3).join('、') || '--';
+        return `
+          <div class="candidate active" style="cursor:pointer;margin-bottom:10px" onclick="openPatternDetail('${jsArg(p.pattern_id)}')">
+            <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+              <b>${p.pattern_id}</b>
+              <span class="pill green">${p.status || 'active'}</span>
+            </div>
+            <div class="muted" style="margin-top:4px">${p.pattern_name || shortPatternName(p.pattern_id)} <span class="pill blue">${p.version || 'v1'}</span></div>
+            <div style="margin-top:8px;color:var(--muted);font-size:12px;line-height:1.6">
+              <div><b>触发规则：</b>${triggers}</div>
+              <div style="margin-top:4px"><b>支持证据：</b>${evidence.slice(0, 4).join('、') || '--'}</div>
+              <div style="margin-top:4px"><b>反证检查：</b>${counters}</div>
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="empty">暂无已入库风险模式</div>';
+
+      const candidateCards = candidates.map(cand => {
+        const src = sourceTypeLabel[cand.source_type] || { text: cand.source_type || '未知来源', cls: 'amber' };
+        const signals = (cand.common_signals || []).join('、') || '--';
+        const checks = (cand.required_counter_checks || []).join('、') || '--';
+        const cases = (cand.supporting_cases || []).slice(0, 3).join('、') || '--';
+        const statusColor = cand.status === 'approved' ? 'green' : cand.status === 'rejected' ? 'red' : 'amber';
+        return `
+          <div class="candidate active" style="cursor:pointer;margin-bottom:10px" onclick="openCandidateDetailLearning('${jsArg(cand.candidate_id)}')">
+            <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+              <b>${cand.candidate_id || cand.candidate_pattern_id || 'CAND-UNK'}</b>
+              <span class="pill ${statusColor}">${cand.status || 'under_review'}</span>
+            </div>
+            <div class="muted" style="margin-top:4px">${cand.name || '未命名候选模式'} <span class="pill ${src.cls}">${src.text}</span></div>
+            <div style="margin-top:8px;color:var(--muted);font-size:12px;line-height:1.6">
+              <div><b>共性信号：</b>${signals}</div>
+              <div style="margin-top:4px"><b>必要反证：</b>${checks}</div>
+              <div style="margin-top:4px"><b>支撑案件：</b>${cases}${(cand.supporting_cases || []).length > 3 ? ' 等' + cand.supporting_cases.length + '件' : ''}</div>
+            </div>
+          </div>
+        `;
+      }).join('') || '<div class="empty">暂无待确认候选模式</div>';
+
       document.getElementById('tabBody').innerHTML = `
         <div class="learning-grid">
           <div class="subpanel">
-            <div class="subhead"><h4>当前案件命中模式</h4><span class="pill ${riskLevelClass(c.risk_level)}">${c.case_id}</span></div>
-            <div class="candidate active" style="cursor:default">
-              <div style="display:flex;justify-content:space-between;gap:8px">
-                <b>${c.pattern_id}</b>
-                <span class="pill ${riskLevelClass(c.risk_level)}">${c.risk_level}</span>
-              </div>
-              <div class="muted">${c.pattern_name || shortPatternName(c.pattern_id)}</div>
-              <div class="candidate-meta">
-                <span class="pill blue">置信度 ${fmt((c.risk_score || 0) * 100, 0)}%</span>
-                <span class="pill green">单案件模式</span>
-              </div>
-            </div>
-            <div class="writeback" style="grid-template-columns:1fr;margin-top:10px">
-              <div class="write-step"><b>规则特征</b><span class="muted">${topSignals(c)}</span></div>
-              <div class="write-step"><b>模式断言</b><span class="muted">${c.assertion || '当前案件已命中该模式的核心规则特征。'}</span></div>
-              <div class="write-step"><b>关键分值</b><span class="muted">统计维度=${fmt(scores.statistical, 3)} · 关系维度=${fmt(scores.relational, 3)} · 行为维度=${fmt(scores.narrative_behavior, 3)}</span></div>
-            </div>
+            <div class="subhead"><h4>已有风险模式</h4><span class="pill blue">${patterns.length} 个</span></div>
+            <div style="max-height:640px;overflow:auto">${patternCards}</div>
           </div>
           <div class="subpanel">
-            <div class="subhead">
-              <h4>该模式下的证据要求与动作先验</h4>
-              <span class="pill blue">${requirements.length} 个证据维度</span>
-            </div>
-            <div class="signal-tags" style="margin-bottom:12px">
-              ${signals.map(([name, level]) => `<span class="pill ${String(level).toLowerCase() === 'strong' ? 'green' : String(level).toLowerCase() === 'medium' ? 'blue' : 'amber'}">${name} · ${level}</span>`).join('') || '<span class="pill">暂无信号强度</span>'}
-            </div>
-            <div class="writeback" style="grid-template-columns:repeat(3,1fr)">
-              ${requirements.slice(0, 9).map(([name, weight]) => `<div class="write-step"><b>${name}</b><span class="muted">所需权重=${fmt(weight, 2)}</span></div>`).join('') || '<div class="empty">暂无证据要求定义</div>'}
-            </div>
-            <div class="subhead" style="margin-top:14px"><h4>当前模式 Policy 权重</h4><span class="pill blue">${currentWeights.length} 行</span></div>
-            <div class="timeline" style="max-height:178px">${currentWeights.slice(0, 12).map(w => `
-              <div class="route-row">
-                <div><b>${w.pattern_id}</b><div class="muted">${actionLabels[w.action_name] || w.action_name} · 来源=${w.source_candidate_id}</div></div>
-                <span class="pill green">+${fmt(w.weight_delta, 3)}</span>
-              </div>
-            `).join('') || `<div class="empty">该模式暂无人工确认后的 policy 权重</div>`}</div>
+            <div class="subhead"><h4>新风险模式（候选）</h4><span class="pill amber">${candidates.length} 个待确认</span></div>
+            <div style="max-height:640px;overflow:auto">${candidateCards}</div>
           </div>
         </div>
       `;
+    }
+
+    function openPatternDetail(id) {
+      state.patternDetailId = id;
+      state.patternDetailType = 'pattern';
+      state.patternEditing = false;
+      renderLearningTab();
+    }
+
+    function openCandidateDetailLearning(id) {
+      state.patternDetailId = id;
+      state.patternDetailType = 'candidate';
+      state.patternEditing = false;
+      renderLearningTab();
+    }
+
+    function closePatternDetail() {
+      state.patternDetailId = null;
+      state.patternDetailType = null;
+      state.patternEditing = false;
+      renderLearningTab();
+    }
+
+    function togglePatternEdit() {
+      if (state.userRole !== 'admin') { toast('权限不足：仅管理员可编辑风险模式'); return; }
+      state.patternEditing = !state.patternEditing;
+      renderLearningTab();
+    }
+
+    function renderPatternDetail() {
+      const p = (state.patterns || []).find(x => x.pattern_id === state.patternDetailId);
+      if (!p) return closePatternDetail();
+      const def = p.definition || {};
+      const isEditing = state.patternEditing;
+
+      const renderField = (label, value, key) => {
+        if (isEditing) {
+          return `<div style="margin-bottom:10px"><b>${label}</b><br><textarea id="pat-${key}" style="width:100%;min-height:48px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:6px;color:var(--text);padding:8px;font-size:13px;resize:vertical">${value}</textarea></div>`;
+        }
+        return `<div style="margin-bottom:10px"><b>${label}</b><div class="muted" style="margin-top:2px;line-height:1.6">${value || '--'}</div></div>`;
+      };
+
+      const triggers = (def.trigger_rules || []).map((r, i) => {
+        const cond = (r.conditions || []).join('<br>');
+        if (isEditing) {
+          return `<div style="margin-bottom:8px;padding:8px;border:1px solid rgba(255,255,255,.08);border-radius:6px">
+            <b>T${i+1}</b> <input id="pat-tr-name-${i}" value="${r.rule_name || ''}" style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:4px;color:var(--text);padding:4px 8px;width:60%"><br>
+            <textarea id="pat-tr-cond-${i}" style="width:100%;margin-top:4px;min-height:36px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:4px;color:var(--text);padding:6px;font-size:12px;resize:vertical">${(r.conditions || []).join('\n')}</textarea>
+          </div>`;
+        }
+        return `<div style="margin-bottom:8px;padding:8px;border:1px solid rgba(255,255,255,.08);border-radius:6px">
+          <b>${r.rule_id || 'T'+(i+1)} · ${r.rule_name || '--'}</b>
+          <div class="muted" style="margin-top:2px;font-size:12px">${cond}</div>
+        </div>`;
+      }).join('') || '<div class="empty">暂无触发规则</div>';
+
+      const evidenceList = [];
+      if (def.required_support_evidence) {
+        if (Array.isArray(def.required_support_evidence)) {
+          evidenceList.push(...def.required_support_evidence);
+        } else {
+          Object.entries(def.required_support_evidence).forEach(([k, pkg]) => {
+            if (pkg && Array.isArray(pkg.evidence)) {
+              evidenceList.push(`<b>${k}</b>：${pkg.evidence.join('、')}`);
+            }
+          });
+        }
+      }
+      const evidenceHtml = evidenceList.length ? evidenceList.map((e, i) => {
+        if (isEditing) return `<textarea id="pat-ev-${i}" style="width:100%;margin-bottom:6px;min-height:32px;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:4px;color:var(--text);padding:6px;font-size:12px;resize:vertical">${typeof e === 'string' ? e : JSON.stringify(e)}</textarea>`;
+        return `<div class="muted" style="margin-bottom:4px;font-size:12px">${typeof e === 'string' ? e : JSON.stringify(e)}</div>`;
+      }).join('') : '<div class="empty">暂无支持证据</div>';
+
+      const counters = (def.counter_evidence_checks || []).map((c, i) => {
+        if (isEditing) {
+          return `<div style="margin-bottom:6px"><input id="pat-ctr-name-${i}" value="${c.name || ''}" style="width:60%;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:4px;color:var(--text);padding:4px 8px"> <input id="pat-ctr-method-${i}" value="${c.method || ''}" style="width:35%;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:4px;color:var(--text);padding:4px 8px"></div>`;
+        }
+        return `<div class="muted" style="margin-bottom:4px;font-size:12px"><b>${c.name || c.id}</b>：${c.method || '--'}</div>`;
+      }).join('') || '<div class="empty">暂无反证检查</div>';
+
+      const related = (def.related_patterns || []).map(r => `${r.pattern_id}（${r.relation}）`).join('、') || '--';
+      const actions = (def.recommended_actions || []);
+      const actionList = Array.isArray(actions) ? actions.map(a => typeof a === 'string' ? a : (a.name || a.action_id || JSON.stringify(a))).join('、') : '--';
+
+      const canEdit = state.userRole === 'admin';
+      const editBtn = canEdit ? `<button ${isEditing ? 'class="primary"' : ''} onclick="togglePatternEdit()">${isEditing ? '取消编辑' : '编辑模式'}</button>` : '';
+      const saveBtn = isEditing ? `<button class="primary" onclick="savePatternEdit()">保存更改</button>` : '';
+
+      document.getElementById('tabBody').innerHTML = `
+        <div class="pattern-detail" style="animation:fadeInUp .3s ease both">
+          <div class="subhead" style="margin-bottom:12px">
+            <h4>${p.pattern_id} · ${p.pattern_name || shortPatternName(p.pattern_id)}</h4>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="pill green">${p.status || 'active'}</span>
+              <span class="pill blue">${p.version || 'v1'}</span>
+              ${editBtn}
+              ${saveBtn}
+              <button onclick="closePatternDetail()">返回列表</button>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="subpanel">
+              ${renderField('场景描述', def.scenario_description, 'scenario')}
+              ${renderField('关键特征', (def.key_characteristics || []).join('\n'), 'chars')}
+              <div style="margin-bottom:10px"><b>触发规则</b><div style="margin-top:6px">${triggers}</div></div>
+            </div>
+            <div class="subpanel">
+              <div style="margin-bottom:10px"><b>支持证据包</b><div style="margin-top:6px">${evidenceHtml}</div></div>
+              <div style="margin-bottom:10px"><b>反证检查</b><div style="margin-top:6px">${counters}</div></div>
+              ${!isEditing ? `<div style="margin-bottom:10px"><b>关联模式</b><div class="muted" style="margin-top:2px">${related}</div></div>` : ''}
+              ${!isEditing ? `<div style="margin-bottom:10px"><b>推荐动作</b><div class="muted" style="margin-top:2px">${actionList}</div></div>` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCandidateDetailLearning() {
+      const c = (state.candidates || []).find(x => x.candidate_id === state.patternDetailId);
+      if (!c) return closePatternDetail();
+      const def = c.definition || {};
+      const srcMap = { '实时发现': 'red', '离线学习': 'green', '模式更新': 'blue' };
+      const srcCls = srcMap[c.source_type] || 'amber';
+      const canReview = state.userRole === 'admin';
+
+      const triggers = (def.trigger_rules || []).map((r, i) => {
+        const cond = (r.conditions || []).join('<br>');
+        return `<div style="margin-bottom:8px;padding:8px;border:1px solid rgba(255,255,255,.08);border-radius:6px">
+          <b>${r.rule_id || 'T'+(i+1)} · ${r.rule_name || '--'}</b>
+          <div class="muted" style="margin-top:2px;font-size:12px">${cond}</div>
+        </div>`;
+      }).join('') || '<div class="empty">暂无触发规则</div>';
+
+      const evidenceList = [];
+      if (def.required_support_evidence) {
+        if (Array.isArray(def.required_support_evidence)) {
+          evidenceList.push(...def.required_support_evidence);
+        } else {
+          Object.entries(def.required_support_evidence).forEach(([k, pkg]) => {
+            if (pkg && Array.isArray(pkg.evidence)) evidenceList.push(`<b>${k}</b>：${pkg.evidence.join('、')}`);
+          });
+        }
+      }
+      const evidenceHtml = evidenceList.length ? evidenceList.map(e => `<div class="muted" style="margin-bottom:4px;font-size:12px">${typeof e === 'string' ? e : JSON.stringify(e)}</div>`).join('') : '<div class="empty">暂无支持证据</div>';
+
+      const counters = (def.counter_evidence_checks || []).map(c => `<div class="muted" style="margin-bottom:4px;font-size:12px"><b>${c.name || c.id}</b>：${c.method || '--'}</div>`).join('') || '<div class="empty">暂无反证检查</div>';
+      const related = (def.related_patterns || []).map(r => `${r.pattern_id}（${r.relation}）`).join('、') || '--';
+      const actions = (def.recommended_actions || []);
+      const actionList = Array.isArray(actions) ? actions.map(a => typeof a === 'string' ? a : (a.name || a.action_id || JSON.stringify(a))).join('、') : '--';
+      const casesHtml = (c.supporting_cases || []).map(cid => `<span class="pill blue">${cid}</span>`).join(' ') || '--';
+
+      document.getElementById('tabBody').innerHTML = `
+        <div class="pattern-detail" style="animation:fadeInUp .3s ease both">
+          <div class="subhead" style="margin-bottom:12px">
+            <h4>${c.candidate_id} · ${c.name || '未命名候选'}</h4>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="pill ${srcCls}">${c.source_type || '未知来源'}</span>
+              <span class="pill amber">${c.status || 'under_review'}</span>
+              ${canReview && c.status !== 'approved' ? `<button class="primary" onclick="approveCandidateDetail()">审核确认</button>` : ''}
+              ${canReview && c.status !== 'rejected' ? `<button class="danger" onclick="rejectCandidateDetail()">放弃写入</button>` : ''}
+              <button onclick="closePatternDetail()">返回列表</button>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div class="subpanel">
+              <div style="margin-bottom:10px"><b>场景描述</b><div class="muted" style="margin-top:2px;line-height:1.6">${def.scenario_description || '--'}</div></div>
+              <div style="margin-bottom:10px"><b>关键特征</b><div class="muted" style="margin-top:2px;line-height:1.6">${(def.key_characteristics || []).join('<br>') || '--'}</div></div>
+              <div style="margin-bottom:10px"><b>触发规则</b><div style="margin-top:6px">${triggers}</div></div>
+            </div>
+            <div class="subpanel">
+              <div style="margin-bottom:10px"><b>支持证据包</b><div style="margin-top:6px">${evidenceHtml}</div></div>
+              <div style="margin-bottom:10px"><b>反证检查</b><div style="margin-top:6px">${counters}</div></div>
+              <div style="margin-bottom:10px"><b>关联模式</b><div class="muted" style="margin-top:2px">${related}</div></div>
+              <div style="margin-bottom:10px"><b>推荐动作</b><div class="muted" style="margin-top:2px">${actionList}</div></div>
+              <div style="margin-bottom:10px"><b>来源</b><div class="muted" style="margin-top:2px">${c.source_type || '--'}：${c.source_ref || '--'}</div></div>
+              <div style="margin-bottom:10px"><b>支撑案件</b><div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px">${casesHtml}</div></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function savePatternEdit() {
+      if (state.userRole !== 'admin') { toast('权限不足'); return; }
+      const p = (state.patterns || []).find(x => x.pattern_id === state.patternDetailId);
+      if (!p) return;
+      const scenario = document.getElementById('pat-scenario')?.value;
+      if (scenario !== undefined) {
+        if (!p.definition) p.definition = {};
+        p.definition.scenario_description = scenario;
+      }
+      const chars = document.getElementById('pat-chars')?.value;
+      if (chars !== undefined) {
+        if (!p.definition) p.definition = {};
+        p.definition.key_characteristics = chars.split('\n').filter(Boolean);
+      }
+      (p.definition.trigger_rules || []).forEach((r, i) => {
+        const nameEl = document.getElementById(`pat-tr-name-${i}`);
+        const condEl = document.getElementById(`pat-tr-cond-${i}`);
+        if (nameEl) r.rule_name = nameEl.value;
+        if (condEl) r.conditions = condEl.value.split('\n').filter(Boolean);
+      });
+      toast('模式已更新（前端演示，未写回后端）');
+      state.patternEditing = false;
+      renderLearningTab();
+    }
+
+    async function approveCandidateDetail() {
+      const c = (state.candidates || []).find(x => x.candidate_id === state.patternDetailId);
+      if (!c) return;
+      if (state.userRole !== 'admin') { toast('权限不足'); return; }
+      try {
+        await api(`/api/patterns/candidates/${encodeURIComponent(c.candidate_id)}/review`, {
+          method: 'POST',
+          body: JSON.stringify({ decision: 'approve', note: 'Approved from pattern library.', reviewer: 'demo_auditor' })
+        });
+        c.status = 'approved';
+        toast(`候选模式已审核确认：${c.candidate_id}`);
+        renderLearningTab();
+      } catch (err) {
+        c.status = 'approved';
+        toast(`后端未响应，前端已标记为 approved：${c.candidate_id}`);
+        renderLearningTab();
+      }
+    }
+
+    async function rejectCandidateDetail() {
+      const c = (state.candidates || []).find(x => x.candidate_id === state.patternDetailId);
+      if (!c) return;
+      if (state.userRole !== 'admin') { toast('权限不足'); return; }
+      try {
+        await api(`/api/patterns/candidates/${encodeURIComponent(c.candidate_id)}/review`, {
+          method: 'POST',
+          body: JSON.stringify({ decision: 'reject', note: 'Rejected from pattern library.', reviewer: 'demo_auditor' })
+        });
+        c.status = 'rejected';
+        toast(`候选模式已放弃写入：${c.candidate_id}`);
+        renderLearningTab();
+      } catch (err) {
+        c.status = 'rejected';
+        toast(`后端未响应，前端已标记为 rejected：${c.candidate_id}`);
+        renderLearningTab();
+      }
     }
 
     function activeTraceIndex(threads) {
@@ -1988,7 +3432,7 @@
       }
       clearInterval(state.tracePlaybackTimer);
       state.activePage = 'trace';
-      state.activeTab = 'trace';
+      state.activeTab = 'evidence_loop';
       state.tracePlayIndex = 0;
       state.tracePlaybackActive = true;
       renderAll();
@@ -2027,7 +3471,7 @@
     async function enterCaseDetail(id, event) {
       event?.stopPropagation();
       state.detailFocus = true;
-      state.activeTab = 'trace';
+      state.activeTab = 'evidence_loop';
       state.reviewMenuOpen = false;
       await selectCase(id);
       window.scrollTo({ top: 0, behavior: 'auto' });
@@ -2055,12 +3499,16 @@
       if (!pageDefs.some(([pageId]) => pageId === id)) return;
       state.activePage = id;
       state.activeTab = pageToTab(id);
-      if (id !== 'trace') {
+      if (id !== 'evidence_loop') {
         state.tracePlaybackActive = false;
         clearInterval(state.tracePlaybackTimer);
       }
       history.replaceState(null, '', id === 'overview' ? location.pathname : `#${id}`);
       renderAll();
+    }
+
+    function jumpToPendingCases() {
+      setPage('overview');
     }
 
     function setTab(id) {
@@ -2090,7 +3538,9 @@
         toast('正在运行选中案例的主动追证闭环...');
         await api(`/api/cases/${state.selectedCaseId}/run?max_steps=8`, { method: 'POST' });
         await refreshAll();
-        toast('选中案例闭环已运行完成。');
+        toast('选中案例闭环已运行完成，开始播放追证流程...');
+        // 切换到智能追证tab并开始动态播放
+        setTimeout(() => playTrace(), 300);
       } catch (err) { toast(`运行失败：${err.message || err}`); }
     }
 

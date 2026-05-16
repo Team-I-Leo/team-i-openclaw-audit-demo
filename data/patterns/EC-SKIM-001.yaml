@@ -2,35 +2,152 @@ pattern_id: EC-SKIM-001
 pattern_name: Shared infrastructure brushing and subsidy skimming
 version: v2.3
 status: active
-risk_assertion_template: >
-  In {business_window}, a group of newly registered accounts around {target_scope}
-  shows shared device/IP infrastructure, synchronized order behavior, high subsidy
-  usage, and abnormal refunds. The group may be conducting coordinated brushing
-  and subsidy skimming.
+scenario_description: 刷单工作室通过控制批量账号、共享设备/IP/地址等基础设施，组织化执行虚假交易或补贴套利。典型作案链路：工作室从任务平台接单→分发至刷手账号池→统一指导下单/好评/退款操作→佣金结算。单账号行为经过刻意模拟（浏览、收藏、加购），接近正常用户，但团伙层面在基础设施复用、行为同步性、资金回流路径上暴露痕迹。
+key_characteristics:
+- 组织化、规模化、基础设施复用
+- 工作室通常控制50-500个账号
+- 使用10-20台设备（配合改机工具）
+- 通过代理IP或固定宽带接入
+- 形成"账号池-设备池-IP池"三层架构
+motivation_quantification:
+  studio_order_price: 5-15元/单（含好评）
+  platform_subsidy: 20-100元/单
+  studio_profit_rate: 补贴套利模式下可达200%-500%
+  merchant_brushing_cost: 远低于真实获客成本（50-200元/单）
+risk_assertion_template: In {business_window}, a group of newly registered accounts
+  around {target_scope} shows shared device/IP infrastructure, synchronized order
+  behavior, high subsidy usage, and abnormal refunds. The group may be conducting
+  coordinated brushing and subsidy skimming.
 trigger_rules:
-  - T1_infrastructure_reuse
-  - T2_behavior_sync
-  - T3_business_result_anomaly
+- rule_id: T1
+  rule_name: 基础设施复用检测
+  timing: 实时/准实时
+  time_window: 30天
+  group_size: '>=3个账号'
+  conditions:
+  - '设备指纹重合: >=2个账号共享同一设备指纹'
+  - 'IP段重合: >=3个账号共享同一/24 IP段'
+  - '收货地址重合: >=2个账号共享同一精确地址（门牌号级）'
+  - '支付账户重合: >=2个账号绑定同一支付工具'
+  confidence: 中（仅触发追证，不直接判定）
+- rule_id: T2
+  rule_name: 行为同步检测
+  timing: 批量离线
+  time_window: 7天
+  group_size: '>=5个账号'
+  conditions:
+  - '下单时间集中度: 变异系数CV <= 0.3（高度集中）'
+  - '行为路径相似度: 编辑距离/DTW相似度 >= 0.85'
+  - '操作节奏机械化: 点击间隔标准差 <= 2秒'
+  confidence: 高（触发追证+预警）
+- rule_id: T3
+  rule_name: 业务结果异常
+  timing: 离线聚合
+  time_window: 30天
+  merchant_count: '>=1个'
+  conditions:
+  - '补贴使用率: >=80%（该组账号订单）'
+  - '空包率: >=60%（该组账号订单，物流轨迹异常）'
+  - '好评率: >=95% 且 评论模板相似度 >= 0.7'
+  - '退款率: >=50% 且 退款时效 <= 24小时'
+  confidence: 高（触发追证+预警）
+trigger_priority: T3 > T2 > T1（业务结果异常最直接）
 required_support_evidence:
-  - device_reuse
-  - ip_cluster
-  - refund_abnormal
-  - payment_cluster
-  - logistics_authenticity
+  basic_package:
+    description: 证明"同一控制"（必须）
+    evidence:
+    - EVD-DEV-设备指纹
+    - EVD-IP-IP聚集
+    - EVD-BEH-行为同步
+  business_package:
+    description: 证明"刷单/骗补目的"（至少2项）
+    evidence:
+    - EVD-ORD-订单模式
+    - EVD-LOG-物流轨迹
+    - EVD-RFD-退款异常
+    - EVD-CMT-评论模板
+    - EVD-SUB-补贴使用
+  enhanced_package:
+    description: 证明"组织化程度"（加分）
+    evidence:
+    - EVD-PAY-支付工具
+    - EVD-ADR-收货地址
 counter_evidence_checks:
-  - promo_natural_traffic
-  - old_customer_repeat_purchase
-  - warehouse_batch_shipping
-  - family_shared_device
-  - campus_ip_cluster
+- id: CTR-001
+  name: 大促自然流量
+  method: 检查平台活动日历，确认非大促期
+  status: 已排除
+- id: CTR-002
+  name: 老客复购
+  method: 检查账号注册时间、历史订单
+  status: 5个账号注册时间均在活动前3天内，注册时长<7天，排除老客
+- id: CTR-003
+  name: 仓配批量发货
+  method: 检查发货地是否为平台仓
+  status: 发货地为商家自有地址，非平台仓
+- id: CTR-004
+  name: 家庭共享设备
+  method: 检查设备多用户切换记录
+  status: 待验证（EVD-DEV）
+- id: CTR-005
+  name: 校园集中IP
+  method: 检查IP Geo是否为校园
+  status: 待验证（EVD-IP）
+counter_evidence_logic: 'if 命中反证项 >= 2项: 置信度降级（高->中，中->低），追证动作降级（预警->记录）; if 命中反证项
+  >= 4项: 模式暂时关闭（标记为"待复核"），转人工深度调查'
 recommended_actions:
-  - expand_infra_graph
-  - query_refund_cluster
-  - query_payment_cluster
-  - query_logistics_trace
-  - compare_promo_cohort
-  - seek_counter_evidence
+  stage1_auto:
+    timing: T+0，实时
+    actions:
+    - expand_infra_graph
+    - query_refund_cluster
+    - query_payment_cluster
+  stage2_assisted:
+    timing: T+1~T+3，按需
+    actions:
+    - query_logistics_trace
+    - compare_promo_cohort
+  stage3_deep:
+    timing: T+7，专项
+    actions:
+    - seek_counter_evidence
 human_gates:
-  - GATE-02 evidence quality review
-  - GATE-03 disposition decision review
-
+- gate_id: GATE-01
+  name: 初筛（所有触发）
+- gate_id: GATE-02
+  name: 证据质量复核
+- gate_id: GATE-03
+  name: 处置决策复核
+human_gate_rules:
+- 任何涉及 >=10 个账号 或 >=3 个商家 或 金额>=10万 的案件，必须过 GATE-02
+- 任何建议处置为 冻结资金 或 清退商家 的案件，必须过 GATE-03
+disposition_levels:
+  L1:
+    name: 监控观察
+    auto: true
+  L2:
+    name: 限制功能
+    auto: true
+    upgrade: 7天内同一模式再次触发，或关联模式（如EC-FAKE-002）同步触发
+    downgrade: 30天内无新增触发，且人工复核确认反证项成立
+  L3:
+    name: 冻结资金/清退
+    auto: false
+    gate: GATE-02
+    upgrade: 人工复核确认关键证据可靠，或反证项<2项
+  L4:
+    name: 司法报案
+    auto: false
+    gate: GATE-03
+    upgrade: 涉及刑事犯罪特征（如伪造证件、组织化黑产），或金额达到司法立案标准
+related_patterns:
+- pattern_id: EC-FAKE-002
+  relation: 常伴随触发
+  reason: 团伙作案通常使用空包降低成本
+- pattern_id: EC-ARBI-003
+  relation: 常伴随触发
+  reason: 团伙作案常伴随补贴套利
+upstream_dependencies:
+- 设备指纹库
+- IP画像库
+- 黑产情报库
