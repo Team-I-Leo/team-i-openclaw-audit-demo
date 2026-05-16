@@ -2,21 +2,72 @@ pattern_id: EC-FAKE-002
 pattern_name: Fake logistics and artificial GMV inflation
 version: v1.5
 status: active
+scenario_description: 商家为了提升商品搜索排名和销量权重，雇佣刷手批量下单，但发送空包裹或虚假物流单号以节省真实发货成本。典型链路：商家发布商品→刷手批量下单付款→商家上传虚假物流单号或发送空包（内装废纸/沙子）→系统显示已发货/已签收→刷手确认收货并好评→商家获得销量数据和好评权重。
+key_characteristics:
+- 有订单、有物流记录、无真实商品流转
+- 空包成本（0.5-2元/单）远低于真实发货成本（5-20元/单）
+- 空包来源：虚假单号生成器、勾结快递网点获取真实单号但不发货、使用最低档快递服务发送空信封
+motivation_quantification:
+  search_rank_value: 每提升1位约新增GMV 500-2000元/天（取决于品类）
+  brushing_cost_compare: 真实发货15元/单 vs 空包1元/单，成本差14元
+  roi_example: 若刷单100单，节省成本1400元，获得销量权重+好评，ROI极高
+risk_assertion_template: In {business_window}, merchant {merchant_id} and its associated
+  order group show abnormal logistics trajectory rate. The merchant may be conducting
+  fake logistics transactions to inflate GMV.
 trigger_rules:
-  - T1_new_merchant_spike
-  - T2_low_quality_logistics
-  - T3_review_template_similarity
+- rule_id: T1
+  rule_name: 物流轨迹异常
+  timing: 实时/准实时
+  time_window: 7天
+  order_threshold: '>=50单'
+  conditions:
+  - '物流轨迹异常率: >=60%（无揽收/无中转/签收时效<2小时）'
+  confidence: 高
+- rule_id: T2
+  rule_name: 签收后用户行为异常
+  timing: 离线聚合
+  time_window: 7天
+  conditions:
+  - '自动确认收货率: >=80%'
+  - '签收后24h内退款率: >=50%'
+  confidence: 中
 required_support_evidence:
-  - merchant_order_spike
-  - logistics_authenticity
-  - comment_similarity
-  - refund_after_confirm
+- EVD-LOG-轨迹异常率
+- EVD-LOG-平均签收时效
+- EVD-UBH-自动确认收货率
+- EVD-UBH-签收后24h退款率
+- EVD-CMT-好评率
 counter_evidence_checks:
-  - same_city_warehouse_delivery
-  - virtual_goods
-  - delayed_confirm_requested_by_user
+- id: CTR-008
+  name: 同城仓发货
+  method: 检查发货地是否为平台前置仓
+  status: 发货地为商家自有仓库，非平台仓
+- id: CTR-009
+  name: 虚拟商品
+  method: 检查商品类目
+  status: 类目为实物商品（手机壳），非虚拟
+- id: CTR-010
+  name: 消费者主动延迟确认
+  method: 检查延长收货记录
+  status: 0单延长收货，排除
 recommended_actions:
-  - query_logistics_trace
-  - compare_promo_cohort
-  - seek_counter_evidence
-
+- action_id: ACT-SYS-06
+  name: 物流单号批量调用快递公司API核验
+- action_id: ACT-SYS-07
+  name: 签收地址与物流轨迹终点地理距离计算
+- action_id: ACT-MAN-06
+  name: 空包订单收货人电话抽样回访
+human_gates:
+- gate_id: GATE-01
+  name: 初筛（所有触发）
+- gate_id: GATE-02
+  name: 物流核验结果复核（触发器1置信度高时）
+- gate_id: GATE-03
+  name: 商家清退决策（建议L4处置时）
+related_patterns:
+- pattern_id: EC-SKIM-001
+  relation: 下游可能触发
+  reason: 空包订单的买家可能属于团伙
+upstream_dependencies:
+- 物流轨迹核验服务
+- 快递公司API

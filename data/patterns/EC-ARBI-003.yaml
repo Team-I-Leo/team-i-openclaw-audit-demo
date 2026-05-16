@@ -2,21 +2,79 @@ pattern_id: EC-ARBI-003
 pattern_name: Subsidy arbitrage with fast refund loop
 version: v1.2
 status: active
+scenario_description: 商家与刷手利用平台补贴规则的时间差和状态不同步，完成"下单-补贴到账-快速退款-补贴不退回"的套利闭环。典型链路：平台发放新人券（满100减50）→刷手注册新账号领取→下单高单价商品（价格精准匹配券门槛）→商家发货空包→补贴（50元）到账至商家/刷手账户→刷手以"不想要了"申请退款→商品款退回，但补贴不退回→商家与刷手瓜分补贴。
+key_characteristics:
+- 补贴发放与退款状态不同步
+- 平台补贴通常在订单完成（确认收货）后发放
+- 退款规则允许7天内无理由退款，且退款只退商品款，不退补贴
+- 时间差：确认收货（T+3至T+7天）→补贴到账→退款申请（补贴到账后24小时内）
+motivation_quantification:
+  single_account_arbitrage: 50-100元（取决于补贴力度）
+  daily_capacity: 注册+下单+退款流程约30分钟/账号，单人日操作10-15账号
+  daily_revenue: 10账号 × 70元（平均补贴）= 700元/天
+  monthly_revenue: 700 × 26天 = 18,200元/人（远超当地平均工资）
+risk_assertion_template: In {business_window}, account {account_id} or account group
+  {group_id} shows 100% subsidy usage rate, 100% refund rate, and abnormally fast
+  refund timing. The account may be conducting subsidy arbitrage.
 trigger_rules:
-  - T1_newbie_coupon_threshold
-  - T2_fast_refund_after_subsidy
-  - T3_payment_path_cluster
+- rule_id: T1
+  rule_name: 单账号套利检测
+  timing: 实时/准实时
+  time_window: 30天
+  order_threshold: '>=3单'
+  conditions:
+  - '补贴使用率: 100%'
+  - '退款率: >=80%'
+  - '平均退款时效: <=24小时'
+  - '补贴未追回率: 100%'
+  confidence: 高
+- rule_id: T2
+  rule_name: 团伙套利检测
+  timing: 离线聚合
+  time_window: 7天
+  group_size: '>=3'
+  conditions:
+  - '共享支付账户: 是'
+  - '团伙补贴总金额: >=500元'
+  confidence: 高
 required_support_evidence:
-  - coupon_threshold_match
-  - refund_abnormal
-  - payment_cluster
-  - subsidy_recall_gap
+- EVD-SUB-补贴使用率
+- EVD-SUB-补贴未追回率
+- EVD-RFD-退款率
+- EVD-RFD-退款时效
+- EVD-RFD-退款理由
+- EVD-ORD-订单金额
 counter_evidence_checks:
-  - product_quality_issue
-  - normal_after_sales_policy
-  - platform_rule_allowed_refund
+- id: CTR-011
+  name: 商品质量问题
+  method: 检查退款理由是否有具体质量问题描述
+  status: 退款理由均为"不想要了"，无具体描述
+- id: CTR-012
+  name: 正常售后
+  method: 检查是否有浏览/对比行为，是否属于冲动消费后悔
+  status: 3单均无浏览记录，直接下单，排除正常售后
+- id: CTR-013
+  name: 补贴规则允许
+  method: 检查平台规则是否明确"退款后补贴不退回"
+  status: 规则明确不退回，但结合其他异常构成套利
 recommended_actions:
-  - query_refund_cluster
-  - query_payment_cluster
-  - seek_counter_evidence
-
+- action_id: ACT-SYS-08
+  name: 补贴到账与退款状态的时间差计算
+- action_id: ACT-SYS-09
+  name: 退款资金流向追踪（是否回流至同一账户）
+- action_id: ACT-MAN-07
+  name: 退款理由人工复核（区分真实售后与模板理由）
+human_gates:
+- gate_id: GATE-01
+  name: 初筛（所有触发）
+- gate_id: GATE-02
+  name: 资金路径复核（涉及金额>=1000元）
+- gate_id: GATE-03
+  name: 处置决策（建议追缴资金时）
+related_patterns:
+- pattern_id: EC-SKIM-001
+  relation: 常伴随触发
+  reason: 套利常由团伙规模化操作
+upstream_dependencies:
+- 补贴规则引擎
+- 资金流转监测系统
