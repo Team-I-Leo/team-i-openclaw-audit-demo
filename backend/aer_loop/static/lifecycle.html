@@ -1,0 +1,1000 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Team-I 订单生命周期主动追证演示</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f5ee;
+      --paper-2: #fffdf8;
+      --ink: #18212b;
+      --muted: #65717f;
+      --line: #d9dfdf;
+      --line-strong: #b8c6c1;
+      --green: #1ba77d;
+      --green-2: #dff5ec;
+      --blue: #3867d6;
+      --blue-2: #e5ecff;
+      --amber: #c98518;
+      --amber-2: #fff1d6;
+      --red: #c94b55;
+      --red-2: #ffe6e8;
+      --violet: #7254bd;
+      --violet-2: #eee8ff;
+      --shadow: 0 22px 70px rgba(32, 46, 58, .13);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font: 15px/1.55 "Inter", "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, Segoe UI, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 10%, rgba(56, 103, 214, .12), transparent 30%),
+        radial-gradient(circle at 82% 4%, rgba(27, 167, 125, .16), transparent 28%),
+        linear-gradient(180deg, #fbf8ef 0%, #f3f4ef 46%, #f8f5ee 100%);
+      min-height: 100vh;
+    }
+
+    button, a { font: inherit; }
+    button {
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: var(--paper-2);
+      color: var(--ink);
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    button:hover { transform: translateY(-1px); box-shadow: 0 10px 25px rgba(32, 46, 58, .12); border-color: var(--green); }
+    .primary {
+      border-color: transparent;
+      color: white;
+      background: linear-gradient(135deg, #18212b, #194b3e);
+      box-shadow: 0 14px 38px rgba(25, 75, 62, .24);
+    }
+    .blue {
+      border-color: transparent;
+      color: white;
+      background: linear-gradient(135deg, #3867d6, #13a38a);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 22px;
+      align-items: center;
+      padding: 14px 28px;
+      border-bottom: 1px solid rgba(24, 33, 43, .08);
+      background: rgba(255, 253, 248, .86);
+      backdrop-filter: blur(18px);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 950;
+      color: #111827;
+      background: linear-gradient(135deg, #ffe49a, #7de5c0);
+      border: 1px solid rgba(24, 33, 43, .12);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .38);
+    }
+    .brand-title { font-weight: 950; font-size: 18px; line-height: 1.15; }
+    .brand-sub { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      min-width: 0;
+      overflow: auto;
+      scrollbar-width: none;
+    }
+    .nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      padding: 8px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+    .nav a.active { color: #0f5f49; background: var(--green-2); border-color: rgba(27, 167, 125, .22); }
+    .top-actions { display: flex; gap: 10px; align-items: center; }
+
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(440px, .98fr);
+      gap: 34px;
+      padding: 58px 6vw 34px;
+      align-items: center;
+    }
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(44px, 5.6vw, 88px);
+      line-height: .97;
+      letter-spacing: -0.04em;
+      max-width: 900px;
+    }
+    .hero h1 span { color: #0f8c68; }
+    .hero-copy {
+      margin: 26px 0 0;
+      max-width: 720px;
+      font-size: 19px;
+      color: #4c5965;
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+    .hero-metrics {
+      margin-top: 34px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(110px, 1fr));
+      gap: 12px;
+      max-width: 760px;
+    }
+    .metric {
+      padding: 14px;
+      border: 1px solid rgba(24, 33, 43, .10);
+      border-radius: 16px;
+      background: rgba(255, 253, 248, .78);
+    }
+    .metric b { display: block; font-size: 24px; line-height: 1; }
+    .metric span { display: block; margin-top: 7px; color: var(--muted); font-size: 12px; font-weight: 800; }
+
+    .case-console {
+      border: 1px solid rgba(24, 33, 43, .10);
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,250,239,.86));
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      min-height: 610px;
+      position: relative;
+      overflow: hidden;
+    }
+    .case-console::before {
+      content: "";
+      position: absolute;
+      inset: -20% -10% auto;
+      height: 280px;
+      background: radial-gradient(circle, rgba(27, 167, 125, .18), transparent 65%);
+      pointer-events: none;
+    }
+    .console-head {
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(24, 33, 43, .10);
+    }
+    .console-head h2 { margin: 0; font-size: 28px; line-height: 1.05; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: var(--red-2);
+      color: #9e2d39;
+      font-size: 12px;
+      font-weight: 950;
+      white-space: nowrap;
+    }
+    .flow-card {
+      position: relative;
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+    .flow-row {
+      display: grid;
+      grid-template-columns: 46px 1fr auto;
+      gap: 13px;
+      align-items: center;
+      padding: 13px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .72);
+      border: 1px solid rgba(24, 33, 43, .08);
+    }
+    .flow-row .num {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-weight: 950;
+      background: #18212b;
+      color: #fff;
+    }
+    .flow-row h3 { margin: 0; font-size: 16px; }
+    .flow-row p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+    .flow-row strong { color: #0f8c68; }
+    .pulse {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 8px rgba(27, 167, 125, .12), 0 0 22px rgba(27, 167, 125, .45);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 26px;
+      padding: 0 6vw 80px;
+      align-items: start;
+    }
+    .side-rail {
+      position: sticky;
+      top: 92px;
+      border: 1px solid rgba(24, 33, 43, .10);
+      background: rgba(255, 253, 248, .84);
+      border-radius: 22px;
+      box-shadow: 0 14px 42px rgba(32, 46, 58, .08);
+      padding: 16px;
+    }
+    .side-rail h3 { margin: 0 0 12px; font-size: 14px; }
+    .rail-step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      text-decoration: none;
+      color: var(--muted);
+      padding: 10px 8px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+    }
+    .rail-step i {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-style: normal;
+      background: #edf1ef;
+      color: #344151;
+      font-weight: 950;
+      font-size: 12px;
+    }
+    .rail-step.active {
+      color: #0d5744;
+      background: var(--green-2);
+      border-color: rgba(27, 167, 125, .22);
+    }
+    .rail-step.active i { color: white; background: var(--green); }
+
+    .stage {
+      min-height: 72vh;
+      scroll-margin-top: 92px;
+      border-top: 1px solid rgba(24, 33, 43, .10);
+      padding: 58px 0;
+    }
+    .stage-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .9fr) minmax(500px, 1.1fr);
+      gap: 24px;
+      align-items: start;
+    }
+    .stage-copy {
+      padding: 4px 10px;
+    }
+    .stage-index {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: #18212b;
+      color: #fff;
+      font-weight: 950;
+      margin-bottom: 18px;
+    }
+    .stage h2 {
+      margin: 0;
+      font-size: clamp(32px, 3.7vw, 58px);
+      line-height: 1;
+      letter-spacing: -0.035em;
+    }
+    .stage .lead {
+      margin: 18px 0 0;
+      color: #4f5c68;
+      font-size: 18px;
+      max-width: 660px;
+    }
+    .output-list {
+      margin-top: 26px;
+      display: grid;
+      gap: 10px;
+    }
+    .output-list div {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #344151;
+      font-weight: 800;
+    }
+    .check {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--green-2);
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 950;
+    }
+
+    .artifact {
+      border: 1px solid rgba(24, 33, 43, .10);
+      background: rgba(255, 253, 248, .86);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .artifact-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .artifact-head h3 { margin: 0; font-size: 18px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #eef2f1;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .tag.green { color: #0e6e54; background: var(--green-2); }
+    .tag.blue { color: #244ca5; background: var(--blue-2); }
+    .tag.red { color: #9f2e39; background: var(--red-2); }
+    .tag.amber { color: #8c5b0f; background: var(--amber-2); }
+    .tag.violet { color: #563a9a; background: var(--violet-2); }
+
+    .grid { display: grid; gap: 12px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .mini-card {
+      border: 1px solid rgba(24, 33, 43, .08);
+      background: rgba(255, 255, 255, .66);
+      border-radius: 15px;
+      padding: 13px;
+      min-width: 0;
+    }
+    .mini-card b { display: block; font-size: 18px; line-height: 1.1; }
+    .mini-card span, .mini-card p { color: var(--muted); margin: 6px 0 0; font-size: 13px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; }
+    .nowrap { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .meter {
+      height: 10px;
+      border-radius: 999px;
+      background: #e9ece8;
+      overflow: hidden;
+      margin-top: 9px;
+    }
+    .meter span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #19b489, #3867d6); }
+    .signal-cloud { display: flex; gap: 8px; flex-wrap: wrap; }
+    .signal-cloud .tag { font-size: 13px; padding: 7px 10px; }
+
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 15px;
+      border: 1px solid rgba(24, 33, 43, .08);
+      background: rgba(255,255,255,.62);
+    }
+    .order-table th, .order-table td {
+      text-align: left;
+      padding: 11px 12px;
+      border-bottom: 1px solid rgba(24, 33, 43, .07);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    .order-table th { color: #4f5c68; font-size: 12px; background: rgba(238, 242, 241, .72); }
+    .order-table tr:last-child td { border-bottom: 0; }
+
+    .graph-box {
+      height: 430px;
+      border-radius: 18px;
+      border: 1px solid rgba(24,33,43,.08);
+      background:
+        linear-gradient(rgba(27,167,125,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,103,214,.08) 1px, transparent 1px),
+        #fbfdfb;
+      background-size: 34px 34px;
+      overflow: hidden;
+    }
+    .graph-svg { width: 100%; height: 100%; display: block; }
+    .edge { stroke: rgba(56,103,214,.24); stroke-width: 1.8; }
+    .node-label { fill: #344151; font-size: 11px; font-weight: 800; }
+
+    .timeline { display: grid; gap: 12px; }
+    .thread {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 12px;
+      border-radius: 15px;
+      border: 1px solid rgba(24,33,43,.08);
+      background: rgba(255,255,255,.65);
+    }
+    .thread-num {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      background: #18212b;
+      color: white;
+      font-weight: 950;
+    }
+    .thread h4 { margin: 0; font-size: 15px; }
+    .thread p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .thread .delta { margin-top: 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .passport-card {
+      border: 1px solid rgba(24,33,43,.10);
+      background: linear-gradient(145deg, #fffdf8, #f7f4e8);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.6);
+    }
+    .passport-card h3 { margin: 0; font-size: 30px; }
+    .passport-stamp {
+      margin-top: 16px;
+      display: inline-flex;
+      padding: 8px 13px;
+      color: #0f6b51;
+      border: 2px solid rgba(27,167,125,.45);
+      border-radius: 10px;
+      font-weight: 950;
+      transform: rotate(-3deg);
+      background: rgba(223,245,236,.58);
+    }
+    .quote {
+      margin: 16px 0 0;
+      color: #4e5966;
+      border-left: 4px solid var(--green);
+      padding-left: 14px;
+      font-size: 15px;
+    }
+    .final-panel {
+      min-height: 66vh;
+      display: grid;
+      place-items: center;
+      padding: 80px 6vw;
+      background: linear-gradient(135deg, #16222d, #123f37);
+      color: white;
+    }
+    .final-card {
+      width: min(1120px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(420px, 1.05fr);
+      gap: 24px;
+      align-items: center;
+      border-radius: 28px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.16);
+      padding: 28px;
+      box-shadow: 0 34px 90px rgba(0,0,0,.26);
+    }
+    .final-card h2 { margin: 0; font-size: clamp(34px, 4vw, 62px); line-height: 1; letter-spacing: -0.035em; }
+    .final-card p { color: rgba(255,255,255,.78); font-size: 18px; }
+    .dashboard-preview {
+      min-height: 310px;
+      border-radius: 20px;
+      background: #061019;
+      border: 1px solid rgba(255,255,255,.14);
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+      box-shadow: inset 0 0 0 1px rgba(34,231,202,.08);
+    }
+    .dash-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .dash-cell {
+      border-radius: 12px;
+      background: rgba(34,231,202,.08);
+      border: 1px solid rgba(34,231,202,.14);
+      padding: 12px;
+      min-height: 74px;
+    }
+    .dash-cell b { display: block; color: #9ffce6; font-size: 22px; }
+    .dash-cell span { color: #aabcca; font-size: 12px; }
+
+    .loading, .error {
+      min-height: 62vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 60px;
+      color: var(--muted);
+    }
+    .error b { color: var(--red); display: block; margin-bottom: 8px; }
+
+    @media (max-width: 1100px) {
+      .topbar { grid-template-columns: 1fr; }
+      .nav { justify-content: flex-start; }
+      .hero, .stage-grid, .final-card { grid-template-columns: 1fr; }
+      .layout { grid-template-columns: 1fr; }
+      .side-rail { position: static; }
+      .case-console { min-height: auto; }
+    }
+    @media (max-width: 720px) {
+      .hero { padding: 34px 18px; }
+      .layout { padding: 0 18px 50px; }
+      .stage { padding: 40px 0; }
+      .hero-metrics, .grid.two, .grid.three, .dash-row { grid-template-columns: 1fr; }
+      .top-actions { flex-wrap: wrap; }
+      .stage-grid { gap: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">T-I</div>
+      <div>
+        <div class="brand-title">Team-I 主动追证订单生命周期</div>
+        <div class="brand-sub">让 AER-001 从一笔风险订单，走完整个可追证、可复核、可沉淀的风控流程</div>
+      </div>
+    </div>
+    <nav class="nav" id="topNav"></nav>
+    <div class="top-actions">
+      <button onclick="playStory()">播放流程</button>
+      <button class="primary" onclick="openDashboard()">进入风险看板</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <div class="loading">
+      <div>
+        <h2>正在读取 AER-001 后端运行结果</h2>
+        <p>加载案件、证据图谱、Agent 轨迹、证据护照与模式写回数据。</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const actionNames = {
+      expand_infra_graph: '关系图谱扩展',
+      query_refund_cluster: '退款簇查询',
+      query_subsidy_ledger: '补贴台账核验',
+      query_payment_cluster: '支付簇查询',
+      query_logistics_trace: '物流真实性核验',
+      compare_promo_cohort: '促销 cohort 对照',
+      analyze_behavior_sequence: '行为序列分析',
+      search_historical_cases: '历史案例检索',
+      seek_counter_evidence: '反证检索',
+      emit_passport: '证据护照生成',
+      request_human_review: '人工复核门禁'
+    };
+
+    const dimensionNames = {
+      device_reuse: '设备复用',
+      ip_cluster: 'IP 聚集',
+      payment_cluster: '支付集中',
+      refund_abnormal: '退款异常',
+      logistics_authenticity: '物流真实性',
+      promo_cohort_outlier: '促销 cohort 异常',
+      subsidy_abuse: '补贴滥用',
+      review_similarity: '评论相似',
+      behavior_automation: '行为自动化',
+      historical_pattern_match: '历史模式匹配',
+      external_feature_anomaly: '外部特征异常',
+      counter_evidence: '反证检查'
+    };
+
+    const state = { data: null, activeId: 'order_ingress', playing: false };
+
+    const fmt = (value, digits = 2) => {
+      const n = Number(value);
+      if (!Number.isFinite(n)) return '--';
+      return n.toFixed(digits).replace(/\.?0+$/, '');
+    };
+    const pct = (value) => `${Math.round(Number(value || 0) * 100)}%`;
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const list = (items, limit = 5) => (items || []).slice(0, limit).map(x => `<span class="tag">${esc(x)}</span>`).join('');
+    const dim = (name) => dimensionNames[name] || name;
+    const action = (name) => actionNames[name] || name;
+
+    async function load() {
+      try {
+        const response = await fetch('/api/demo/order-lifecycle/AER-001');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        state.data = await response.json();
+        render();
+        setupObserver();
+      } catch (err) {
+        document.getElementById('app').innerHTML = `<div class="error"><div><b>订单生命周期数据加载失败</b><span>${esc(err.message || err)}</span><p>请先启动 FastAPI 服务，并确认 runtime SQLite 演示库可读取。</p></div></div>`;
+      }
+    }
+
+    function render() {
+      const d = state.data;
+      document.getElementById('topNav').innerHTML = d.events.map((event, idx) => `<a href="#${event.id}" data-nav="${event.id}">${idx + 1}. ${esc(event.title)}</a>`).join('');
+      document.getElementById('app').innerHTML = `
+        ${renderHero(d)}
+        <div class="layout">
+          <aside class="side-rail">
+            <h3>订单生命周期</h3>
+            ${d.events.map((event, idx) => `
+              <a class="rail-step" href="#${event.id}" data-nav="${event.id}">
+                <i>${idx + 1}</i>
+                <span>${esc(event.title)}</span>
+              </a>
+            `).join('')}
+          </aside>
+          <section>
+            ${d.events.map((event, idx) => renderStage(event, idx, d)).join('')}
+          </section>
+        </div>
+        ${renderFinal(d)}
+      `;
+      updateActiveNav();
+    }
+
+    function renderHero(d) {
+      const c = d.case;
+      const orders = c.primary_entities?.orders?.length || 0;
+      const evidence = c.evidence?.length || 0;
+      const thread = c.thread?.length || 0;
+      const modelCalls = (d.model_invocations || []).reduce((sum, x) => sum + Number(x.count || 0), 0);
+      return `
+        <section class="hero">
+          <div>
+            <h1>一笔高风险订单，<span>如何被追证到底</span></h1>
+            <p class="hero-copy">
+              这不是静态看板。AER-001 从订单流进入系统后，会经过多源异构融合、风险信号发现、模式库匹配、Agent 主动追证、OpenCLAW 受控动作、证据护照和记忆沉淀，最终落到可操作的风控看板。
+            </p>
+            <div class="hero-actions">
+              <button class="primary" onclick="playStory()">播放订单流程</button>
+              <button onclick="document.getElementById('order_ingress').scrollIntoView()">逐段查看中间产物</button>
+              <button class="blue" onclick="openDashboard()">打开真实风险看板</button>
+            </div>
+            <div class="hero-metrics">
+              <div class="metric"><b>${orders}</b><span>关联订单</span></div>
+              <div class="metric"><b>${evidence}</b><span>证据条目</span></div>
+              <div class="metric"><b>${thread}</b><span>追证动作</span></div>
+              <div class="metric"><b>${modelCalls}</b><span>模型调用</span></div>
+            </div>
+          </div>
+          <div class="case-console">
+            <div class="console-head">
+              <div>
+                <h2>${esc(c.case_id)} · ${esc(c.pattern_id)}</h2>
+                <p class="muted">${esc(c.pattern_name)}</p>
+              </div>
+              <span class="badge">${esc(c.risk_level)} · ${pct(c.risk_score)}</span>
+            </div>
+            <div class="flow-card">
+              ${d.events.map((event, idx) => `
+                <div class="flow-row">
+                  <div class="num">${idx + 1}</div>
+                  <div>
+                    <h3>${esc(event.title)}</h3>
+                    <p>${esc(event.summary)}</p>
+                  </div>
+                  <div class="pulse"></div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderStage(event, idx, d) {
+      const artifact = ({
+        order_ingress: renderOrderIngress,
+        multi_source_fusion: renderFusion,
+        risk_signal: renderRiskSignal,
+        pattern_match: renderPatternMatch,
+        active_retrieval: renderActiveRetrieval,
+        passport: renderPassport,
+        memory_writeback: renderMemory
+      }[event.id] || (() => ''))(d);
+      return `
+        <article class="stage" id="${event.id}" data-stage="${event.id}">
+          <div class="stage-grid">
+            <div class="stage-copy">
+              <div class="stage-index">Step ${idx + 1}</div>
+              <h2>${esc(event.title)}</h2>
+              <p class="lead">${esc(event.summary)}</p>
+              <div class="output-list">
+                ${(event.outputs || []).map(x => `<div><span class="check">✓</span>${esc(x)}</div>`).join('')}
+              </div>
+            </div>
+            <div class="artifact">${artifact}</div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderOrderIngress(d) {
+      const c = d.case;
+      const entities = c.primary_entities || {};
+      const samples = d.order_samples || [];
+      return `
+        <div class="artifact-head"><h3>订单与关联实体进入系统</h3><span class="tag red">${esc(c.status)}</span></div>
+        <div class="grid three">
+          <div class="mini-card"><b>${entities.orders?.length || 0}</b><span>订单</span></div>
+          <div class="mini-card"><b>${entities.users?.length || 0}</b><span>用户账号</span></div>
+          <div class="mini-card"><b>${entities.devices?.length || 0}</b><span>设备指纹</span></div>
+          <div class="mini-card"><b>${entities.ips?.length || 0}</b><span>IP 地址</span></div>
+          <div class="mini-card"><b>${entities.payment_accounts?.length || 0}</b><span>支付账户</span></div>
+          <div class="mini-card"><b>${entities.merchants?.join(', ') || '--'}</b><span>商户</span></div>
+        </div>
+        <table class="order-table" style="margin-top:14px">
+          <thead><tr><th>订单</th><th>用户</th><th>金额</th><th>支付</th><th>退款</th><th>物流</th></tr></thead>
+          <tbody>
+            ${samples.slice(0, 5).map(row => `
+              <tr>
+                <td class="mono">${esc(row.order_id)}</td>
+                <td class="mono">${esc(row.user_id)}</td>
+                <td>¥${fmt(row.pay_amount, 2)}</td>
+                <td class="mono">${esc(row.payment?.payment_account_hash || '--')}</td>
+                <td>${row.refund?.refund_id ? '已退款' : '无退款'}</td>
+                <td>${esc(row.logistics?.carrier || '--')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderFusion(d) {
+      const tables = d.source_tables || [];
+      return `
+        <div class="artifact-head"><h3>证据图谱实时构建</h3><span class="tag blue">${d.graph.nodes?.length || 0} 节点 / ${d.graph.edges?.length || 0} 边</span></div>
+        <div class="graph-box">${graphSvg(d.graph)}</div>
+        <div class="grid three" style="margin-top:14px">
+          ${tables.slice(0, 9).map(t => `<div class="mini-card"><b>${esc(t.source_table)}</b><span>${esc(t.entity_type)} · ${t.count} 行</span></div>`).join('')}
+        </div>
+      `;
+    }
+
+    function renderRiskSignal(d) {
+      const c = d.case;
+      const scores = c.scores || {};
+      const signals = Object.entries(c.signal_strength || {});
+      return `
+        <div class="artifact-head"><h3>从异常组合到风险画像</h3><span class="tag red">risk score ${fmt(c.risk_score, 2)}</span></div>
+        <div class="grid two">
+          <div class="mini-card"><b>${fmt(scores.device_reuse, 1)}x</b><span>设备复用强度</span><div class="meter"><span style="width:96%"></span></div></div>
+          <div class="mini-card"><b>${pct(scores.refund_rate)}</b><span>退款率</span><div class="meter"><span style="width:${Math.min(100, Number(scores.refund_rate || 0) * 100)}%"></span></div></div>
+          <div class="mini-card"><b>${fmt(scores.payment_reuse, 1)}x</b><span>支付账户集中</span><div class="meter"><span style="width:90%"></span></div></div>
+          <div class="mini-card"><b>${pct(scores.ieee_fraud_rate)}</b><span>外部特征异常</span><div class="meter"><span style="width:${Math.min(100, Number(scores.ieee_fraud_rate || 0) * 100)}%"></span></div></div>
+        </div>
+        <div class="signal-cloud" style="margin-top:16px">
+          ${signals.map(([name, level]) => `<span class="tag ${level === 'strong' ? 'green' : 'amber'}">${esc(dim(name))} · ${esc(level)}</span>`).join('')}
+        </div>
+        <p class="quote">${esc(c.assertion)}</p>
+      `;
+    }
+
+    function renderPatternMatch(d) {
+      const c = d.case;
+      const req = Object.entries(c.evidence_requirements || {});
+      const candidates = d.candidate_patterns || [];
+      return `
+        <div class="artifact-head"><h3>风险模式库命中</h3><span class="tag violet">${esc(c.pattern_id)}</span></div>
+        <div class="mini-card">
+          <b>${esc(c.pattern_name)}</b>
+          <p>系统将当前订单簇与模式库和案例记忆比对，确认这是共享基础设施刷单骗补路径，而不是单笔交易异常。</p>
+        </div>
+        <div class="grid three" style="margin-top:14px">
+          ${req.map(([name, weight]) => `<div class="mini-card"><b>${esc(dim(name))}</b><span>required weight ${fmt(weight, 2)}</span><div class="meter"><span style="width:${Math.round(Number(weight) * 520)}%"></span></div></div>`).join('')}
+        </div>
+        <div class="signal-cloud" style="margin-top:14px">
+          ${candidates.map(x => `<span class="tag amber">候选模式 ${esc(x.candidate_id)} · ${esc(x.status)}</span>`).join('')}
+        </div>
+      `;
+    }
+
+    function renderActiveRetrieval(d) {
+      const threads = d.case.thread || [];
+      const route = d.route.ranked_actions || [];
+      const modelCalls = d.model_invocations || [];
+      return `
+        <div class="artifact-head"><h3>Agent 选择下一步受控动作</h3><span class="tag green">${threads.length} 步轨迹</span></div>
+        <div class="grid two">
+          <div>
+            <div class="timeline">
+              ${threads.slice(0, 8).map(t => `
+                <div class="thread">
+                  <div class="thread-num">${t.thread_step}</div>
+                  <div>
+                    <h4>${esc(action(t.action_taken))} <span class="tag blue">${esc(t.agent_id)}</span></h4>
+                    <p>${esc(t.observation_summary || t.model_reasoning || '')}</p>
+                    <div class="delta">${(t.support_evidence_delta || []).map(x => `<span class="tag green">${esc(x)}</span>`).join('')}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <div class="grid">
+            <div class="mini-card"><b>Action Ranking</b><span>按证据缺口、成本、治理风险和 learned policy 排序</span></div>
+            ${route.slice(0, 5).map(r => `<div class="mini-card"><b>${esc(action(r.action))}</b><span>utility ${fmt(r.action_utility, 3)} · gain ${fmt(r.expected_evidence_gain, 2)}</span><div class="meter"><span style="width:${Math.max(8, Math.min(100, (Number(r.action_utility || 0) + .2) * 160))}%"></span></div></div>`).join('')}
+            <div class="mini-card"><b>${modelCalls.reduce((sum, x) => sum + Number(x.count || 0), 0)}</b><span>模型调用，fallback=${modelCalls.reduce((sum, x) => sum + (Number(x.used_fallback || 0) ? Number(x.count || 0) : 0), 0)}</span></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPassport(d) {
+      const p = d.passport || {};
+      const cov = d.route.coverage || {};
+      const support = d.case.evidence.filter(e => e.kind === 'support');
+      const counter = d.case.evidence.filter(e => e.kind !== 'support');
+      return `
+        <div class="artifact-head"><h3>证据护照生成</h3><span class="tag green">${cov.passport_ready ? '可复核' : '待补证'}</span></div>
+        <div class="grid two">
+          <div class="passport-card">
+            <h3>${esc(d.case.case_id)}</h3>
+            <div class="passport-stamp">Evidence Passport · ${pct(cov.sufficiency_score)}</div>
+            <p class="quote">${esc(p.model_narrative || d.case.assertion)}</p>
+          </div>
+          <div class="grid">
+            <div class="mini-card"><b>${support.length}</b><span>支持证据</span></div>
+            <div class="mini-card"><b>${counter.length}</b><span>反证与不确定性</span></div>
+            <div class="mini-card"><b>${pct(cov.counter_score)}</b><span>反证覆盖</span></div>
+            <div class="mini-card"><b>人工门禁</b><span>${esc(p.human_gate?.reason || '高风险案件必须人工复核后处置')}</span></div>
+          </div>
+        </div>
+        <div class="signal-cloud" style="margin-top:14px">
+          ${(p.recommended_action || []).map(x => `<span class="tag blue">${esc(x)}</span>`).join('')}
+        </div>
+      `;
+    }
+
+    function renderMemory(d) {
+      const candidates = d.candidate_patterns || [];
+      const policy = d.policy_weights || [];
+      const memory = d.case_memory || [];
+      const reviews = d.human_reviews || [];
+      return `
+        <div class="artifact-head"><h3>复核结果进入可复用资产</h3><span class="tag green">持续学习</span></div>
+        <div class="grid three">
+          <div class="mini-card"><b>risk_pattern</b><span>${candidates.length ? `${candidates[0].candidate_id} · ${candidates[0].status}` : '等待候选模式审核'}</span></div>
+          <div class="mini-card"><b>case_memory</b><span>${memory.length} 条历史案例记忆</span></div>
+          <div class="mini-card"><b>policy_action_weight</b><span>${policy.length} 条动作权重</span></div>
+        </div>
+        <div class="grid two" style="margin-top:14px">
+          <div class="mini-card">
+            <b>人工复核记录</b>
+            <p>${reviews.length ? reviews.map(r => `${r.reviewer || 'reviewer'}: ${r.decision}`).join('；') : '当前演示库保留人工门禁，等待业务人员复核。'}</p>
+          </div>
+          <div class="mini-card">
+            <b>下次类似案件优先触发</b>
+            <p>支付簇、物流真实性、反证检索、补贴台账和历史案例检索会被写入路由先验，缩短下一轮调查路径。</p>
+          </div>
+        </div>
+        <div class="signal-cloud" style="margin-top:14px">
+          ${policy.slice(0, 8).map(w => `<span class="tag violet">${esc(action(w.action_name))} +${fmt(w.weight_delta, 3)}</span>`).join('') || '<span class="tag">尚无已审核权重</span>'}
+        </div>
+      `;
+    }
+
+    function renderFinal(d) {
+      const c = d.case;
+      return `
+        <section class="final-panel">
+          <div class="final-card">
+            <div>
+              <h2>技术流程结束，切回真实风控工作台</h2>
+              <p>前面的页面解释了 AER-001 每一步怎么被追证；风险看板则承接真实业务使用：待处理队列、案件详情、Agent 轨迹、证据护照、人工复核和模式学习写回。</p>
+              <div class="hero-actions">
+                <button class="blue" onclick="openDashboard()">进入风险看板 Demo</button>
+                <button onclick="window.scrollTo({top:0, behavior:'smooth'})">回到开头</button>
+              </div>
+            </div>
+            <div class="dashboard-preview">
+              <div class="dash-row">
+                <div class="dash-cell"><b>${esc(c.case_id)}</b><span>当前案件</span></div>
+                <div class="dash-cell"><b>${pct(c.risk_score)}</b><span>风险分</span></div>
+                <div class="dash-cell"><b>${d.case.evidence.length}</b><span>证据条目</span></div>
+              </div>
+              <div class="dash-row">
+                <div class="dash-cell"><b>${d.case.thread.length}</b><span>追证动作</span></div>
+                <div class="dash-cell"><b>${d.route.coverage.passport_ready ? '可复核' : '待补证'}</b><span>护照状态</span></div>
+                <div class="dash-cell"><b>${esc(c.pattern_id)}</b><span>风险模式</span></div>
+              </div>
+              <div class="dash-cell"><b>风控处置 → 证据材料 → 复核留痕 → 记忆沉淀</b><span>同一套后端结果支撑展示页与风险看板</span></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function graphSvg(graph) {
+      const nodes = (graph.nodes || []).slice(0, 48);
+      const edges = (graph.edges || []).slice(0, 80);
+      if (!nodes.length) return '<div class="loading">暂无图谱节点</div>';
+      const cx = 410, cy = 212;
+      const pos = {};
+      nodes.forEach((n, i) => {
+        const ring = i < 1 ? 0 : i < 9 ? 1 : i < 25 ? 2 : 3;
+        const count = ring === 0 ? 1 : ring === 1 ? 8 : ring === 2 ? 16 : 24;
+        const idx = ring === 0 ? 0 : ring === 1 ? i - 1 : ring === 2 ? i - 9 : i - 25;
+        const angle = -Math.PI / 2 + idx * Math.PI * 2 / count;
+        const radius = ring === 0 ? 0 : ring === 1 ? 88 : ring === 2 ? 158 : 222;
+        pos[n.id] = { x: cx + Math.cos(angle) * radius, y: cy + Math.sin(angle) * radius, node: n };
+      });
+      const edgeSvg = edges.map(e => {
+        const s = pos[e.source], t = pos[e.target];
+        if (!s || !t) return '';
+        return `<line class="edge" x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}" />`;
+      }).join('');
+      const nodeSvg = nodes.map(n => {
+        const p = pos[n.id];
+        const type = n.type || '';
+        const fill = type === 'case' || type === 'assertion' ? '#1ba77d' : type === 'evidence' ? '#c98518' : '#3867d6';
+        const r = type === 'case' ? 14 : type === 'assertion' ? 11 : type === 'evidence' ? 8 : 6;
+        return `<g>
+          <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" opacity=".92"/>
+          <text class="node-label" x="${p.x + 10}" y="${p.y + 4}">${esc((n.label || n.id).slice(0, 18))}</text>
+        </g>`;
+      }).join('');
+      return `<svg class="graph-svg" viewBox="0 0 820 430" role="img" aria-label="AER-001 证据图谱">${edgeSvg}${nodeSvg}</svg>`;
+    }
+
+    function setupObserver() {
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            state.activeId = entry.target.dataset.stage;
+            updateActiveNav();
+          }
+        });
+      }, { rootMargin: '-35% 0px -50% 0px', threshold: 0.05 });
+      document.querySelectorAll('[data-stage]').forEach(el => observer.observe(el));
+    }
+
+    function updateActiveNav() {
+      document.querySelectorAll('[data-nav]').forEach(el => el.classList.toggle('active', el.dataset.nav === state.activeId));
+    }
+
+    async function playStory() {
+      const ids = (state.data?.events || []).map(e => e.id);
+      if (!ids.length || state.playing) return;
+      state.playing = true;
+      for (const id of ids) {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        await new Promise(resolve => setTimeout(resolve, 1150));
+      }
+      state.playing = false;
+    }
+
+    function openDashboard() {
+      window.location.href = '/#trace';
+    }
+
+    load();
+  </script>
+</body>
+</html>

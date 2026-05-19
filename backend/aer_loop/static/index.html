@@ -1,0 +1,2131 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Team-I OpenCLAW Audit Demo</title>
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #061019;
+      --bg2: #071a24;
+      --panel: rgba(9, 24, 38, 0.92);
+      --panel2: rgba(13, 34, 52, 0.84);
+      --line: rgba(33, 231, 202, 0.18);
+      --line2: rgba(124, 172, 255, 0.18);
+      --text: #eef8ff;
+      --muted: #8ca6b8;
+      --dim: #536879;
+      --cyan: #22e7ca;
+      --blue: #45a3ff;
+      --amber: #ffb356;
+      --red: #ff5a6f;
+      --green: #2fe68f;
+      --purple: #a981ff;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.36);
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      font: 13px/1.45 "Inter", "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, Segoe UI, sans-serif;
+      color: var(--text);
+      background:
+        linear-gradient(rgba(34, 231, 202, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(69, 163, 255, 0.032) 1px, transparent 1px),
+        linear-gradient(180deg, #051019 0%, #081923 52%, #050c14 100%);
+      background-size: 28px 28px, 28px 28px, auto;
+      overflow-x: hidden;
+    }
+    button, select {
+      font: inherit;
+      color: inherit;
+    }
+    button {
+      border: 1px solid var(--line);
+      background: rgba(8, 27, 42, 0.86);
+      border-radius: 7px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: border-color .18s ease, transform .18s ease, background .18s ease;
+    }
+    button:hover { border-color: rgba(34, 231, 202, .7); background: rgba(13, 48, 66, 0.94); transform: translateY(-1px); }
+    button.primary { background: linear-gradient(90deg, rgba(34,231,202,.92), rgba(69,163,255,.86)); color: #031017; border-color: transparent; font-weight: 800; }
+    button.warn { border-color: rgba(255, 179, 86, .42); color: #ffd39b; }
+    button.danger { border-color: rgba(255, 90, 111, .42); color: #ff9aa8; }
+    select {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: rgba(8, 27, 42, 0.92);
+      color: var(--text);
+      border-radius: 7px;
+      padding: 8px 34px 8px 12px;
+      min-width: 150px;
+      outline: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--cyan) 50%), linear-gradient(135deg, var(--cyan) 50%, transparent 50%);
+      background-position: calc(100% - 18px) 50%, calc(100% - 12px) 50%;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+    .app { min-height: 100vh; display: grid; grid-template-rows: 64px auto; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      border-bottom: 1px solid rgba(34, 231, 202, .28);
+      background: rgba(4, 12, 20, .88);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 1px 0 rgba(69, 163, 255, .12), 0 14px 30px rgba(0, 0, 0, .24);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: white;
+      background: #101820;
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: inset 0 0 18px rgba(34,231,202,.16), 0 0 22px rgba(34,231,202,.12);
+    }
+    h1 { margin: 0; font-size: 18px; letter-spacing: 0; line-height: 1.1; }
+    h1 span { display: inline; }
+    .subline { color: var(--muted); font-size: 12px; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .page-nav {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 460px;
+    }
+    .nav-btn {
+      padding: 8px 10px;
+      min-width: 76px;
+      color: var(--muted);
+      background: rgba(255,255,255,.035);
+      border-color: rgba(124,172,255,.13);
+      white-space: nowrap;
+    }
+    .nav-btn.active {
+      color: var(--text);
+      border-color: rgba(34,231,202,.62);
+      background: linear-gradient(180deg, rgba(34,231,202,.16), rgba(69,163,255,.08));
+      box-shadow: inset 0 0 0 1px rgba(34,231,202,.10), 0 0 20px rgba(34,231,202,.10);
+    }
+    .statusbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .sys {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(34,231,202,.22);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(10, 31, 45, .72);
+      white-space: nowrap;
+    }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 16px var(--green); }
+    .main {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      gap: 10px;
+      padding: 10px 12px;
+      align-items: start;
+    }
+    .main.detail-focus {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto;
+      align-items: stretch;
+    }
+    .main.detail-focus .kpis,
+    .main.detail-focus .controls,
+    .main.detail-focus .order-stream,
+    .main.detail-focus .queue-panel,
+    .main.detail-focus .case-board,
+    .main.detail-focus .weak-panel,
+    .main.detail-focus .candidate-panel {
+      display: none;
+    }
+    .panel {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(12, 31, 49, .94), rgba(6, 18, 31, .94));
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+      overflow: hidden;
+    }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(34,231,202,.14);
+      background: linear-gradient(90deg, rgba(34,231,202,.10), rgba(69,163,255,.05));
+    }
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+    .panel-title::before {
+      content: "";
+      width: 4px;
+      height: 18px;
+      border-radius: 4px;
+      background: var(--cyan);
+      box-shadow: 0 0 12px rgba(34,231,202,.65);
+    }
+    .count { color: var(--muted); font-weight: 700; }
+    .kpis {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 12px;
+    }
+    .kpi {
+      border: 1px solid rgba(124, 172, 255, .16);
+      background: linear-gradient(180deg, rgba(19, 41, 63, .9), rgba(8, 21, 35, .92));
+      border-radius: 8px;
+      padding: 12px 14px;
+      min-height: 78px;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--cyan), transparent);
+      opacity: .7;
+    }
+    .kpi .label { color: var(--muted); font-size: 12px; }
+    .kpi strong { display: block; font-size: 28px; line-height: 1.05; margin-top: 7px; font-weight: 900; }
+    .kpi .note { color: var(--dim); font-size: 11px; margin-top: 5px; }
+    .controls {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(34,231,202,.16);
+      background: rgba(4, 19, 29, .72);
+      border-radius: 8px;
+    }
+    .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .order-stream { grid-column: 1; grid-row: auto; }
+    .queue-panel { grid-column: 1; grid-row: auto; }
+    .case-board { grid-column: 1; grid-row: auto; }
+    .candidate-panel { grid-column: 1; grid-row: auto; }
+
+    .stream { max-height: 360px; overflow: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 9px 10px; text-align: left; border-bottom: 1px solid rgba(124, 172, 255, .08); white-space: nowrap; }
+    th { color: #37d9bd; font-size: 12px; background: rgba(34,231,202,.05); position: sticky; top: 0; z-index: 1; }
+    td { color: #c9d8e5; }
+    .case-id { color: #28d7ff; font-weight: 900; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 22px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .pill.red { color: #ffb0ba; background: rgba(255, 90, 111, .12); border-color: rgba(255,90,111,.28); }
+    .pill.amber { color: #ffd09a; background: rgba(255, 179, 86, .12); border-color: rgba(255,179,86,.30); }
+    .pill.green { color: #a7ffd0; background: rgba(47, 230, 143, .10); border-color: rgba(47,230,143,.26); }
+    .pill.blue { color: #b5d7ff; background: rgba(69,163,255,.12); border-color: rgba(69,163,255,.26); }
+    .confidence { display: grid; gap: 3px; min-width: 68px; }
+    .bar { height: 6px; border-radius: 999px; background: rgba(255,255,255,.09); overflow: hidden; }
+    .bar > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--cyan), var(--blue)); }
+    .case-grid { display: grid; grid-template-columns: 1fr; gap: 10px; padding: 12px; max-height: 472px; overflow: auto; }
+    .case-card {
+      border: 1px solid rgba(124, 172, 255, .15);
+      background: linear-gradient(180deg, rgba(11, 30, 49, .95), rgba(8, 19, 33, .96));
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      min-height: 0;
+      position: relative;
+      overflow: hidden;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .case-card.active {
+      border-color: rgba(34,231,202,.72);
+      box-shadow: inset 0 0 0 1px rgba(34,231,202,.20), 0 0 26px rgba(34,231,202,.12);
+    }
+    .case-card:hover { transform: translateY(-2px); border-color: rgba(34,231,202,.46); }
+    .case-card h3 { font-size: 18px; margin: 0 0 3px; line-height: 1; letter-spacing: 0; }
+    .case-name { font-size: 15px; font-weight: 900; margin: 0; }
+    .case-top { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start; }
+    .case-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; color: var(--muted); font-weight: 700; margin-top: 9px; }
+    .case-signal { margin: 9px 0; color: #ffc075; font-weight: 900; min-height: 0; }
+    .progress-label { display: flex; justify-content: space-between; color: var(--muted); margin: 6px 0 5px; }
+    .progress-label b { color: #ffc075; font-size: 20px; line-height: 1; }
+    .card-actions { display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+    .card-actions button { padding: 6px 8px; font-size: 12px; }
+    .case-card-detail {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(124,172,255,.12);
+    }
+    .case-card.expanded .case-card-detail { display: block; }
+    .steps { display: grid; grid-template-columns: 1fr 118px; gap: 10px; align-items: center; }
+    .step-list { display: grid; gap: 8px; border-left: 2px solid rgba(34,231,202,.18); padding-left: 15px; }
+    .step-item { position: relative; display: grid; gap: 1px; color: var(--muted); font-size: 12px; }
+    .step-item::before {
+      content: "";
+      position: absolute;
+      left: -23px;
+      top: 3px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--cyan);
+      box-shadow: 0 0 14px rgba(34,231,202,.75);
+    }
+    .step-item strong { color: var(--text); font-size: 13px; }
+    .radar { width: 118px; height: 118px; opacity: .95; }
+    .workbench {
+      grid-column: 1;
+      grid-row: auto;
+      display: block;
+      min-height: 0;
+      max-height: 520px;
+      overflow: auto;
+    }
+    .main.detail-focus .workbench {
+      grid-column: 1;
+      grid-row: 1;
+      min-height: calc(100vh - 88px);
+    }
+    .detail-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(34,231,202,.14);
+      background: rgba(4, 17, 28, .52);
+    }
+    .detail-actions .play-controls { justify-content: flex-end; }
+    .detail-return { border-color: rgba(124,172,255,.24); color: #b5d7ff; }
+    .review-menu {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,179,86,.18);
+      background: rgba(255,179,86,.06);
+    }
+    .review-menu[hidden] { display: none; }
+    .main.page-trace,
+    .main.page-passport,
+    .main.page-learning {
+      grid-template-columns: minmax(300px, .72fr) minmax(690px, 1.62fr);
+    }
+    .main.page-trace .order-stream,
+    .main.page-trace .queue-panel,
+    .main.page-trace .weak-panel,
+    .main.page-trace .candidate-panel,
+    .main.page-passport .order-stream,
+    .main.page-passport .queue-panel,
+    .main.page-passport .weak-panel,
+    .main.page-passport .candidate-panel,
+    .main.page-learning .order-stream,
+    .main.page-learning .queue-panel,
+    .main.page-learning .weak-panel,
+    .main.page-learning .candidate-panel { display: none; }
+    .main.page-trace .case-board,
+    .main.page-passport .case-board,
+    .main.page-learning .case-board { grid-column: 1; grid-row: 3; }
+    .main.page-trace .workbench,
+    .main.page-passport .workbench,
+    .main.page-learning .workbench { grid-column: 2; grid-row: 3 / 5; min-height: 760px; }
+    .demo-lane {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(34,231,202,.14);
+      background: rgba(4, 17, 28, .52);
+      align-items: stretch;
+    }
+    .lane-step {
+      border: 1px solid rgba(124, 172, 255, .14);
+      background: rgba(255,255,255,.035);
+      border-radius: 8px;
+      padding: 9px;
+      min-height: 74px;
+    }
+    .lane-step b { display: block; color: var(--cyan); margin-bottom: 4px; }
+    .lane-step span { color: var(--muted); font-size: 12px; }
+    .tabs {
+      display: flex;
+      gap: 6px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(34,231,202,.14);
+      background: rgba(6, 19, 31, .82);
+    }
+    .tab {
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 7px;
+      padding: 9px 13px;
+      color: var(--muted);
+      background: rgba(255,255,255,.035);
+      cursor: pointer;
+      font-weight: 800;
+    }
+    .tab.active {
+      color: var(--text);
+      border-color: rgba(34,231,202,.50);
+      background: linear-gradient(180deg, rgba(34,231,202,.16), rgba(69,163,255,.08));
+      box-shadow: inset 0 0 0 1px rgba(34,231,202,.08);
+    }
+    .tab-body {
+      padding: 12px;
+      min-height: 0;
+      background: rgba(2, 13, 22, .38);
+    }
+    .split { display: grid; grid-template-columns: 1.12fr .88fr; gap: 12px; }
+    .subpanel {
+      border: 1px solid rgba(124, 172, 255, .13);
+      background: rgba(4, 15, 25, .56);
+      border-radius: 8px;
+      padding: 12px;
+      min-width: 0;
+    }
+    .subhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 10px; }
+    .subhead h4 { margin: 0; font-size: 14px; }
+    .timeline { display: grid; gap: 9px; max-height: 408px; overflow: auto; padding-right: 4px; }
+    .trace-stage {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(92px, 1fr));
+      gap: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(34,231,202,.18);
+      border-radius: 8px;
+      background: linear-gradient(90deg, rgba(34,231,202,.07), rgba(69,163,255,.04));
+      position: relative;
+      overflow: hidden;
+    }
+    .trace-stage::before {
+      content: "";
+      position: absolute;
+      left: -30%;
+      top: 0;
+      width: 32%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(34,231,202,.18), transparent);
+      animation: sweep 2.6s linear infinite;
+      pointer-events: none;
+    }
+    .flow-step {
+      position: relative;
+      z-index: 1;
+      min-height: 84px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(4, 15, 25, .72);
+      color: var(--muted);
+    }
+    .flow-step b { display: block; color: var(--text); margin-bottom: 5px; }
+    .flow-step small { display: block; min-height: 32px; }
+    .flow-step.done { border-color: rgba(47,230,143,.26); }
+    .flow-step.active {
+      border-color: rgba(34,231,202,.82);
+      box-shadow: 0 0 22px rgba(34,231,202,.16), inset 0 0 18px rgba(34,231,202,.08);
+      color: #dffcff;
+    }
+    .flow-step.pending { opacity: .45; }
+    .flow-meta { display: flex; justify-content: space-between; gap: 8px; margin-top: 7px; font-size: 11px; }
+    .live-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .live-cell {
+      border: 1px solid rgba(124,172,255,.14);
+      border-radius: 8px;
+      padding: 10px;
+      background: rgba(255,255,255,.035);
+      min-width: 0;
+    }
+    .live-cell span { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+    .live-cell b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .play-controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: flex-end; }
+    .thread {
+      display: grid;
+      grid-template-columns: 50px 1fr;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.035);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .thread.active { border-color: rgba(34,231,202,.62); box-shadow: inset 0 0 0 1px rgba(34,231,202,.08); }
+    .thread.pending { opacity: .38; }
+    .thread .idx {
+      display: grid;
+      place-items: center;
+      color: #071018;
+      font-weight: 900;
+      border-radius: 7px;
+      background: linear-gradient(180deg, var(--cyan), var(--blue));
+      min-height: 46px;
+    }
+    .thread h5 { margin: 0 0 5px; font-size: 14px; }
+    .thread p { margin: 4px 0 0; color: var(--muted); }
+    .evidence-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; max-height: 520px; overflow: auto; }
+    .evidence {
+      border: 1px solid rgba(255,255,255,.08);
+      border-left: 4px solid var(--green);
+      background: rgba(255,255,255,.035);
+      border-radius: 8px;
+      padding: 10px;
+    }
+    .evidence.counter, .evidence.uncertainty { border-left-color: var(--amber); }
+    .evidence h5 { margin: 0 0 6px; font-size: 13px; }
+    .evidence p { margin: 0 0 8px; color: var(--muted); }
+    .passport-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 12px; }
+    .passport-box {
+      border: 1px solid rgba(34,231,202,.20);
+      border-radius: 8px;
+      background: linear-gradient(180deg, rgba(34,231,202,.06), rgba(69,163,255,.035));
+      padding: 12px;
+    }
+    .passport-box h4 { margin: 0 0 8px; }
+    .passport-box p, .passport-box li { color: var(--muted); }
+    .graph-wrap { height: 470px; position: relative; overflow: hidden; border-radius: 8px; border: 1px dashed rgba(34,231,202,.22); background: rgba(1, 10, 18, .56); }
+    .graph-svg { width: 100%; height: 100%; display: block; }
+    .legend { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 9px; }
+    .legend span { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+    .legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .learning-grid { display: grid; grid-template-columns: minmax(280px, .8fr) 1.2fr; gap: 12px; }
+    .candidate-list { display: grid; gap: 8px; max-height: 460px; overflow: auto; }
+    .candidate {
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.035);
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .candidate.active { border-color: rgba(34,231,202,.48); background: rgba(34,231,202,.08); }
+    .overview-candidate-panel .candidate-list { max-height: 260px; padding: 10px; }
+    .overview-candidate-panel .candidate {
+      display: grid;
+      gap: 6px;
+      min-height: 72px;
+    }
+    .candidate-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+    .candidate-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .signal-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .writeback {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .write-step { border: 1px solid rgba(255,255,255,.08); border-radius: 8px; padding: 10px; background: rgba(255,255,255,.035); min-height: 86px; }
+    .write-step b { color: var(--cyan); display: block; margin-bottom: 6px; }
+    .queue { max-height: 240px; overflow: auto; }
+    .queue table th, .queue table td { padding: 8px; }
+
+    .route-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 8px;
+      padding: 9px;
+      background: rgba(255,255,255,.035);
+    }
+    .toast {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      z-index: 50;
+      border: 1px solid rgba(34,231,202,.38);
+      background: rgba(5, 19, 31, .94);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 10px 12px;
+      box-shadow: var(--shadow);
+      max-width: 420px;
+      display: none;
+    }
+    .toast.show { display: block; }
+    .empty { color: var(--dim); padding: 24px; text-align: center; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .muted { color: var(--muted); }
+    .hot { color: var(--amber); font-weight: 900; }
+    .ok { color: var(--green); font-weight: 900; }
+    .bad { color: var(--red); font-weight: 900; }
+    .blue { color: var(--blue); font-weight: 900; }
+    .highlighted-order {
+      background: rgba(34, 231, 202, 0.12) !important;
+      box-shadow: inset 0 0 0 1px rgba(34,231,202,.35);
+    }
+    .highlighted-order td {
+      color: #dffcff;
+      font-weight: 800;
+    }
+    .trace-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .trace-step {
+      border: 1px solid rgba(124, 172, 255, .14);
+      background: rgba(255,255,255,.035);
+      border-radius: 8px;
+      padding: 12px 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all .18s ease;
+      position: relative;
+    }
+    .trace-step:hover { border-color: rgba(34,231,202,.5); transform: translateY(-1px); }
+    .trace-step.selected {
+      border-color: rgba(34,231,202,.72);
+      box-shadow: inset 0 0 0 1px rgba(34,231,202,.20), 0 0 20px rgba(34,231,202,.12);
+    }
+    .trace-step.completed { border-color: rgba(47,230,143,.28); }
+    .trace-step.skipped { border-color: rgba(255,179,86,.28); opacity:.85; }
+    .trace-step.pending { border-color: rgba(83,104,121,.28); }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: grid; place-items: center; margin: 0 auto 8px;
+      color: #071018; font-weight: 900; font-size: 13px;
+      background: linear-gradient(180deg, var(--dim), #3a4f5e);
+    }
+    .trace-step.completed .step-num { background: linear-gradient(180deg, var(--green), #1cb876); }
+    .trace-step.skipped .step-num { background: linear-gradient(180deg, var(--amber), #c98a3c); }
+    .trace-step.pending .step-num { background: linear-gradient(180deg, var(--dim), #3a4f5e); }
+    .step-name { font-weight: 800; font-size: 13px; margin-bottom: 4px; }
+    .step-status { font-size: 11px; color: var(--muted); }
+    .step-detail { min-height: 0; }
+    .cyan-text { color: var(--cyan); font-weight: 900; }
+    .review-panel-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .review-form { margin-top: 12px; padding: 12px; border: 1px solid rgba(124,172,255,.14); border-radius: 8px; background: rgba(4,15,25,.56); }
+    .review-form textarea { width: 100%; min-height: 60px; background: rgba(8,27,42,.86); border: 1px solid var(--line); color: var(--text); border-radius: 7px; padding: 8px; font: inherit; resize: vertical; outline: none; }
+    .review-form textarea:focus { border-color: rgba(34,231,202,.5); }
+    .recommend-list { display: grid; gap: 6px; margin-bottom: 10px; }
+    .recommend-item { display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03); cursor: pointer; }
+    .recommend-item:hover { border-color: rgba(34,231,202,.35); }
+    .recommend-item input { accent-color: var(--cyan); }
+    @keyframes sweep {
+      from { transform: translateX(0); }
+      to { transform: translateX(420%); }
+    }
+    @media (max-width: 1180px) {
+      .topbar { height: auto; flex-wrap: wrap; }
+      .page-nav { order: 3; width: 100%; min-width: 0; justify-content: flex-start; overflow-x: auto; }
+      .main { grid-template-columns: 1fr; }
+      .order-stream, .queue-panel, .case-board, .weak-panel, .candidate-panel, .workbench { grid-column: auto; grid-row: auto; }
+      .kpis, .demo-lane, .writeback { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .workbench { grid-column: auto; }
+      .split, .passport-grid, .learning-grid { grid-template-columns: 1fr; }
+      .main.page-trace .case-board,
+      .main.page-trace .workbench,
+      .main.page-passport .case-board,
+      .main.page-passport .workbench,
+      .main.page-learning .case-board,
+      .main.page-learning .workbench {
+        grid-column: auto;
+        grid-row: auto;
+        max-height: none;
+      }
+      .main.page-trace .order-stream,
+      .main.page-passport .order-stream,
+      .main.page-learning .order-stream { display: grid; }
+    }
+    @media (max-width: 680px) {
+      html, body, .app { width: 100%; max-width: 100%; overflow-x: hidden; }
+      .topbar { align-items: flex-start; flex-direction: column; height: auto; gap: 10px; }
+      .brand { width: 100%; align-items: flex-start; display: grid; grid-template-columns: 34px minmax(0, 1fr); }
+      .page-nav { width: 100%; min-width: 0; justify-content: flex-start; overflow-x: auto; padding-bottom: 2px; }
+      .nav-btn { min-width: max-content; width: auto; }
+      .brand > div:last-child { min-width: 0; }
+      h1 { font-size: 16px; line-height: 1.22; white-space: normal; overflow-wrap: anywhere; word-break: break-word; }
+      h1 span { display: block; }
+      .subline { white-space: normal; line-height: 1.35; overflow-wrap: anywhere; word-break: break-all; }
+      .statusbar { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); justify-content: flex-start; }
+      .sys { max-width: 100%; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+      .sys b, .sys span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+      .app { grid-template-rows: auto auto; }
+      .main { width: 100%; max-width: 100%; padding: 8px; grid-template-columns: minmax(0, 1fr); }
+      .kpis, .case-grid, .demo-lane, .evidence-grid, .writeback, .trace-stage, .live-strip { grid-template-columns: 1fr; }
+      .kpis, .panel, .controls, .kpi, .case-card, .subpanel { width: 100%; min-width: 0; }
+      th, td { white-space: normal; }
+      .controls { align-items: stretch; flex-direction: column; }
+      .filters, .actions { width: 100%; }
+      .statusbar button { grid-column: 1 / -1; }
+      select, button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark">D.</div>
+        <div>
+          <h1>跨境电商连续审计 · <span>Team-I 主动追证指挥中心</span></h1>
+          <div class="subline">OpenCLAW 工具编排 · 证据护照 · 人工确认写回模式库</div>
+        </div>
+      </div>
+      <nav class="page-nav" id="pageNav" aria-label="演示页面导航"></nav>
+      <div class="statusbar">
+        <div class="sys"><span class="dot"></span><span id="runtimeStatus">系统运行中</span></div>
+        <div class="sys">模型服务 <b id="backendStatus">loading</b></div>
+        <div class="sys">最后更新 <b id="lastUpdated">--</b></div>
+        <button onclick="refreshAll()">刷新</button>
+      </div>
+    </header>
+
+    <main class="main page-overview" id="main">
+      <section class="kpis" id="kpis"></section>
+
+      <section class="controls">
+        <div class="filters">
+          <select id="patternFilter" onchange="renderAll()">
+            <option value="all">风险模式：全部</option>
+          </select>
+          <select id="progressFilter" onchange="renderAll()">
+            <option value="all">追证进度：全部</option>
+            <option value="investigating">主动追证与反证检索中</option>
+            <option value="passport">证据护照已生成</option>
+            <option value="review">等待人工复核</option>
+          </select>
+          <select id="levelFilter" onchange="renderAll()">
+            <option value="all">案例等级：全部</option>
+            <option value="critical">严重</option>
+            <option value="high">高</option>
+            <option value="medium">中</option>
+          </select>
+        </div>
+        <div class="count">选择案件后，在下方“案件详情”中执行追证、闭环运行和人工确认。</div>
+      </section>
+
+      <section class="panel order-stream">
+        <div class="panel-head">
+          <div class="panel-title">实时订单与风险信号流</div>
+          <span class="count" id="streamCount">-- 项</span>
+        </div>
+        <div class="stream">
+          <table>
+            <thead>
+              <tr><th>时间</th><th>订单编号</th><th>用户</th><th>金额</th><th>风险信号</th><th>风险模式</th><th>处理结果</th></tr>
+            </thead>
+            <tbody id="orderStream"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel queue-panel">
+        <div class="panel-head">
+          <div class="panel-title">待处理风险案件</div>
+          <span class="count" id="queueCount">-- 项</span>
+        </div>
+        <div class="queue">
+          <table>
+            <thead><tr><th>案件编号</th><th>风险模式</th><th>关联账号</th><th>关联订单</th><th>置信度</th><th>状态</th></tr></thead>
+            <tbody id="queueRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel candidate-panel">
+        <div class="panel-head">
+          <div class="panel-title">新风险模式候选</div>
+          <span class="count" id="candidateOverviewCount">-- 个</span>
+        </div>
+        <div class="candidate-list" id="candidateOverviewCards"></div>
+      </section>
+
+
+
+      <section class="panel workbench">
+        <div class="panel-head">
+          <div class="panel-title" id="workbenchTitle">风险案件详情</div>
+          <span class="count" id="selectedStatus">请选择案例</span>
+        </div>
+        <div class="detail-actions">
+          <span class="count">案件详情集中展示主动追证流、证据护照、多源融合图谱和模式学习闭环。</span>
+          <div class="play-controls">
+            <button class="detail-return" onclick="exitDetail()">返回总览</button>
+            <button onclick="stepSelected()">下一步追证</button>
+            <button class="warn" onclick="runSelected()">运行选中案例</button>
+            <button class="primary" onclick="runFullLoop()">运行完整闭环</button>
+            <button onclick="toggleReviewMenu()">人工确认</button>
+          </div>
+        </div>
+        <div class="review-menu" id="reviewMenu" hidden></div>
+        <div class="tabs" id="tabs"></div>
+        <div class="tab-body" id="tabBody"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const pageDefs = [
+      ['overview', '总览'],
+      ['trace', '主动追证'],
+      ['agents', 'Agent 协作'],
+      ['fusion', '多源融合'],
+      ['passport', '审计报告'],
+      ['learning', '模式学习']
+    ];
+
+    function pageToTab(page) {
+      return {
+        trace: 'trace',
+        agents: 'trace',
+        fusion: 'graph',
+        passport: 'passport',
+        learning: 'learning'
+      }[page] || 'trace';
+    }
+
+    function initialPage() {
+      const hash = location.hash.replace('#', '');
+      return pageDefs.some(([id]) => id === hash) ? hash : 'overview';
+    }
+
+    const state = {
+      dashboard: null,
+      cases: [],
+      selectedCaseId: null,
+      caseDetails: {},
+      selectedCase: null,
+      graph: null,
+      passport: null,
+      route: null,
+      candidates: [],
+      patterns: [],
+      policyWeights: [],
+      activePage: initialPage(),
+      activeTab: pageToTab(initialPage()),
+      selectedCandidateId: null,
+      selectedCandidateDetailId: null,
+      expandedCaseId: null,
+      detailFocus: false,
+      reviewMenuOpen: false,
+      tracePlayIndex: -1,
+      tracePlaybackActive: false,
+      tracePlaybackTimer: null,
+      highlightedOrderId: null,
+      selectedTraceStep: 0,
+      reviewMode: null,
+      caseResultMap: {}
+    };
+
+    const actionLabels = {
+      expand_infra_graph: '关系扩展',
+      query_refund_cluster: '退款簇查询',
+      query_subsidy_ledger: '补贴台账',
+      query_payment_cluster: '支付聚类',
+      query_logistics_trace: '物流真实性',
+      compare_promo_cohort: '促销窗口对比',
+      analyze_behavior_sequence: '行为序列',
+      search_historical_cases: '历史案例',
+      seek_counter_evidence: '反证检索',
+      emit_passport: '护照生成',
+      request_human_review: '人工复核'
+    };
+
+
+
+    async function api(path, opts = {}) {
+      const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts });
+      if (!res.ok) throw new Error(await res.text());
+      return res.json();
+    }
+
+    function safeJson(value, fallback) {
+      if (value == null) return fallback;
+      if (typeof value !== 'string') return value;
+      try { return JSON.parse(value); } catch { return fallback; }
+    }
+
+    function toast(message) {
+      const el = document.getElementById('toast');
+      el.textContent = message;
+      el.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => el.classList.remove('show'), 3600);
+    }
+
+    function fmt(n, digits = 0) {
+      if (n == null || Number.isNaN(Number(n))) return '--';
+      return Number(n).toLocaleString('en-US', { maximumFractionDigits: digits, minimumFractionDigits: digits });
+    }
+
+    function riskLevelClass(level) {
+      const v = String(level || '').toLowerCase();
+      if (v.includes('critical') || v.includes('干预')) return 'red';
+      if (v.includes('high') || v.includes('预警')) return 'amber';
+      if (v.includes('medium')) return 'blue';
+      return 'green';
+    }
+
+    function shortPatternName(patternId) {
+      const map = {
+        'EC-SKIM-001': '团伙刷单骗补',
+        'EC-FAKE-002': '空包虚假交易',
+        'EC-ARBI-003': '补贴套利观察'
+      };
+      return map[patternId] || patternId || '未知模式';
+    }
+
+    function caseHeadline(c) {
+      const map = {
+        'EC-SKIM-001': '团伙刷单骗补',
+        'EC-FAKE-002': '空包虚假交易',
+        'EC-ARBI-003': '补贴套利观察'
+      };
+      return map[c.pattern_id] || c.pattern_name || c.case_id;
+    }
+
+    function topSignals(c) {
+      const scores = safeJson(c.scores, {});
+      const entities = safeJson(c.primary_entities, {});
+      if (c.pattern_id === 'EC-SKIM-001') {
+        return `设备${(entities.devices || []).length}台/${(entities.users || []).length}账号 | IP同段/${(entities.ips || []).length} | 退款率${fmt((scores.refund_rate || 0) * 100, 0)}% | 补贴率${fmt((scores.subsidy_rate || 0) * 100, 0)}%`;
+      }
+      if (c.pattern_id === 'EC-FAKE-002') {
+        return `物流异常率${fmt((scores.low_logistics_rate || 0) * 100, 0)}% | 自动确认${fmt((scores.avg_automation_score || 0) * 100, 0)}% | 评论复用`;
+      }
+      return `资格Key集中 | 补贴率${fmt((scores.subsidy_rate || 0) * 100, 0)}% | 退款时效<24h | 支付复用`;
+    }
+
+    function progressFor(c) {
+      const status = String(c.status || '');
+      if (status.includes('human_review') || status.includes('reviewed')) return 100;
+      return Math.min(100, Math.round((Number(c.risk_score || 0) || 0.75) * 100));
+    }
+
+    function statusText(c) {
+      const status = String(c.status || '');
+      if (status.includes('human_review')) return '等待人工复核';
+      if (status.includes('reviewed')) return '已确认';
+      if (status.includes('investigation')) return '主动追证中';
+      return status || '追证中';
+    }
+
+    function getComplexity(c) {
+      const threadLen = (c.thread || []).length;
+      const evLen = (c.evidence || []).length;
+      const orderLen = (safeJson(c.primary_entities, {}).orders || []).length;
+      if (threadLen >= 6 || evLen >= 15 || orderLen >= 70) return { level: 'high', label: '高复杂' };
+      if (threadLen >= 3 || evLen >= 8 || orderLen >= 30) return { level: 'medium', label: '中复杂' };
+      return { level: 'low', label: '低复杂' };
+    }
+
+    function getTraceSteps(c) {
+      const complexity = getComplexity(c);
+      const hasAssertion = !!(c.assertion || (c.thread || []).some(t => t.agent_id === 'assertion_agent'));
+      const hasRoute = !!(state.route?.ranked_actions?.length || (c.thread || []).some(t => t.agent_id === 'case_router_agent' || t.agent_id === 'router_agent'));
+      const hasEvidence = (c.evidence || []).some(e => e.kind === 'support');
+      const hasCounter = (c.evidence || []).some(e => e.kind !== 'support');
+      const hasPassport = !!(state.passport?.case_header);
+      return [
+        { id: 'assertion', name: '风险断言', status: hasAssertion ? 'completed' : 'pending', detail: c.assertion || '尚未生成风险断言' },
+        { id: 'routing', name: '调查复杂度路由', status: hasRoute ? 'completed' : 'pending', detail: `复杂度评估：${complexity.label}。${complexity.level === 'low' ? '低复杂案件跳过证据与反证检索，直接生成护照。' : '系统根据证据缺口和治理成本排序候选动作。'}` },
+        { id: 'evidence', name: '寻找证据', status: complexity.level === 'low' ? 'skipped' : (hasEvidence ? 'completed' : 'pending'), detail: null },
+        { id: 'counter', name: '寻找反证', status: complexity.level === 'low' ? 'skipped' : (hasCounter ? 'completed' : 'pending'), detail: null },
+        { id: 'passport', name: '生成证据护照', status: hasPassport ? 'completed' : 'pending', detail: null }
+      ];
+    }
+
+    function renderStepDetail(step, c) {
+      if (step.id === 'assertion') {
+        const scores = safeJson(c.scores, {});
+        const entities = safeJson(c.primary_entities, {});
+        const signals = safeJson(c.signal_strength, {});
+        const users = entities.users || [];
+        const userList = users.slice(0, 5).join(', ') + (users.length > 5 ? ` 等${users.length}个账号` : '');
+        const triggerSignal = Object.entries(signals).find(([, level]) => String(level).toLowerCase() === 'strong')?.[0] || Object.keys(signals)[0] || '规则初筛命中';
+        const supportEvs = (c.evidence || []).filter(e => e.kind === 'support').slice(0, 3).map(e => cnEvidenceDimension(e.dimension)).join('、') || '暂无';
+        const missingEvs = Object.keys(safeJson(c.evidence_requirements, {})).slice(0, 3).join('、') || '物流真实性、行为序列';
+        const counterDirs = ['家庭共享设备', '校园网络', '自然促销流量'].slice(0, 2).join('、');
+        return `
+          <div class="subpanel">
+            <div class="subhead"><h4>风险断言详情</h4><span class="pill ${step.status === 'completed' ? 'green' : 'amber'}">${step.status === 'completed' ? '已完成' : '待执行'}</span></div>
+            <div style="line-height:1.8;color:var(--muted)">
+              <p>在 <span class="cyan-text">BF-2025 跨境大促窗口</span> 内，<br>
+              针对 <span class="cyan-text">账号 ${userList || '关联账号组'}</span>，</p>
+              <div style="margin-top:10px;display:grid;gap:6px">
+                <div>【怀疑的风险类型】<span style="color:var(--text);font-weight:700">${c.pattern_id} ${shortPatternName(c.pattern_id)}</span></div>
+                <div>【涉及的业务范围】<span style="color:var(--text)">跨境电商订单 / 补贴台账 / 退款售后</span></div>
+                <div>【初始触发信号】<span style="color:var(--text)">${triggerSignal}</span></div>
+                <div>【当前支持证据】<span style="color:var(--text)">${supportEvs}</span></div>
+                <div>【待验证证据维度】<span style="color:var(--text)">${missingEvs}</span></div>
+                <div>【必要反证方向】<span style="color:var(--text)">${counterDirs}</span></div>
+                <div>【人工复核标记】<span style="color:var(--text)">${statusText(c).includes('人工') || statusText(c).includes('review') ? '是' : '否'} · ${statusText(c)}</span></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      if (step.id === 'routing') {
+        const complexity = getComplexity(c);
+        const topActions = (state.route?.ranked_actions || []).slice(0, 5);
+        return `
+          <div class="subpanel">
+            <div class="subhead"><h4>调查复杂度路由</h4><span class="pill ${complexity.level === 'high' ? 'red' : complexity.level === 'medium' ? 'amber' : 'green'}">${complexity.label}</span></div>
+            <p style="line-height:1.6">系统评估该案件为 <b>${complexity.label}</b>。${complexity.level === 'low' ? '低复杂案件无需展开深度证据与反证检索，直接生成证据护照。' : '按证据缺口与治理成本排序候选动作，持续追证直到满足护照门槛。'}</p>
+            ${topActions.length ? `
+            <div style="margin-top:12px">
+              <h5 style="margin:0 0 8px">候选动作排序</h5>
+              ${topActions.map(r => `
+                <div class="route-row" style="margin-bottom:6px">
+                  <div><b>${actionLabels[r.action] || r.action}</b><div class="muted">${r.reason || '填补证据缺口'}</div></div>
+                  <span class="pill ${Number(r.action_utility || 0) > .2 ? 'green' : 'amber'}">${fmt(r.action_utility, 3)}</span>
+                </div>
+              `).join('')}
+            </div>` : ''}
+          </div>
+        `;
+      }
+      if (step.id === 'evidence') {
+        const support = (c.evidence || []).filter(e => e.kind === 'support');
+        return `
+          <div class="subpanel">
+            <div class="subhead"><h4>支持证据 (${support.length})</h4><span class="pill ${step.status === 'skipped' ? 'amber' : step.status === 'completed' ? 'green' : 'blue'}">${step.status === 'skipped' ? '已跳过' : step.status === 'completed' ? '已完成' : '待执行'}</span></div>
+            <div class="evidence-grid">${support.map(e => `
+              <div class="evidence support">
+                <h5>${cnEvidenceDimension(e.dimension)} <span class="pill green">支持证据</span></h5>
+                <p>${cnEvidenceDesc(e.description)}</p>
+                <span class="pill blue">${cnEvidenceSource(e.source)}</span>
+                <span class="pill">置信度 ${fmt(e.confidence, 2)}</span>
+              </div>
+            `).join('') || '<div class="empty">暂无支持证据</div>'}</div>
+          </div>
+        `;
+      }
+      if (step.id === 'counter') {
+        const counter = (c.evidence || []).filter(e => e.kind !== 'support');
+        return `
+          <div class="subpanel">
+            <div class="subhead"><h4>反证与不确定性 (${counter.length})</h4><span class="pill ${step.status === 'skipped' ? 'amber' : step.status === 'completed' ? 'green' : 'blue'}">${step.status === 'skipped' ? '已跳过' : step.status === 'completed' ? '已完成' : '待执行'}</span></div>
+            <div class="evidence-grid">${counter.map(e => `
+              <div class="evidence ${e.kind}">
+                <h5>${cnEvidenceDimension(e.dimension)} <span class="pill amber">${e.kind === 'counter' ? '反证' : '不确定性'}</span></h5>
+                <p>${cnEvidenceDesc(e.description)}</p>
+                <span class="pill blue">${cnEvidenceSource(e.source)}</span>
+                <span class="pill">置信度 ${fmt(e.confidence, 2)}</span>
+              </div>
+            `).join('') || '<div class="empty">暂无反证</div>'}</div>
+          </div>
+        `;
+      }
+      if (step.id === 'passport') {
+        const p = state.passport || {};
+        const evidence = c?.evidence || [];
+        const support = evidence.filter(e => e.kind === 'support');
+        const counter = evidence.filter(e => e.kind !== 'support');
+        const threads = c?.thread || [];
+        const scores = safeJson(c?.scores, {});
+        const entities = safeJson(c?.primary_entities, {});
+        const orders = entities.orders || [];
+        const users = entities.users || [];
+        const signals = safeJson(c?.signal_strength, {});
+        const patternName = shortPatternName(c?.pattern_id);
+        const sourcesList = Array.from(new Set(evidence.map(e => cnEvidenceSource(e.source)))).join('、') || '--';
+        const executedActions = threads.map(t => actionLabels[t.action_taken] || t.action_taken).join(' → ') || '暂无';
+        const uncertainties = counter.map(e => cnEvidenceDimension(e.dimension)).join('、') || '暂无';
+        const confidenceScore = fmt((c?.risk_score || 0) * 100, 0);
+        return `
+          <div style="display:grid;gap:12px">
+            <div class="passport-grid">
+              <div class="passport-box">
+                <h4>1. 案例基础信息</h4>
+                <p>案件编号：<span class="cyan-text">${c?.case_id}</span></p>
+                <p>风险模式：<span class="cyan-text">${c?.pattern_id} ${patternName}</span></p>
+                <p>关联订单：${orders.length} 笔 · 关联账号：${users.length} 个</p>
+                <p>当前状态：<span class="pill ${riskLevelClass(c?.risk_level)}">${statusText(c)}</span></p>
+              </div>
+              <div class="passport-box">
+                <h4>2. 风险断言</h4>
+                <p>${c?.assertion || p?.model_narrative || '风险断言尚未生成。'}</p>
+              </div>
+            </div>
+            <div class="passport-grid">
+              <div class="passport-box">
+                <h4>3. 命中的规则与模式</h4>
+                <p>规则编号：<span class="cyan-text">${c?.pattern_id}</span></p>
+                <p>规则名称：${patternName}</p>
+                <div class="signal-tags" style="margin-top:8px">
+                  ${Object.entries(signals).map(([name, level]) => `<span class="pill ${String(level).toLowerCase() === 'strong' ? 'green' : String(level).toLowerCase() === 'medium' ? 'blue' : 'amber'}">${name} · ${level}</span>`).join('') || '<span class="pill">暂无信号</span>'}
+                </div>
+              </div>
+              <div class="passport-box">
+                <h4>4. 支持证据 (${support.length})</h4>
+                <ul>${support.slice(0, 6).map(e => `<li>${cnEvidenceDimension(e.dimension)}：${cnEvidenceDesc(e.description).slice(0, 60)}${cnEvidenceDesc(e.description).length > 60 ? '...' : ''}</li>`).join('') || '<li>暂无支持证据</li>'}</ul>
+              </div>
+            </div>
+            <div class="passport-grid">
+              <div class="passport-box">
+                <h4>5. 反证 (${counter.length})</h4>
+                <ul>${counter.slice(0, 6).map(e => `<li>${cnEvidenceDimension(e.dimension)}：${cnEvidenceDesc(e.description).slice(0, 60)}${cnEvidenceDesc(e.description).length > 60 ? '...' : ''}</li>`).join('') || '<li>暂无反证</li>'}</ul>
+              </div>
+              <div class="passport-box">
+                <h4>6. 证据来源</h4>
+                <p>${sourcesList}</p>
+                <h4 style="margin-top:12px">7. 已执行追证动作</h4>
+                <p style="font-size:12px;line-height:1.6">${executedActions}</p>
+              </div>
+            </div>
+            <div class="passport-grid">
+              <div class="passport-box">
+                <h4>8. 剩余不确定性</h4>
+                <p>${uncertainties}</p>
+              </div>
+              <div class="passport-box">
+                <h4>9. 建议下一步动作</h4>
+                <ul>${(p?.recommended_action || ['提交人工复核', '保留证据链', '禁止自动处置']).map(x => `<li>${x}</li>`).join('')}</ul>
+              </div>
+            </div>
+            <div class="passport-grid">
+              <div class="passport-box">
+                <h4>10. 是否需要人工审批</h4>
+                <p>${p?.human_gate?.required ?? true ? '<span class="pill red">是</span> 当前证据满足度不足，需人工门禁确认。' : '<span class="pill green">否</span> 证据充分，可自动流转。'}</p>
+                <p style="margin-top:6px">充分性=${p?.human_gate?.sufficiency_score ?? '--'} · 反证分=${p?.human_gate?.counter_score ?? '--'}</p>
+              </div>
+              <div class="passport-box">
+                <h4>11. 当前可信度评估</h4>
+                <p>风险置信度：<span class="cyan-text">${confidenceScore}%</span></p>
+                <p>统计维度=${fmt(scores.statistical, 3)} · 关系维度=${fmt(scores.relational, 3)} · 行为维度=${fmt(scores.narrative_behavior, 3)}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      return '';
+    }
+
+    function selectTraceStep(index) {
+      state.selectedTraceStep = index;
+      renderTraceTab();
+    }
+
+    async function enterOrderDetail(oid, caseId, event) {
+      event?.stopPropagation();
+      state.highlightedOrderId = oid;
+      state.detailFocus = true;
+      state.activeTab = 'orders';
+      state.reviewMenuOpen = false;
+      await selectCase(caseId);
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function jsArg(value) {
+      return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    }
+
+    function getSignalLevel(c) {
+      const signals = safeJson(c.signal_strength, {});
+      const hasStrong = Object.values(signals).some(v => String(v).toLowerCase() === 'strong');
+      const hasMedium = Object.values(signals).some(v => String(v).toLowerCase() === 'medium');
+      const level = String(c.risk_level || '').toLowerCase();
+      if (hasStrong || level.includes('critical') || level.includes('high')) return 'strong';
+      if (hasMedium || level.includes('medium')) return 'medium';
+      return 'weak';
+    }
+
+    async function refreshAll() {
+      try {
+        document.getElementById('runtimeStatus').textContent = '加载数据中';
+        const [dashboard, cases, candidates, patterns, policyWeights] = await Promise.all([
+          api('/api/dashboard'),
+          api('/api/cases'),
+          api('/api/patterns/candidates').catch(() => []),
+          api('/api/patterns').catch(() => []),
+          api('/api/policy/weights').catch(() => [])
+        ]);
+        state.dashboard = dashboard;
+        state.cases = cases;
+        state.candidates = candidates;
+        state.patterns = patterns;
+        state.policyWeights = policyWeights;
+        const detailRows = await Promise.all(cases.map(c => api(`/api/cases/${c.case_id}`).catch(() => null)));
+        state.caseDetails = {};
+        detailRows.forEach(row => { if (row && row.case_id) state.caseDetails[row.case_id] = row; });
+        if (!state.selectedCaseId && cases.length) state.selectedCaseId = cases[0].case_id;
+        if (!state.selectedCandidateId && candidates.length) state.selectedCandidateId = candidates[0].candidate_id;
+        renderFilters();
+        await loadSelectedCase();
+        document.getElementById('runtimeStatus').textContent = '系统运行中';
+        document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+        renderAll();
+      } catch (err) {
+        document.getElementById('runtimeStatus').textContent = '数据连接异常';
+        toast(`加载失败：${err.message || err}`);
+      }
+    }
+
+    async function loadSelectedCase() {
+      if (!state.selectedCaseId) return;
+      const id = state.selectedCaseId;
+      const [selectedCase, graph, passport, route] = await Promise.all([
+        api(`/api/cases/${id}`),
+        api(`/api/cases/${id}/graph`).catch(() => null),
+        api(`/api/cases/${id}/passport`).catch(() => null),
+        api(`/api/cases/${id}/route`).catch(() => null)
+      ]);
+      state.selectedCase = selectedCase;
+      state.graph = graph;
+      state.passport = passport;
+      state.route = route;
+    }
+
+    function renderFilters() {
+      const select = document.getElementById('patternFilter');
+      const existing = select.value || 'all';
+      const patterns = Array.from(new Set(state.cases.map(c => c.pattern_id))).filter(Boolean);
+      select.innerHTML = `<option value="all">风险模式：全部</option>` + patterns.map(p => `<option value="${p}">${p} ${shortPatternName(p)}</option>`).join('');
+      select.value = patterns.includes(existing) ? existing : 'all';
+    }
+
+    function filteredCases() {
+      const pattern = document.getElementById('patternFilter')?.value || 'all';
+      const level = document.getElementById('levelFilter')?.value || 'all';
+      const progress = document.getElementById('progressFilter')?.value || 'all';
+      return state.cases.filter(c => {
+        if (pattern !== 'all' && c.pattern_id !== pattern) return false;
+        if (level !== 'all' && String(c.risk_level).toLowerCase() !== level) return false;
+        if (progress === 'passport' && !String(c.status || '').includes('human_review')) return false;
+        if (progress === 'review' && !String(c.status || '').includes('human_review')) return false;
+        if (progress === 'investigating' && String(c.status || '').includes('human_review')) return false;
+        return true;
+      });
+    }
+
+    function renderPageNav() {
+      const nav = document.getElementById('pageNav');
+      nav.innerHTML = '';
+      const main = document.getElementById('main');
+      main.className = `main page-overview${state.detailFocus ? ' detail-focus' : ''}`;
+    }
+
+    function renderAll() {
+      renderPageNav();
+      renderKpis();
+      renderOrderStream();
+      renderCandidateOverview();
+      renderQueue();
+      renderWorkbench();
+    }
+
+    function renderKpis() {
+      const dash = state.dashboard || {};
+      const calls = (dash.model_invocations || []).reduce((sum, x) => sum + Number(x.count || 0), 0);
+      const fallback = (dash.model_invocations || []).reduce((sum, x) => sum + (Number(x.used_fallback || 0) ? Number(x.count || 0) : 0), 0);
+      const actions = (dash.actions || []).reduce((sum, x) => sum + Number(x.count || 0), 0);
+      const backend = (dash.model_invocations || []).some(x => x.backend === 'openai') ? 'openai-compatible' : dash.model_backend || 'fallback';
+      document.getElementById('backendStatus').textContent = backend;
+      const cards = [
+        ['风险案例', dash.case_count ?? state.cases.length, '三类典型跨境电商风险模式'],
+        ['证据条目', dash.evidence_count ?? 0, '支持证据、反证与不确定性'],
+        ['追证轨迹', dash.trajectory_count ?? 0, 'agent state / decision / reward'],
+        ['OpenCLAW动作', actions, '受控 action registry 调用'],
+        ['模型调用', calls, `fallback=${fallback}`],
+        ['证据护照', dash.passport_count ?? 0, '可提交人工复核的输出']
+      ];
+      document.getElementById('kpis').innerHTML = cards.map(([label, value, note], i) => `
+        <div class="kpi">
+          <div class="label">${label}</div>
+          <strong class="${i === 4 ? 'blue' : i === 5 ? 'ok' : ''}">${value}</strong>
+          <div class="note">${note}</div>
+        </div>
+      `).join('');
+    }
+
+    function getOrderResult(caseId) {
+      const mapped = state.caseResultMap[caseId];
+      if (mapped) {
+        return {
+          text: mapped.status,
+          pill: mapped.decision === 'risk_founded' ? 'red' : mapped.decision === 'risk_not_founded' ? 'green' : 'amber'
+        };
+      }
+      const c = state.cases.find(x => x.case_id === caseId);
+      if (!c) return { text: 'AI 自动处理', pill: 'blue' };
+      const status = String(c.status || '');
+      if (status.includes('human_review')) return { text: '等待人工处理', pill: 'amber' };
+      if (status.includes('reviewed')) return { text: '人工已确认', pill: 'green' };
+      return { text: 'AI 自动处理', pill: 'blue' };
+    }
+
+    function renderOrderStream() {
+      const rows = [];
+      const base = new Date();
+      const signalStats = { strong: 0, medium: 0, weak: 0 };
+      state.cases.forEach((c, ci) => {
+        const entities = safeJson(c.primary_entities, {});
+        const orders = (entities.orders || []).slice(0, 10);
+        const signalLevel = getSignalLevel(c);
+        const signalLabel = { strong: '强信号', medium: '中信号', weak: '弱信号' }[signalLevel];
+        const signalClass = { strong: 'red', medium: 'amber', weak: 'green' }[signalLevel];
+        const result = getOrderResult(c.case_id);
+        const isWeak = signalLevel === 'weak';
+        orders.forEach((oid, i) => {
+          signalStats[signalLevel] = (signalStats[signalLevel] || 0) + 1;
+          rows.push({
+            time: new Date(base.getTime() - (ci * 10 + i) * 17000).toLocaleTimeString('zh-CN', { hour12: false }),
+            oid,
+            caseId: c.case_id,
+            user: (entities.users || [])[i % Math.max(1, (entities.users || []).length)] || 'U-UNK',
+            amount: c.pattern_id === 'EC-ARBI-003' ? 150 + i * 17 : c.pattern_id === 'EC-FAKE-002' ? 58 + i * 8 : 249 + i * 11,
+            signalLabel,
+            signalClass,
+            patternId: isWeak ? '' : c.pattern_id,
+            resultText: isWeak ? '' : result.text,
+            resultPill: isWeak ? '' : result.pill
+          });
+        });
+      });
+      const fallbackCaseId = state.cases[0]?.case_id || 'DEMO';
+      const extraDefs = [
+        { level: 'strong', patternId: 'EC-SKIM-001', amountBase: 899 },
+        { level: 'medium', patternId: 'EC-FAKE-002', amountBase: 299 },
+        { level: 'weak', patternId: 'EC-ARBI-003', amountBase: 99 }
+      ];
+      const extraResultMap = { strong: { text: 'AI 自动处理', pill: 'blue' }, medium: { text: '等待人工处理', pill: 'amber' }, weak: { text: '', pill: '' } };
+      extraDefs.forEach(({ level, patternId, amountBase }) => {
+        const needed = Math.max(0, 3 - (signalStats[level] || 0));
+        const er = extraResultMap[level];
+        const isWeak = level === 'weak';
+        for (let i = 0; i < needed; i++) {
+          signalStats[level] = (signalStats[level] || 0) + 1;
+          rows.push({
+            time: new Date(base.getTime() - rows.length * 17000).toLocaleTimeString('zh-CN', { hour12: false }),
+            oid: `${patternId.split('-')[2]}-${String(8000 + i + 1)}`,
+            caseId: fallbackCaseId,
+            user: `U-${String(Math.floor(Math.random() * 900) + 100)}`,
+            amount: amountBase + Math.floor(Math.random() * 50),
+            signalLabel: { strong: '强信号', medium: '中信号', weak: '弱信号' }[level],
+            signalClass: { strong: 'red', medium: 'amber', weak: 'green' }[level],
+            patternId: isWeak ? '' : patternId,
+            resultText: isWeak ? '' : er.text,
+            resultPill: isWeak ? '' : er.pill
+          });
+        }
+      });
+      document.getElementById('streamCount').textContent = `${rows.length} 项`;
+      document.getElementById('orderStream').innerHTML = rows.map(r => `
+        <tr>
+          <td class="mono">${r.time}</td>
+          <td><b class="case-id" style="cursor:pointer" onclick="enterOrderDetail('${jsArg(r.oid)}','${jsArg(r.caseId)}',event)">${r.oid}</b></td>
+          <td class="mono">${r.user}</td>
+          <td class="blue">¥${fmt(r.amount, 2)}</td>
+          <td><span class="pill ${r.signalClass}">${r.signalLabel}</span></td>
+          <td class="mono">${r.patternId}</td>
+          <td>${r.resultText ? `<span class="pill ${r.resultPill}">${r.resultText}</span>` : ''}</td>
+        </tr>
+      `).join('');
+    }
+
+    function renderCandidateOverview() {
+      const candidates = state.candidates || [];
+      const body = document.getElementById('candidateOverviewCards');
+      const countEl = document.getElementById('candidateOverviewCount');
+      if (!body) return;
+      countEl.textContent = `${candidates.length} 个`;
+      const selected = candidates.find(c => c.candidate_id === state.selectedCandidateId) || candidates[0];
+      body.innerHTML = candidates.map(c => {
+        const active = selected && selected.candidate_id === c.candidate_id ? 'active' : '';
+        const supporting = (c.supporting_cases || []).slice(0, 4).map(x => `<span class="pill blue">${x}</span>`).join('');
+        const signals = (c.common_signals || []).slice(0, 6).map(x => `<span class="pill green">${x}</span>`).join('');
+        const isDetailOpen = state.selectedCandidateDetailId === c.candidate_id;
+        const detailHtml = isDetailOpen ? renderCandidateDetail(c) : '';
+        return `
+          <div class="candidate ${active}" onclick="focusCandidate('${jsArg(c.candidate_id)}', event)">
+            <div style="display:flex;justify-content:space-between;gap:8px">
+              <b class="case-id" onclick="showCandidateDetail('${jsArg(c.candidate_id)}', event)">${c.candidate_id}</b>
+              <span class="pill ${c.status === 'approved' ? 'green' : c.status === 'rejected' ? 'red' : 'amber'}">${c.status || 'under_review'}</span>
+            </div>
+            <div class="muted">${c.name || 'learned pattern candidate'}</div>
+            <div class="candidate-meta">${supporting || '<span class="pill">离线候选</span>'}</div>
+            <div class="signal-tags">${signals || '<span class="pill amber">等待人工确认</span>'}</div>
+            <div class="candidate-actions">
+              <span class="muted">反证项 ${(c.required_counter_checks || []).length} 个</span>
+              <button class="primary" onclick="approveCandidate('${jsArg(c.candidate_id)}', event)" ${c.status === 'approved' ? 'disabled' : ''}>审核通过并写回</button>
+            </div>
+            ${detailHtml}
+          </div>
+        `;
+      }).join('') || `<div class="empty">暂无新风险模式候选</div>`;
+    }
+
+    function showCandidateDetail(id, event) {
+      event?.stopPropagation();
+      state.selectedCandidateDetailId = id;
+      renderCandidateOverview();
+    }
+
+    function closeCandidateDetail(event) {
+      event?.stopPropagation();
+      state.selectedCandidateDetailId = null;
+      renderCandidateOverview();
+    }
+
+    function getCandidateDetailInfo(c) {
+      const id = c.candidate_id || '';
+      const name = c.name || shortPatternName(id);
+      const defaultMap = {
+        'EC-SKIM-001': {
+          assertion: '在促销窗口期内，检测到同一设备/网络环境下存在多个账号集中下单并高频退款，疑似团伙刷单骗补。',
+          scene: '跨境电商大促补贴活动、平台新人专享优惠券发放场景。',
+          trigger: '设备指纹集中 > 3个账号/设备 且 退款率 > 40% 且 补贴率 > 30%。',
+          evidence: ['设备关联图谱', '退款时效分布', '补贴资金流水', 'IP 同段聚类'],
+          counter: ['家庭共享设备', '校园/办公网络 NAT', '正常促销凑单退货'],
+          actions: ['关系扩展', '退款簇查询', '补贴台账', '促销窗口对比'],
+          gate: '充分性 > 0.75 且 反证分 < 0.25 时仍需人工复核。',
+          disposal: '冻结关联账号提现资格，限制补贴参与，标记黑名单。',
+          version: 'v1.0-demo'
+        },
+        'EC-FAKE-002': {
+          assertion: '物流轨迹异常率高，自动确认收货占比显著，评论内容高度复用，疑似空包虚假交易。',
+          scene: '跨境直邮、保税仓发货、第三方代发订单场景。',
+          trigger: '物流异常率 > 35% 且 自动确认率 > 60% 且 评论复用度 > 阈值。',
+          evidence: ['物流真实性校验', '签收地理围栏', '评论文本相似度', '发货重量异常'],
+          counter: ['物流信息延迟回传', '海外仓批量发货', '用户真实自提'],
+          actions: ['物流真实性', '行为序列', '历史案例'],
+          gate: '必须人工确认物流真实性后方可自动处置。',
+          disposal: '冻结店铺保证金，下架关联商品，追溯虚假订单资金。',
+          version: 'v1.0-demo'
+        },
+        'EC-ARBI-003': {
+          assertion: '同一资格 Key 集中使用，补贴率与退款率双高，支付账户复用明显，疑似补贴套利观察。',
+          scene: '新用户首单补贴、邀请奖励、平台满减券套利场景。',
+          trigger: '资格 Key 集中度 > 阈值 且 补贴率 > 25% 且 支付复用度 > 2。',
+          evidence: ['资格 Key 关联图谱', '支付账户聚类', '退款时效 < 24h', '行为序列异常'],
+          counter: ['家庭共享支付', '正常拼单代购', '促销期集中消费'],
+          actions: ['支付聚类', '退款簇查询', '行为序列'],
+          gate: '低复杂案件可直接生成护照，高复杂案件必须人工复核。',
+          disposal: '追回违规补贴资金，限制账号参与营销活动，上报监管。',
+          version: 'v1.0-demo'
+        }
+      };
+      const patternKey = Object.keys(defaultMap).find(k => id.includes(k)) || 'EC-SKIM-001';
+      const d = defaultMap[patternKey];
+      return {
+        name,
+        assertion: d.assertion,
+        scene: d.scene,
+        trigger: d.trigger,
+        evidence: (c.common_signals || []).length ? c.common_signals : d.evidence,
+        counter: (c.required_counter_checks || []).length ? c.required_counter_checks : d.counter,
+        actions: d.actions,
+        gate: d.gate,
+        disposal: d.disposal,
+        version: d.version
+      };
+    }
+
+    function renderCandidateDetail(c) {
+      const info = getCandidateDetailInfo(c);
+      return `
+        <div class="candidate-detail" style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(124,172,255,.14)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <b style="font-size:14px">风险模式详情</b>
+            <button onclick="closeCandidateDetail(event)" style="padding:4px 8px;font-size:12px">关闭</button>
+          </div>
+          <div style="display:grid;gap:8px;line-height:1.6">
+            <div><b>风险模式名称：</b><span class="cyan-text">${info.name}</span></div>
+            <div><b>风险断言模板：</b><span class="muted">${info.assertion}</span></div>
+            <div><b>适用业务场景：</b><span class="muted">${info.scene}</span></div>
+            <div><b>规则触发条件：</b><span class="muted">${info.trigger}</span></div>
+            <div><b>支持证据维度：</b> ${info.evidence.map(e => `<span class="pill green">${e}</span>`).join('')}</div>
+            <div><b>必要反证方向：</b> ${info.counter.map(e => `<span class="pill amber">${e}</span>`).join('')}</div>
+            <div><b>推荐追证动作：</b> ${info.actions.map(a => `<span class="pill blue">${a}</span>`).join('')}</div>
+            <div><b>人工复核关口：</b><span class="muted">${info.gate}</span></div>
+            <div><b>建议处置方式：</b><span class="muted">${info.disposal}</span></div>
+            <div><b>模式版本信息：</b><span class="pill">${info.version}</span></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderQueue() {
+      const cases = filteredCases();
+      document.getElementById('queueCount').textContent = `${cases.length} 项`;
+      document.getElementById('queueRows').innerHTML = cases.map(c => {
+        const entities = safeJson(c.primary_entities, {});
+        return `
+        <tr style="cursor:pointer">
+          <td><b class="case-id" onclick="enterCaseDetail('${jsArg(c.case_id)}',event)">${c.case_id}</b></td>
+          <td>${shortPatternName(c.pattern_id)}</td>
+          <td>${(entities.users || []).length}</td>
+          <td>${(entities.orders || []).length}</td>
+          <td><div class="confidence"><b>${fmt((c.risk_score || 0) * 100, 0)}%</b><div class="bar"><span style="width:${progressFor(c)}%"></span></div></div></td>
+          <td><span class="pill ${riskLevelClass(c.risk_level)}">${statusText(c)}</span></td>
+        </tr>
+      `}).join('');
+    }
+
+    function renderOrdersTab() {
+      const c = state.selectedCase;
+      const entities = safeJson(c.primary_entities, {});
+      const orders = (entities.orders || []).slice(0, 50);
+      const base = new Date();
+      const status = String(c.status || '');
+      const mapped = state.caseResultMap[c.case_id];
+      let caseResult = 'AI 自动处理';
+      let resultPill = 'blue';
+      if (mapped) {
+        caseResult = mapped.status;
+        resultPill = mapped.decision === 'risk_founded' ? 'red' : mapped.decision === 'risk_not_founded' ? 'green' : 'amber';
+      } else if (status.includes('human_review')) {
+        caseResult = '等待人工处理';
+        resultPill = 'amber';
+      } else if (status.includes('reviewed')) {
+        caseResult = '人工已确认';
+        resultPill = 'green';
+      }
+      document.getElementById('tabBody').innerHTML = `
+        <div class="subpanel" style="border:0;background:transparent;padding:0">
+          <div class="subhead">
+            <h4>关联风险订单 (${orders.length})</h4>
+            <span class="pill ${resultPill}">${caseResult}</span>
+          </div>
+          ${!mapped && caseResult === '等待人工处理' ? `
+          <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(255,179,86,.25);border-radius:8px;background:rgba(255,179,86,.08)">
+            <span class="hot">该案件需要人工复核。</span>
+            <button class="primary" style="margin-left:10px" onclick="toggleReviewMenu()">人工处理</button>
+          </div>` : ''}
+          ${mapped && mapped.decision === 'risk_founded' ? `
+          <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(255,90,111,.25);border-radius:8px;background:rgba(255,90,111,.08)">
+            <span class="bad">已处置：${mapped.action}</span>
+          </div>` : ''}
+          ${mapped && mapped.decision === 'risk_not_founded' ? `
+          <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(47,230,143,.25);border-radius:8px;background:rgba(47,230,143,.08)">
+            <span class="ok">相关订单已放行</span>
+          </div>` : ''}
+          ${mapped && mapped.decision === 'evidence_insufficient' ? `
+          <div style="margin-bottom:12px;padding:10px;border:1px solid rgba(255,179,86,.25);border-radius:8px;background:rgba(255,179,86,.08)">
+            <span class="hot">补充调查方向：${mapped.action}</span>
+          </div>` : ''}
+          <div class="stream" style="max-height:520px;overflow:auto">
+            <table>
+              <thead>
+                <tr><th>订单编号</th><th>关联用户</th><th>金额</th><th>时间</th><th>处理结果</th></tr>
+              </thead>
+              <tbody>
+                ${orders.map((oid, i) => {
+                  const isHighlighted = oid === state.highlightedOrderId;
+                  const user = (entities.users || [])[i % Math.max(1, (entities.users || []).length)] || 'U-UNK';
+                  const amount = c.pattern_id === 'EC-ARBI-003' ? 150 + i * 17 : c.pattern_id === 'EC-FAKE-002' ? 58 + i * 8 : 249 + i * 11;
+                  const time = new Date(base.getTime() - i * 17000).toLocaleTimeString('zh-CN', { hour12: false });
+                  return `
+                    <tr class="${isHighlighted ? 'highlighted-order' : ''}">
+                      <td><b class="case-id">${oid}</b></td>
+                      <td class="mono">${user}</td>
+                      <td class="blue">¥${fmt(amount, 2)}</td>
+                      <td class="mono">${time}</td>
+                      <td><span class="pill ${resultPill}">${caseResult}</span></td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderWorkbench() {
+      const c = state.selectedCase;
+      document.getElementById('workbenchTitle').textContent = c ? `${c.case_id} · ${caseHeadline(c)}` : '风险案件详情';
+      document.getElementById('selectedStatus').textContent = c ? `${c.pattern_id} · ${statusText(c)}` : '请选择案例';
+      const reviewMenu = document.getElementById('reviewMenu');
+      if (reviewMenu) {
+        reviewMenu.hidden = !state.reviewMenuOpen;
+        if (state.reviewMenuOpen) {
+          reviewMenu.innerHTML = renderReviewPanel();
+        }
+      }
+      const tabs = [
+        ['orders', '风险订单'],
+        ['trace', '主动追证流程'],
+        ['passport', '审计报告']
+      ];
+      document.getElementById('tabs').innerHTML = tabs.map(([id, label]) => `
+        <div class="tab ${state.activeTab === id ? 'active' : ''}" onclick="setTab('${id}')">${label}</div>
+      `).join('');
+      if (!c) {
+        document.getElementById('tabBody').innerHTML = `<div class="empty">请选择一个风险案件开始演示</div>`;
+        return;
+      }
+      if (state.activeTab === 'orders') renderOrdersTab();
+      if (state.activeTab === 'trace') renderTraceTab();
+      if (state.activeTab === 'passport') renderPassportTab();
+    }
+
+    function renderReviewPanel() {
+      const mode = state.reviewMode;
+      if (!mode) {
+        return `
+          <div style="margin-bottom:10px;font-weight:800">请选择人工复核结论：</div>
+          <div class="review-panel-btns">
+            <button class="danger" onclick="setReviewMode('risk_founded')">风险成立</button>
+            <button onclick="setReviewMode('risk_not_founded')">风险不成立</button>
+            <button class="warn" onclick="setReviewMode('evidence_insufficient')">证据不足</button>
+          </div>
+        `;
+      }
+      if (mode === 'risk_founded') {
+        return `
+          <div style="margin-bottom:10px;font-weight:800">风险成立 — 请选择处置措施：</div>
+          <div class="review-form">
+            <div class="recommend-list">
+              <label class="recommend-item"><input type="radio" name="riskAction" value="冻结关联账号" checked> 冻结关联账号</label>
+              <label class="recommend-item"><input type="radio" name="riskAction" value="限制提现与补贴资格"> 限制提现与补贴资格</label>
+              <label class="recommend-item"><input type="radio" name="riskAction" value="标记黑名单并上报监管"> 标记黑名单并上报监管</label>
+              <label class="recommend-item"><input type="radio" name="riskAction" value="custom"> 自定义处置措施</label>
+            </div>
+            <textarea id="customRiskAction" placeholder="若选择自定义，请在此输入处置措施..."></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+              <button onclick="setReviewMode(null)">返回</button>
+              <button class="primary" onclick="submitReviewAction('risk_founded')">确认处置</button>
+            </div>
+          </div>
+        `;
+      }
+      if (mode === 'risk_not_founded') {
+        return `
+          <div style="margin-bottom:10px;font-weight:800">风险不成立</div>
+          <div class="review-form">
+            <p style="color:var(--green);font-weight:900;font-size:16px">相关订单已放行。</p>
+            <p class="muted">系统已将该案件标记为"风险不成立"，关联订单恢复正常流转。</p>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+              <button onclick="setReviewMode(null)">返回</button>
+              <button class="primary" onclick="submitReviewAction('risk_not_founded')">确认</button>
+            </div>
+          </div>
+        `;
+      }
+      if (mode === 'evidence_insufficient') {
+        return `
+          <div style="margin-bottom:10px;font-weight:800">证据不足 — 请指出下一步调查方向：</div>
+          <div class="review-form">
+            <textarea id="investigateDirection" placeholder="请输入您认为需要补充调查的方向，例如：补充物流轨迹真实性核验、扩大设备指纹关联范围、增加促销窗口同期对比..."></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+              <button onclick="setReviewMode(null)">返回</button>
+              <button class="primary" onclick="submitReviewAction('evidence_insufficient')">确认并重新追证</button>
+            </div>
+          </div>
+        `;
+      }
+      return '';
+    }
+
+    function setReviewMode(mode) {
+      state.reviewMode = mode;
+      renderWorkbench();
+    }
+
+    async function submitReviewAction(decision) {
+      const c = state.selectedCase;
+      if (!c) return;
+      let actionText = '';
+      if (decision === 'risk_founded') {
+        const radios = document.querySelectorAll('input[name="riskAction"]');
+        let selected = '';
+        for (const r of radios) { if (r.checked) { selected = r.value; break; } }
+        if (selected === 'custom') {
+          actionText = document.getElementById('customRiskAction')?.value?.trim() || '自定义处置';
+        } else {
+          actionText = selected;
+        }
+        if (!actionText) { toast('请选择或输入处置措施'); return; }
+        state.caseResultMap[c.case_id] = { decision: 'risk_founded', action: actionText, status: '处置已完成' };
+        toast(`处置已完成：${actionText}`);
+      }
+      if (decision === 'risk_not_founded') {
+        state.caseResultMap[c.case_id] = { decision: 'risk_not_founded', action: '订单已放行', status: '订单已放行' };
+        toast('相关订单已放行');
+      }
+      if (decision === 'evidence_insufficient') {
+        const direction = document.getElementById('investigateDirection')?.value?.trim();
+        if (!direction) { toast('请输入下一步调查方向'); return; }
+        state.caseResultMap[c.case_id] = { decision: 'evidence_insufficient', action: direction, status: '重新追证中' };
+        toast(`已记录调查方向：${direction}，AI 重新进入主动追证流程...`);
+        try {
+          await api(`/api/cases/${c.case_id}/run?max_steps=8`, { method: 'POST' });
+          await refreshAll();
+          toast('AI 追证已完成，证据护照已更新。');
+        } catch (err) { toast(`追证失败：${err.message || err}`); }
+      }
+      state.reviewMenuOpen = false;
+      state.reviewMode = null;
+      try {
+        await api(`/api/cases/${c.case_id}/review`, {
+          method: 'POST',
+          body: JSON.stringify({ decision, note: actionText || direction || '订单已放行', reviewer: 'demo_auditor' })
+        });
+        await refreshAll();
+      } catch (err) { /* ignore backend review errors in demo */ }
+      renderWorkbench();
+    }
+
+    function renderTraceTab() {
+      const c = state.selectedCase;
+      const steps = getTraceSteps(c);
+      const selectedIndex = Math.min(Math.max(state.selectedTraceStep, 0), steps.length - 1);
+      const selectedStep = steps[selectedIndex];
+      document.getElementById('tabBody').innerHTML = `
+        <div class="trace-steps">
+          ${steps.map((s, i) => `
+            <div class="trace-step ${s.status} ${i === selectedIndex ? 'selected' : ''}" onclick="selectTraceStep(${i})">
+              <div class="step-num">${i + 1}</div>
+              <div class="step-name">${s.name}</div>
+              <div class="step-status">${s.status === 'completed' ? '已完成' : s.status === 'skipped' ? '已跳过' : '待执行'}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="step-detail">
+          ${renderStepDetail(selectedStep, c)}
+        </div>
+      `;
+    }
+
+    function cnEvidenceDimension(dim) {
+      const map = {
+        'device_clustering': '设备聚类',
+        'refund_rate': '退款率异常',
+        'subsidy_rate': '补贴率异常',
+        'ip_segment': 'IP同段',
+        'logistics_anomaly': '物流异常',
+        'automation_score': '自动确认率',
+        'review_reuse': '评论复用',
+        'payment_reuse': '支付复用',
+        'qualification_key': '资格Key集中',
+        'behavior_sequence': '行为序列',
+        'refund_speed': '退款时效',
+        'cohort_comparison': '促销窗口对比'
+      };
+      return map[dim] || dim;
+    }
+
+    function cnEvidenceSource(src) {
+      const map = {
+        'graph': '关系图谱',
+        'statistical': '统计模型',
+        'logistics': '物流系统',
+        'payment': '支付系统',
+        'review': '评论系统',
+        'user_behavior': '用户行为',
+        'external': '外部数据',
+        'rule_engine': '规则引擎',
+        'llm': '大模型分析'
+      };
+      return map[src] || src;
+    }
+
+    function cnEvidenceDesc(desc) {
+      if (!desc || typeof desc !== 'string') return desc || '--';
+      const map = {
+        'Multiple accounts share the same device fingerprint': '多个账号共享同一设备指纹',
+        'High refund rate detected in subsidy orders': '补贴订单中检测到高退款率',
+        'Abnormal logistics tracking patterns': '物流追踪模式异常',
+        'Review content shows high similarity': '评论内容高度相似',
+        'Payment accounts reused across multiple orders': '支付账户在多个订单中复用',
+        'Qualification key concentrated in few accounts': '资格Key集中在少数账号',
+        'Refund completed within 24 hours repeatedly': '退款在24小时内反复完成',
+        'IP addresses from same segment': 'IP地址来自同一网段',
+        'Automated confirmation rate exceeds threshold': '自动确认率超过阈值'
+      };
+      return map[desc] || desc;
+    }
+
+    function cnAssertion(c) {
+      if (c?.assertion && /[\u4e00-\u9fa5]/.test(c.assertion)) return c.assertion;
+      const pid = c?.pattern_id;
+      if (pid === 'EC-SKIM-001') return `在促销窗口期内，检测到同一设备/网络环境下存在多个账号集中下单并高频退款，疑似团伙刷单骗补。案件 ${c?.case_id} 共涉及多个关联账号，退款率与补贴率均显著高于正常水平。`;
+      if (pid === 'EC-FAKE-002') return `物流轨迹异常率高，自动确认收货占比显著，评论内容高度复用，疑似空包虚假交易。案件 ${c?.case_id} 的物流真实性存疑，建议进一步核验。`;
+      if (pid === 'EC-ARBI-003') return `同一资格Key集中使用，补贴率与退款率双高，支付账户复用明显，疑似补贴套利观察。案件 ${c?.case_id} 存在明显的套利行为特征。`;
+      return c?.assertion || '风险断言尚未生成。';
+    }
+
+    function renderPassportTab() {
+      const c = state.selectedCase;
+      const p = state.passport || {};
+      const evidence = c?.evidence || [];
+      const support = evidence.filter(e => e.kind === 'support');
+      const counter = evidence.filter(e => e.kind !== 'support');
+      const scores = safeJson(c?.scores, {});
+      const entities = safeJson(c?.primary_entities, {});
+      const orders = entities.orders || [];
+      const users = entities.users || [];
+      const patternName = shortPatternName(c?.pattern_id);
+      const confidenceScore = fmt((c?.risk_score || 0) * 100, 0);
+      const totalAmount = orders.reduce((sum, _, i) => sum + (c.pattern_id === 'EC-ARBI-003' ? 150 + i * 17 : c.pattern_id === 'EC-FAKE-002' ? 58 + i * 8 : 249 + i * 11), 0);
+      const supportLogic = support.length
+        ? support.map((e, i) => `${i + 1}) ${cnEvidenceDimension(e.dimension)}（来源：${cnEvidenceSource(e.source)}，置信度 ${fmt(e.confidence, 2)}）—— ${cnEvidenceDesc(e.description)}`).join('<br>')
+        : '目前系统尚未收集到明确的支持证据，建议继续执行追证动作以补齐证据缺口。';
+      const counterLogic = counter.length
+        ? counter.map((e, i) => `${i + 1}) ${cnEvidenceDimension(e.dimension)}—— ${cnEvidenceDesc(e.description)}`).join('<br>')
+        : '尚未发现有效反证，风险方向未出现明显偏差。';
+      const riskExplanation = cnAssertion(c) || `经系统分析，案件 ${c?.case_id} 命中风险模式 ${patternName}。该模式主要表现为：${topSignals(c)}。综合统计、关系与行为三个维度的评分，系统判定当前风险置信度为 ${confidenceScore}%。`;
+      const governanceImpact = `本案件共涉及 <b>${orders.length}</b> 笔订单、<b>${users.length}</b> 个关联账号，预估涉案金额约 <b>¥${fmt(totalAmount, 0)}</b>。若风险属实，可能导致平台补贴资金损失、用户信任度下降，并存在被监管通报的合规隐患。建议根据证据充分性及时采取冻结、限制或上报等措施，控制损失扩散。`;
+      const disposalMap = {
+        'EC-SKIM-001': ['冻结关联账号的登录与交易权限', '限制关联账号的提现与补贴资格', '追回已发放的违规补贴资金', '将涉事设备指纹与 IP 段标记黑名单', '冻结关联支付账户资金 72 小时'],
+        'EC-FAKE-002': ['冻结店铺保证金并暂停结算', '下架关联商品链接并限制上新', '冻结虚假订单对应的已结算资金', '限制涉事店铺发货权限', '将店铺主体上报平台风控名单'],
+        'EC-ARBI-003': ['追回违规领取的补贴与优惠券', '限制账号参与平台营销活动 90 天', '冻结套利资金流水并挂账待核', '将资格 Key 与支付账户加入限制名单', '情节严重时上报属地监管部门']
+      };
+      const defaultActions = ['冻结关联账号的登录与交易权限', '限制关联账号的提现与补贴资格', '追回已发放的违规补贴资金', '保留完整证据链以备后续审计与监管检查'];
+      const actions = disposalMap[c?.pattern_id] || defaultActions;
+      const actionList = actions.map((a, i) => `<li style="margin-bottom:6px">${i + 1}. ${a}</li>`).join('');
+      const humanGate = p?.human_gate?.required ?? true;
+      document.getElementById('tabBody').innerHTML = `
+        <div style="display:grid;gap:12px">
+          <div class="passport-grid">
+            <div class="passport-box">
+              <h4>一、风险解释</h4>
+              <p style="line-height:1.7">${riskExplanation}</p>
+              <p style="margin-top:8px">风险模式：<span class="cyan-text">${c?.pattern_id} ${patternName}</span> · 置信度：<span class="cyan-text">${confidenceScore}%</span></p>
+            </div>
+            <div class="passport-box">
+              <h4>二、梳理证据逻辑</h4>
+              <p style="line-height:1.7"><b>支持证据链（${support.length} 条）：</b><br>${supportLogic}</p>
+              <p style="margin-top:10px;line-height:1.7"><b>反证与不确定性（${counter.length} 条）：</b><br>${counterLogic}</p>
+            </div>
+          </div>
+          <div class="passport-grid">
+            <div class="passport-box">
+              <h4>三、评估治理影响</h4>
+              <p style="line-height:1.7">${governanceImpact}</p>
+              <div class="signal-tags" style="margin-top:10px">
+                <span class="pill">订单 ${orders.length} 笔</span>
+                <span class="pill">账号 ${users.length} 个</span>
+                <span class="pill blue">统计维度 ${fmt(scores.statistical, 3)}</span>
+                <span class="pill blue">关系维度 ${fmt(scores.relational, 3)}</span>
+                <span class="pill blue">行为维度 ${fmt(scores.narrative_behavior, 3)}</span>
+              </div>
+            </div>
+            <div class="passport-box">
+              <h4>四、处置建议</h4>
+              <ul style="padding-left:18px;line-height:1.7">${actionList}</ul>
+              <p style="margin-top:10px">${humanGate ? '<span class="pill red">需人工审批</span> 当前证据满足度不足，建议由人工确认后再执行上述处置。' : '<span class="pill green">可自动流转</span> 证据充分，系统可直接执行上述处置。'}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGraphTab() {
+      document.getElementById('tabBody').innerHTML = `
+        <div class="split">
+          <div class="subpanel">
+            <div class="subhead"><h4>多源证据融合图谱</h4><span class="pill blue">${(state.graph?.nodes || []).length} 节点</span></div>
+            <div class="graph-wrap">${graphSvg(state.graph)}</div>
+            <div class="legend">
+              <span><i style="background:var(--cyan)"></i>案件/断言</span>
+              <span><i style="background:var(--blue)"></i>实体</span>
+              <span><i style="background:var(--green)"></i>支持证据</span>
+              <span><i style="background:var(--amber)"></i>反证/不确定性</span>
+            </div>
+          </div>
+          <div class="subpanel">
+            <div class="subhead"><h4>融合算法讲解</h4><span class="pill green">可解释</span></div>
+            <div class="writeback" style="grid-template-columns:1fr">
+              <div class="write-step"><b>统计异常</b><span class="muted">促销 cohort、退款率、补贴率、外部 IEEE 特征形成初始 risk score。</span></div>
+              <div class="write-step"><b>关系图扩展</b><span class="muted">用户、设备、IP、支付账户、订单、物流节点进入图谱，按关系权重连接。</span></div>
+              <div class="write-step"><b>证据覆盖度</b><span class="muted">每个 pattern 定义 required evidence，router 按 missing dimension 和成本治理风险排序 action。</span></div>
+              <div class="write-step"><b>反证约束</b><span class="muted">不是只找支持证据，必须主动检索家庭共享、校园、仓配批量、自然活动等反证。</span></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function graphSvg(graph) {
+      if (!graph || !graph.nodes || !graph.nodes.length) return `<div class="empty">暂无图谱数据</div>`;
+      const nodes = graph.nodes.slice(0, 42);
+      const edges = (graph.edges || []).slice(0, 70);
+      const pos = {};
+      nodes.forEach((n, i) => {
+        const ring = i < 1 ? 0 : i < 8 ? 1 : i < 22 ? 2 : 3;
+        const count = ring === 0 ? 1 : ring === 1 ? 7 : ring === 2 ? 14 : 20;
+        const idx = ring === 0 ? 0 : ring === 1 ? i - 1 : ring === 2 ? i - 8 : i - 22;
+        const angle = -Math.PI / 2 + idx * Math.PI * 2 / count;
+        const radius = ring === 0 ? 0 : ring === 1 ? 90 : ring === 2 ? 160 : 220;
+        pos[n.id] = { x: 320 + Math.cos(angle) * radius, y: 235 + Math.sin(angle) * radius, node: n };
+      });
+      const edgeSvg = edges.map(e => {
+        const s = pos[e.source], t = pos[e.target];
+        if (!s || !t) return '';
+        return `<line x1="${s.x}" y1="${s.y}" x2="${t.x}" y2="${t.y}" stroke="rgba(124,172,255,.18)" stroke-width="${Math.max(1, Number(e.weight || .4) * 2)}"/>`;
+      }).join('');
+      const nodeSvg = nodes.map(n => {
+        const p = pos[n.id];
+        const type = n.type || '';
+        const fill = type === 'case' || type === 'assertion' ? '#22e7ca' : type === 'evidence' ? '#2fe68f' : '#45a3ff';
+        const r = type === 'case' ? 12 : type === 'assertion' ? 10 : type === 'evidence' ? 8 : 6;
+        const label = String(n.label || n.id).slice(0, 18);
+        return `<g>
+          <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" opacity=".92"/>
+          <text x="${p.x + 10}" y="${p.y + 4}" fill="#b8cad8" font-size="10">${label}</text>
+        </g>`;
+      }).join('');
+      return `<svg class="graph-svg" viewBox="0 0 640 470">${edgeSvg}${nodeSvg}</svg>`;
+    }
+
+    function renderLearningTab() {
+      const c = state.selectedCase;
+      if (!c) {
+        document.getElementById('tabBody').innerHTML = `<div class="empty">请选择一个风险案件查看命中模式</div>`;
+        return;
+      }
+      const signals = Object.entries(safeJson(c.signal_strength, {}) || {});
+      const requirements = Object.entries(safeJson(c.evidence_requirements, {}) || {});
+      const scores = safeJson(c.scores, {});
+      const currentWeights = (state.policyWeights || []).filter(w => w.pattern_id === c.pattern_id);
+      document.getElementById('tabBody').innerHTML = `
+        <div class="learning-grid">
+          <div class="subpanel">
+            <div class="subhead"><h4>当前案件命中模式</h4><span class="pill ${riskLevelClass(c.risk_level)}">${c.case_id}</span></div>
+            <div class="candidate active" style="cursor:default">
+              <div style="display:flex;justify-content:space-between;gap:8px">
+                <b>${c.pattern_id}</b>
+                <span class="pill ${riskLevelClass(c.risk_level)}">${c.risk_level}</span>
+              </div>
+              <div class="muted">${c.pattern_name || shortPatternName(c.pattern_id)}</div>
+              <div class="candidate-meta">
+                <span class="pill blue">置信度 ${fmt((c.risk_score || 0) * 100, 0)}%</span>
+                <span class="pill green">单案件模式</span>
+              </div>
+            </div>
+            <div class="writeback" style="grid-template-columns:1fr;margin-top:10px">
+              <div class="write-step"><b>规则特征</b><span class="muted">${topSignals(c)}</span></div>
+              <div class="write-step"><b>模式断言</b><span class="muted">${c.assertion || '当前案件已命中该模式的核心规则特征。'}</span></div>
+              <div class="write-step"><b>关键分值</b><span class="muted">统计维度=${fmt(scores.statistical, 3)} · 关系维度=${fmt(scores.relational, 3)} · 行为维度=${fmt(scores.narrative_behavior, 3)}</span></div>
+            </div>
+          </div>
+          <div class="subpanel">
+            <div class="subhead">
+              <h4>该模式下的证据要求与动作先验</h4>
+              <span class="pill blue">${requirements.length} 个证据维度</span>
+            </div>
+            <div class="signal-tags" style="margin-bottom:12px">
+              ${signals.map(([name, level]) => `<span class="pill ${String(level).toLowerCase() === 'strong' ? 'green' : String(level).toLowerCase() === 'medium' ? 'blue' : 'amber'}">${name} · ${level}</span>`).join('') || '<span class="pill">暂无信号强度</span>'}
+            </div>
+            <div class="writeback" style="grid-template-columns:repeat(3,1fr)">
+              ${requirements.slice(0, 9).map(([name, weight]) => `<div class="write-step"><b>${name}</b><span class="muted">所需权重=${fmt(weight, 2)}</span></div>`).join('') || '<div class="empty">暂无证据要求定义</div>'}
+            </div>
+            <div class="subhead" style="margin-top:14px"><h4>当前模式 Policy 权重</h4><span class="pill blue">${currentWeights.length} 行</span></div>
+            <div class="timeline" style="max-height:178px">${currentWeights.slice(0, 12).map(w => `
+              <div class="route-row">
+                <div><b>${w.pattern_id}</b><div class="muted">${actionLabels[w.action_name] || w.action_name} · 来源=${w.source_candidate_id}</div></div>
+                <span class="pill green">+${fmt(w.weight_delta, 3)}</span>
+              </div>
+            `).join('') || `<div class="empty">该模式暂无人工确认后的 policy 权重</div>`}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function activeTraceIndex(threads) {
+      if (!threads.length) return -1;
+      if (state.tracePlayIndex < 0) return threads.length - 1;
+      return Math.max(0, Math.min(state.tracePlayIndex, threads.length - 1));
+    }
+
+    function playTrace() {
+      const threads = state.selectedCase?.thread || [];
+      if (!threads.length) {
+        toast('当前案例还没有追证轨迹，请先运行下一步追证或完整闭环。');
+        return;
+      }
+      clearInterval(state.tracePlaybackTimer);
+      state.activePage = 'trace';
+      state.activeTab = 'trace';
+      state.tracePlayIndex = 0;
+      state.tracePlaybackActive = true;
+      renderAll();
+      state.tracePlaybackTimer = setInterval(() => {
+        const total = state.selectedCase?.thread?.length || 0;
+        if (state.tracePlayIndex >= total - 1) {
+          clearInterval(state.tracePlaybackTimer);
+          state.tracePlaybackActive = false;
+          toast('主动追证播放完成：每一步 action、agent 决策、观察结果和证据增量已串起来。');
+          renderWorkbench();
+          return;
+        }
+        state.tracePlayIndex += 1;
+        renderWorkbench();
+      }, 950);
+    }
+
+    function resetTracePlayback() {
+      clearInterval(state.tracePlaybackTimer);
+      state.tracePlaybackActive = false;
+      state.tracePlayIndex = -1;
+      renderWorkbench();
+    }
+
+    function evidenceFor(caseId) {
+      if (state.caseDetails[caseId]) return state.caseDetails[caseId].evidence || [];
+      if (state.selectedCase?.case_id === caseId) return state.selectedCase.evidence || [];
+      return [];
+    }
+
+    function toggleCaseExpand(id, event) {
+      event?.stopPropagation();
+      state.expandedCaseId = state.expandedCaseId === id ? null : id;
+    }
+
+    async function enterCaseDetail(id, event) {
+      event?.stopPropagation();
+      state.detailFocus = true;
+      state.activeTab = 'trace';
+      state.reviewMenuOpen = false;
+      await selectCase(id);
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function exitDetail() {
+      state.detailFocus = false;
+      state.reviewMenuOpen = false;
+      state.highlightedOrderId = null;
+      renderAll();
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    async function selectCase(id) {
+      state.selectedCaseId = id;
+      state.expandedCaseId = id;
+      state.tracePlayIndex = -1;
+      state.tracePlaybackActive = false;
+      clearInterval(state.tracePlaybackTimer);
+      await loadSelectedCase();
+      renderAll();
+    }
+
+    function setPage(id) {
+      if (!pageDefs.some(([pageId]) => pageId === id)) return;
+      state.activePage = id;
+      state.activeTab = pageToTab(id);
+      if (id !== 'trace') {
+        state.tracePlaybackActive = false;
+        clearInterval(state.tracePlaybackTimer);
+      }
+      history.replaceState(null, '', id === 'overview' ? location.pathname : `#${id}`);
+      renderAll();
+    }
+
+    function setTab(id) {
+      state.activeTab = id;
+      renderWorkbench();
+    }
+
+    function focusCandidate(id, event) {
+      event?.stopPropagation();
+      state.selectedCandidateId = id;
+      renderCandidateOverview();
+    }
+
+    async function stepSelected() {
+      if (!state.selectedCaseId) return;
+      try {
+        toast('正在执行下一步受控追证 action...');
+        await api(`/api/cases/${state.selectedCaseId}/step`, { method: 'POST', body: JSON.stringify({}) });
+        await refreshAll();
+        toast('追证 action 已完成，证据与轨迹已更新。');
+      } catch (err) { toast(`追证失败：${err.message || err}`); }
+    }
+
+    async function runSelected() {
+      if (!state.selectedCaseId) return;
+      try {
+        toast('正在运行选中案例的主动追证闭环...');
+        await api(`/api/cases/${state.selectedCaseId}/run?max_steps=8`, { method: 'POST' });
+        await refreshAll();
+        toast('选中案例闭环已运行完成。');
+      } catch (err) { toast(`运行失败：${err.message || err}`); }
+    }
+
+    async function runFullLoop() {
+      try {
+        toast('正在运行完整 Team-I demo，可能需要一些时间...');
+        await api('/api/demo/run?reset=true&max_steps=8', { method: 'POST' });
+        await refreshAll();
+        toast('完整闭环已完成：案件、证据、轨迹、护照与候选模式已刷新。');
+      } catch (err) { toast(`完整闭环失败：${err.message || err}`); }
+    }
+
+    function toggleReviewMenu() {
+      if (!state.selectedCaseId) return;
+      state.reviewMenuOpen = !state.reviewMenuOpen;
+      renderWorkbench();
+    }
+
+    async function approveCandidate(candidateId, event) {
+      event?.stopPropagation();
+      const id = candidateId || state.selectedCandidateId || state.candidates[0]?.candidate_id;
+      if (!id) return;
+      state.selectedCandidateId = id;
+      try {
+        const payload = await api(`/api/patterns/candidates/${encodeURIComponent(id)}/review`, {
+          method: 'POST',
+          body: JSON.stringify({ decision: 'approve', note: 'Approved from frontend demo.', reviewer: 'demo_auditor' })
+        });
+        await refreshAll();
+        renderCandidateOverview();
+        toast(`候选模式已写回：risk_pattern=${payload.risk_pattern_id || id}`);
+      } catch (err) { toast(`模式写回失败：${err.message || err}`); }
+    }
+
+    refreshAll();
+  </script>
+</body>
+</html>
