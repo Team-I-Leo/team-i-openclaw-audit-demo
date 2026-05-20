@@ -150,6 +150,7 @@
     .main.detail-focus .controls,
     .main.detail-focus .order-stream,
     .main.detail-focus .queue-panel,
+    .main.detail-focus .demo-ops,
     .main.detail-focus .case-board,
     .main.detail-focus .weak-panel,
     .main.detail-focus .candidate-panel {
@@ -230,6 +231,81 @@
     }
     .filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .demo-ops {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .demo-card {
+      border: 1px solid rgba(124, 172, 255, .17);
+      background: linear-gradient(180deg, rgba(14, 35, 54, .94), rgba(6, 18, 31, .94));
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 154px;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      position: relative;
+      overflow: hidden;
+    }
+    .demo-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--cyan), rgba(69,163,255,.18));
+      opacity: .85;
+    }
+    .demo-card h3 {
+      margin: 0;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .demo-card p { margin: 0; color: var(--muted); }
+    .demo-card-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 2px; }
+    .status-line {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 6px 10px;
+      align-items: start;
+      color: var(--muted);
+    }
+    .status-line b { color: var(--text); }
+    .mini-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .mini-flow span {
+      border: 1px solid rgba(34,231,202,.18);
+      border-radius: 999px;
+      padding: 3px 8px;
+      background: rgba(34,231,202,.06);
+    }
+    .delivery-list {
+      display: grid;
+      gap: 5px;
+      max-height: 66px;
+      overflow: auto;
+      font-size: 12px;
+    }
+    .delivery-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 5px 7px;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 6px;
+      background: rgba(255,255,255,.035);
+    }
     .order-stream { grid-column: 1; grid-row: auto; }
     .queue-panel { grid-column: 1; grid-row: auto; }
     .case-board { grid-column: 1; grid-row: auto; }
@@ -665,8 +741,9 @@
       .topbar { height: auto; flex-wrap: wrap; }
       .page-nav { order: 3; width: 100%; min-width: 0; justify-content: flex-start; overflow-x: auto; }
       .main { grid-template-columns: 1fr; }
-      .order-stream, .queue-panel, .case-board, .weak-panel, .candidate-panel, .workbench { grid-column: auto; grid-row: auto; }
+      .order-stream, .queue-panel, .case-board, .weak-panel, .candidate-panel, .workbench, .demo-ops { grid-column: auto; grid-row: auto; }
       .kpis, .demo-lane, .writeback { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .demo-ops { grid-template-columns: 1fr; }
       .workbench { grid-column: auto; }
       .split, .passport-grid, .learning-grid { grid-template-columns: 1fr; }
       .main.page-trace .case-board,
@@ -751,6 +828,8 @@
         <div class="count">选择案件后，在下方“案件详情”中执行追证、闭环运行和人工确认。</div>
       </section>
 
+      <section class="demo-ops" id="demoOps"></section>
+
       <section class="panel order-stream">
         <div class="panel-head">
           <div class="panel-title">实时订单与风险信号流</div>
@@ -801,6 +880,7 @@
             <button onclick="stepSelected()">下一步追证</button>
             <button class="warn" onclick="runSelected()">运行选中案例</button>
             <button class="primary" onclick="runFullLoop()">运行完整闭环</button>
+            <button onclick="sendCaseNotification('human_review_required')">飞书通知</button>
             <button onclick="toggleReviewMenu()">人工确认</button>
           </div>
         </div>
@@ -863,7 +943,12 @@
       highlightedOrderId: null,
       selectedTraceStep: 0,
       reviewMode: null,
-      caseResultMap: {}
+      caseResultMap: {},
+      notificationStatus: null,
+      notifications: [],
+      writebackResult: null,
+      notifyResult: null,
+      busyAction: ''
     };
 
     const actionLabels = {
@@ -1183,18 +1268,22 @@
     async function refreshAll() {
       try {
         document.getElementById('runtimeStatus').textContent = '加载数据中';
-        const [dashboard, cases, candidates, patterns, policyWeights] = await Promise.all([
+        const [dashboard, cases, candidates, patterns, policyWeights, notificationStatus, notifications] = await Promise.all([
           api('/api/dashboard'),
           api('/api/cases'),
           api('/api/patterns/candidates').catch(() => []),
           api('/api/patterns').catch(() => []),
-          api('/api/policy/weights').catch(() => [])
+          api('/api/policy/weights').catch(() => []),
+          api('/api/notifications/status').catch(() => null),
+          api('/api/notifications?limit=5').catch(() => ({ items: [] }))
         ]);
         state.dashboard = dashboard;
         state.cases = cases;
         state.candidates = candidates;
         state.patterns = patterns;
         state.policyWeights = policyWeights;
+        state.notificationStatus = notificationStatus;
+        state.notifications = notifications.items || [];
         const detailRows = await Promise.all(cases.map(c => api(`/api/cases/${c.case_id}`).catch(() => null)));
         state.caseDetails = {};
         detailRows.forEach(row => { if (row && row.case_id) state.caseDetails[row.case_id] = row; });
@@ -1258,6 +1347,7 @@
     function renderAll() {
       renderPageNav();
       renderKpis();
+      renderDemoOps();
       renderOrderStream();
       renderCandidateOverview();
       renderQueue();
@@ -1286,6 +1376,81 @@
           <div class="note">${note}</div>
         </div>
       `).join('');
+    }
+
+    function modelChainInfo() {
+      const dash = state.dashboard || {};
+      const calls = (dash.model_invocations || []).reduce((sum, x) => sum + Number(x.count || 0), 0);
+      const fallback = (dash.model_invocations || []).reduce((sum, x) => sum + (Number(x.used_fallback || 0) ? Number(x.count || 0) : 0), 0);
+      const backends = Array.from(new Set((dash.model_invocations || []).map(x => x.backend).filter(Boolean)));
+      const backend = backends.includes('openai') ? 'openai-compatible' : (backends[0] || dash.model_backend || 'fallback');
+      const isModelBacked = calls > 0 && fallback === 0 && backend !== 'fallback';
+      return { calls, fallback, backend, isModelBacked };
+    }
+
+    function candidateForWriteback() {
+      const selectedCaseId = state.selectedCaseId;
+      const candidates = state.candidates || [];
+      return candidates.find(c => c.status !== 'approved' && (c.supporting_cases || []).includes(selectedCaseId))
+        || candidates.find(c => c.status !== 'approved')
+        || candidates[0]
+        || null;
+    }
+
+    function renderDemoOps() {
+      const host = document.getElementById('demoOps');
+      if (!host) return;
+      const model = modelChainInfo();
+      const candidate = candidateForWriteback();
+      const approved = (state.candidates || []).filter(c => c.status === 'approved').length;
+      const notif = state.notificationStatus || {};
+      const channels = notif.default_channels || [];
+      const latest = state.notifications?.[0];
+      const latestDeliveries = latest?.deliveries || [];
+      const notifyEnabled = notif.enabled !== false;
+      const feishuReady = Boolean(notif.feishu_enabled && notif.feishu_configured);
+      host.innerHTML = `
+        <div class="demo-card">
+          <h3>多模型 Agent 链路 <span class="pill ${model.isModelBacked ? 'green' : 'amber'}">${model.backend}</span></h3>
+          <p>前端直接读取后端模型调用轨迹，展示当前演示使用的是本地/兼容模型服务，还是 fallback 回归链路。</p>
+          <div class="status-line">
+            <span>调用数</span><b>${model.calls}</b>
+            <span>fallback</span><b>${model.fallback}</b>
+            <span>角色分工</span><b>7B 路由/追证 · 14B 护照/学习</b>
+          </div>
+          <div class="demo-card-actions">
+            <button onclick="refreshAll()">刷新模型状态</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <h3>Pattern Learning 写回 <span class="pill ${candidate?.status === 'approved' ? 'green' : 'amber'}">${approved}/${state.candidates.length || 0} 已写回</span></h3>
+          <p>把候选模式从“人工审表”推进到风险模式库、案例记忆库和策略权重，形成下一次审计可复用的闭环。</p>
+          <div class="mini-flow">
+            <span>候选模式</span>→<span>人工确认</span>→<span>risk_pattern</span>→<span>case_memory</span>→<span>policy_weight</span>
+          </div>
+          <div class="status-line">
+            <span>当前候选</span><b>${candidate?.candidate_id || '暂无'}</b>
+            <span>Policy 权重</span><b>${state.policyWeights.length} 行</b>
+          </div>
+          <div class="demo-card-actions">
+            <button class="primary" onclick="runPatternWritebackDemo()" ${candidate ? '' : 'disabled'}>审核通过并写回</button>
+          </div>
+        </div>
+        <div class="demo-card">
+          <h3>飞书 / IM 通知 <span class="pill ${notifyEnabled && feishuReady ? 'green' : notifyEnabled ? 'amber' : 'red'}">${feishuReady ? 'feishu ready' : notifyEnabled ? channels.join(',') || 'mock' : 'disabled'}</span></h3>
+          <p>高风险案件、证据护照和人工复核门禁可以推送到飞书群，现场点击即可触发通知并回写发送记录。</p>
+          <div class="delivery-list">
+            ${latest ? `
+              <div class="delivery-row"><span>${latest.case_id} · ${latest.event_type}</span><b>${latest.status}</b></div>
+              ${latestDeliveries.slice(0, 2).map(d => `<div class="delivery-row"><span>${d.channel}</span><b class="${d.status === 'delivered' ? 'ok' : 'bad'}">${d.status}</b></div>`).join('')}
+            ` : '<div class="muted">暂无通知发送记录</div>'}
+          </div>
+          <div class="demo-card-actions">
+            <button class="primary" onclick="sendCaseNotification('human_review_required')">发送人工复核通知</button>
+            <button onclick="sendCaseNotification('evidence_passport_ready')">发送护照通知</button>
+          </div>
+        </div>
+      `;
     }
 
     function getOrderResult(caseId) {
@@ -1712,6 +1877,14 @@
           method: 'POST',
           body: JSON.stringify({ decision, note: actionText || direction || '订单已放行', reviewer: 'demo_auditor' })
         });
+        if (decision === 'risk_founded') {
+          await writeBackCandidate(null, { silent: true, refresh: false }).catch(() => null);
+          await sendCaseNotification('human_review_approved', { silent: true, refresh: false }).catch(() => null);
+        } else if (decision === 'evidence_insufficient') {
+          await sendCaseNotification('active_retrieval_started', { silent: true, refresh: false }).catch(() => null);
+        } else {
+          await sendCaseNotification('human_review_required', { silent: true, refresh: false }).catch(() => null);
+        }
         await refreshAll();
       } catch (err) { /* ignore backend review errors in demo */ }
       renderWorkbench();
@@ -2109,20 +2282,73 @@
       renderWorkbench();
     }
 
-    async function approveCandidate(candidateId, event) {
-      event?.stopPropagation();
-      const id = candidateId || state.selectedCandidateId || state.candidates[0]?.candidate_id;
+    async function writeBackCandidate(candidateId, options = {}) {
+      const id = candidateId || candidateForWriteback()?.candidate_id || state.selectedCandidateId || state.candidates[0]?.candidate_id;
       if (!id) return;
       state.selectedCandidateId = id;
+      state.busyAction = 'writeback';
+      renderDemoOps();
+      const payload = await api(`/api/patterns/candidates/${encodeURIComponent(id)}/review`, {
+        method: 'POST',
+        body: JSON.stringify({ decision: 'approve', note: 'Approved from frontend demo.', reviewer: 'demo_auditor' })
+      });
+      state.writebackResult = payload;
+      state.busyAction = '';
+      if (options.refresh !== false) await refreshAll();
+      if (!options.silent) toast(`候选模式已写回：risk_pattern=${payload.risk_pattern_id || id}`);
+      return payload;
+    }
+
+    async function runPatternWritebackDemo() {
       try {
-        const payload = await api(`/api/patterns/candidates/${encodeURIComponent(id)}/review`, {
-          method: 'POST',
-          body: JSON.stringify({ decision: 'approve', note: 'Approved from frontend demo.', reviewer: 'demo_auditor' })
-        });
-        await refreshAll();
+        await writeBackCandidate();
+        state.activeTab = 'learning';
+        renderAll();
+      } catch (err) {
+        state.busyAction = '';
+        toast(`模式写回失败：${err.message || err}`);
+      }
+    }
+
+    async function approveCandidate(candidateId, event) {
+      event?.stopPropagation();
+      try {
+        await writeBackCandidate(candidateId);
         renderCandidateOverview();
-        toast(`候选模式已写回：risk_pattern=${payload.risk_pattern_id || id}`);
       } catch (err) { toast(`模式写回失败：${err.message || err}`); }
+    }
+
+    async function sendCaseNotification(eventType = 'human_review_required', options = {}) {
+      const caseId = state.selectedCaseId || state.cases[0]?.case_id || 'AER-001';
+      const notif = state.notificationStatus || {};
+      const channels = notif.feishu_enabled && notif.feishu_configured ? ['feishu', 'mock'] : ['mock'];
+      try {
+        state.busyAction = 'notify';
+        renderDemoOps();
+        const payload = await api('/api/notifications/send', {
+          method: 'POST',
+          body: JSON.stringify({
+            case_id: caseId,
+            event_type: eventType,
+            channels,
+            actor: { agent_id: 'frontend_demo', role: 'risk_operator' },
+            trigger: { source: 'dashboard_button', selected_case: caseId }
+          })
+        });
+        state.notifyResult = payload;
+        state.busyAction = '';
+        if (options.refresh !== false) await refreshAll();
+        const delivered = (payload.deliveries || []).filter(d => d.status === 'delivered').map(d => d.channel).join(', ');
+        const failed = (payload.deliveries || []).filter(d => d.status !== 'delivered').map(d => `${d.channel}:${d.error_message || d.status}`).join(', ');
+        if (!options.silent) {
+          if (payload.ok === false) toast(`通知未发送：${payload.reason || 'notification_disabled'}`);
+          else toast(delivered ? `通知已发送：${delivered}${failed ? `；失败：${failed}` : ''}` : `通知已创建，发送状态：${payload.event?.status || 'pending'}`);
+        }
+        return payload;
+      } catch (err) {
+        state.busyAction = '';
+        toast(`通知发送失败：${err.message || err}`);
+      }
     }
 
     refreshAll();
