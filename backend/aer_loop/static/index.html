@@ -347,7 +347,7 @@
     .review-menu[hidden] { display: none; }
     .main.page-trace,
     .main.page-passport {
-      grid-template-columns: minmax(300px, .72fr) minmax(690px, 1.62fr);
+      grid-template-columns: minmax(0, 1fr) !important;
     }
     .main.page-learning,
     .main.page-governance {
@@ -383,9 +383,20 @@
     .main.page-passport .case-board,
     .main.page-governance .case-board { grid-column: 1; grid-row: 3; }
     .main.page-trace .workbench,
-    .main.page-passport .workbench { grid-column: 2; grid-row: 3 / 5; min-height: 760px; }
+    .main.page-passport .workbench { grid-column: 1 / -1 !important; grid-row: 3 / 5; min-height: 760px; width: 100%; }
     .main.page-learning .workbench,
     .main.page-governance .workbench { grid-column: 1 / -1; grid-row: 1 / -1; min-height: calc(100vh - 80px); }
+    .main.page-trace.detail-focus,
+    .main.page-passport.detail-focus {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .main.page-trace.detail-focus .workbench,
+    .main.page-passport.detail-focus .workbench {
+      grid-column: 1 / -1;
+      grid-row: 1;
+      min-height: calc(100vh - 88px);
+      max-height: none;
+    }
     .demo-lane {
       display: grid;
       grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -804,6 +815,11 @@
       border-color: rgba(34,231,202,.72);
       box-shadow: inset 0 0 0 1px rgba(34,231,202,.20), 0 0 20px rgba(34,231,202,.12);
     }
+    .trace-step.playback-current {
+      border-color: rgba(34,231,202,.92);
+      background: linear-gradient(180deg, rgba(34,231,202,.16), rgba(69,163,255,.08));
+      box-shadow: inset 0 0 0 1px rgba(34,231,202,.28), 0 0 26px rgba(34,231,202,.24);
+    }
     .trace-step.completed { border-color: rgba(47,230,143,.28); }
     .trace-step.skipped { border-color: rgba(255,179,86,.28); opacity:.85; }
     .trace-step.pending { border-color: rgba(83,104,121,.28); }
@@ -819,6 +835,70 @@
     .step-name { font-weight: 800; font-size: 13px; margin-bottom: 4px; }
     .step-status { font-size: 11px; color: var(--muted); }
     .step-detail { min-height: 0; }
+    .loop-playback-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(34,231,202,.18);
+      border-radius: 8px;
+      background: linear-gradient(90deg, rgba(34,231,202,.10), rgba(69,163,255,.05));
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .loop-playback-strip .bar {
+      position: relative;
+      flex: 1;
+      height: 6px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(124,172,255,.14);
+    }
+    .loop-playback-strip .bar i {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 18%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--blue));
+      box-shadow: 0 0 14px rgba(34,231,202,.45);
+      animation: sweepBar 5.2s ease-in-out infinite;
+    }
+    .animated-step-detail {
+      border: 1px solid rgba(34,231,202,.18);
+      border-radius: 8px;
+      background: radial-gradient(circle at top left, rgba(34,231,202,.08), transparent 34%), rgba(4,15,25,.58);
+      padding: 14px;
+      overflow: hidden;
+    }
+    .animated-step-detail h4 {
+      margin: 0 0 10px;
+      font-size: 16px;
+      color: var(--text);
+    }
+    .story-lines {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .story-line {
+      opacity: 0;
+      transform: translateY(8px);
+      border: 1px solid rgba(124,172,255,.12);
+      background: rgba(255,255,255,.035);
+      border-radius: 7px;
+      padding: 9px 10px;
+      color: var(--muted);
+      line-height: 1.55;
+      animation: storyLineIn .8s ease forwards;
+    }
+    .story-line b { color: var(--cyan); }
+    .story-line:nth-child(1) { animation-delay: .8s; }
+    .story-line:nth-child(2) { animation-delay: 2s; }
+    .story-line:nth-child(3) { animation-delay: 3.2s; }
+    .story-line:nth-child(4) { animation-delay: 4.4s; }
+    .story-line:nth-child(5) { animation-delay: 5.6s; }
     .cyan-text { color: var(--cyan); font-weight: 900; }
 
     /* 智能追证融合视图 */
@@ -900,6 +980,17 @@
     @keyframes sweep {
       from { transform: translateX(0); }
       to { transform: translateX(420%); }
+    }
+    @keyframes tracePulse {
+      0%, 100% { transform: translateY(0); filter: brightness(1); }
+      50% { transform: translateY(0); filter: brightness(1.08); }
+    }
+    @keyframes storyLineIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes sweepBar {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(560%); }
     }
     @media (max-width: 1180px) {
       .topbar { height: auto; flex-wrap: wrap; }
@@ -1089,6 +1180,8 @@
       reviewMenuOpen: false,
       tracePlayIndex: -1,
       tracePlaybackActive: false,
+      evidenceLoopAnimationActive: false,
+      evidenceLoopAnimationTimer: null,
       governanceFilter: {},
       tracePlaybackTimer: null,
       highlightedOrderId: null,
@@ -1387,6 +1480,7 @@
     }
 
     function selectTraceStep(index) {
+      stopEvidenceLoopAnimation();
       state.selectedTraceStep = index;
       renderEvidenceLoopTab();
     }
@@ -2306,6 +2400,63 @@
       `;
     }
 
+    function stepNarrativeLines(step, c) {
+      const entities = safeJson(c.primary_entities, {});
+      const scores = safeJson(c.scores, {});
+      const requirements = Object.keys(safeJson(c.evidence_requirements, {}));
+      const routeActions = (state.route?.ranked_actions || []).slice(0, 3).map(r => actionLabels[r.action] || r.action);
+      const support = (c.evidence || []).filter(e => e.kind === 'support');
+      const counter = (c.evidence || []).filter(e => e.kind !== 'support');
+      const passportScore = state.passport?.human_gate?.sufficiency_score ?? c.risk_score ?? 0;
+      const base = {
+        assertion: [
+          `风险信号首先被收拢到案件 <b>${c.case_id}</b>：涉及 <b>${(entities.orders || []).length}</b> 笔订单、<b>${(entities.users || []).length}</b> 个账号。`,
+          `系统形成初始断言：命中 <b>${c.pattern_id} ${shortPatternName(c.pattern_id)}</b>，风险分 <b>${fmt((c.risk_score || 0) * 100, 0)}%</b>。`,
+          `触发信号来自设备复用、IP 聚集、退款/补贴异常等多源线索，进入主动追证链路。`
+        ],
+        routing: [
+          `Router Agent 评估调查复杂度：订单规模、证据缺口、反证需要与治理成本同时进入排序。`,
+          `当前优先动作：<b>${routeActions.join(' → ') || '关系扩展 → 退款簇查询 → 反证检索'}</b>。`,
+          `路由结果不是一次性判定，而是决定下一轮要查什么、补什么证据、是否需要人工门禁。`
+        ],
+        evidence: [
+          `Evidence Agent 开始补齐支持证据，当前已形成 <b>${support.length}</b> 条支持证据。`,
+          `关键证据覆盖：<b>${support.slice(0, 3).map(e => cnEvidenceDimension(e.dimension)).join('、') || requirements.slice(0, 3).join('、')}</b>。`,
+          `证据从订单、支付、退款、物流、设备、IP 和补贴台账汇入同一案件图谱。`
+        ],
+        counter: [
+          `Counter-Evidence Agent 主动检索反证，避免只寻找支持风险的材料。`,
+          `当前反证/不确定性 <b>${counter.length}</b> 条，重点检查家庭共享设备、校园网络、仓配批量等正当解释。`,
+          `反证不足以推翻风险断言时，风险置信度继续上升；反证充分时，案件会进入重新追证或放行。`
+        ],
+        passport: [
+          `Passport Agent 汇总支持证据、反证、不确定性、动作轨迹和版本信息，生成证据护照。`,
+          `当前护照充分性约 <b>${fmt(Number(passportScore) * 100, 0)}%</b>，状态为 <b>${statusText(c)}</b>。`,
+          `输出进入 Human-in-the-Loop：人工复核后可写回 risk_pattern、case_memory 与 policy_action_weight。`
+        ]
+      };
+      return base[step.id] || [step.detail || '当前步骤正在执行。'];
+    }
+
+    function renderAnimatedStepDetail(step, c, selectedIndex, total) {
+      const lines = stepNarrativeLines(step, c);
+      const status = step.status === 'completed' ? '已完成' : step.status === 'skipped' ? '已跳过' : '进行中';
+      return `
+        <div class="animated-step-detail">
+          <div class="subhead" style="padding:0 0 10px;border-bottom:1px solid rgba(255,255,255,.08);background:transparent">
+            <h4>${selectedIndex + 1}. ${step.name}</h4>
+            <span class="pill ${step.status === 'completed' ? 'green' : step.status === 'skipped' ? 'amber' : 'blue'}">${status}</span>
+          </div>
+          <div class="story-lines">
+            ${lines.map(line => `<div class="story-line">${line}</div>`).join('')}
+          </div>
+          <div style="margin-top:12px;color:var(--dim);font-size:12px;font-weight:700">
+            追证进度 ${selectedIndex + 1}/${total} · 每一步均记录 agent、action、observation 与 evidence delta
+          </div>
+        </div>
+      `;
+    }
+
     function buildUnifiedTrace(c) {
       const steps = getTraceSteps(c);
       const traces = buildReasoningTrace(c);
@@ -2337,7 +2488,7 @@
 
         // 横向步骤导航
         const stepNav = steps.map((s, i) => `
-          <div class="trace-step ${s.status} ${i === selectedIndex ? 'selected' : ''}" onclick="selectTraceStep(${i})">
+          <div class="trace-step ${s.status} ${i === selectedIndex ? 'selected' : ''} ${state.evidenceLoopAnimationActive && i === selectedIndex ? 'playback-current' : ''}" onclick="selectTraceStep(${i})">
             <div class="step-num">${i + 1}</div>
             <div class="step-name">${s.name}</div>
             <div class="step-status">${s.status === 'completed' ? '已完成' : s.status === 'skipped' ? '已跳过' : '待执行'}</div>
@@ -2346,7 +2497,7 @@
 
         // 当前选中步骤的详情
         let detailHtml = '';
-        try { detailHtml = renderStepDetail(selectedStep, c); } catch (e) { detailHtml = `<div class="empty">详情渲染异常：${e.message}</div>`; }
+        try { detailHtml = renderAnimatedStepDetail(selectedStep, c, selectedIndex, steps.length); } catch (e) { detailHtml = `<div class="empty">详情渲染异常：${e.message}</div>`; }
 
         // 当前步骤的AI轨迹
         let tracesHtml = '';
@@ -2383,6 +2534,13 @@
         `;
 
         document.getElementById('tabBody').innerHTML = `
+          ${state.evidenceLoopAnimationActive ? `
+            <div class="loop-playback-strip">
+              <span>主动追证播放中</span>
+              <div class="bar"><i></i></div>
+              <span>${selectedIndex + 1}/${steps.length}</span>
+            </div>
+          ` : ''}
           <div class="trace-steps">${stepNav}</div>
           ${progressHtml}
           <div class="step-detail-panel" style="animation:fadeInUp .3s ease">
@@ -3425,29 +3583,19 @@
     }
 
     function playTrace() {
-      const threads = state.selectedCase?.thread || [];
-      if (!threads.length) {
-        toast('当前案例还没有追证轨迹，请先运行下一步追证或完整闭环。');
+      const steps = getTraceSteps(state.selectedCase || {});
+      if (!steps.length) {
+        toast('当前案例还没有追证步骤，请先运行下一步追证或完整闭环。');
         return;
       }
       clearInterval(state.tracePlaybackTimer);
-      state.activePage = 'trace';
+      state.tracePlaybackActive = false;
+      state.tracePlayIndex = -1;
+      state.activePage = 'overview';
       state.activeTab = 'evidence_loop';
-      state.tracePlayIndex = 0;
-      state.tracePlaybackActive = true;
+      state.detailFocus = true;
       renderAll();
-      state.tracePlaybackTimer = setInterval(() => {
-        const total = state.selectedCase?.thread?.length || 0;
-        if (state.tracePlayIndex >= total - 1) {
-          clearInterval(state.tracePlaybackTimer);
-          state.tracePlaybackActive = false;
-          toast('主动追证播放完成：每一步 action、agent 决策、观察结果和证据增量已串起来。');
-          renderWorkbench();
-          return;
-        }
-        state.tracePlayIndex += 1;
-        renderWorkbench();
-      }, 950);
+      startEvidenceLoopAnimation();
     }
 
     function resetTracePlayback() {
@@ -3455,6 +3603,34 @@
       state.tracePlaybackActive = false;
       state.tracePlayIndex = -1;
       renderWorkbench();
+    }
+
+    function stopEvidenceLoopAnimation() {
+      clearInterval(state.evidenceLoopAnimationTimer);
+      state.evidenceLoopAnimationTimer = null;
+      state.evidenceLoopAnimationActive = false;
+    }
+
+    function startEvidenceLoopAnimation() {
+      stopEvidenceLoopAnimation();
+      const total = getTraceSteps(state.selectedCase || {}).length || 5;
+      state.selectedTraceStep = 0;
+      state.evidenceLoopAnimationActive = true;
+      renderWorkbench();
+      state.evidenceLoopAnimationTimer = setInterval(() => {
+        if (!state.detailFocus || state.activeTab !== 'evidence_loop') {
+          stopEvidenceLoopAnimation();
+          renderWorkbench();
+          return;
+        }
+        if (state.selectedTraceStep >= total - 1) {
+          stopEvidenceLoopAnimation();
+          renderWorkbench();
+          return;
+        }
+        state.selectedTraceStep += 1;
+        renderWorkbench();
+      }, 7600);
     }
 
     function evidenceFor(caseId) {
@@ -3474,10 +3650,12 @@
       state.activeTab = 'evidence_loop';
       state.reviewMenuOpen = false;
       await selectCase(id);
+      startEvidenceLoopAnimation();
       window.scrollTo({ top: 0, behavior: 'auto' });
     }
 
     function exitDetail() {
+      stopEvidenceLoopAnimation();
       state.detailFocus = false;
       state.reviewMenuOpen = false;
       state.highlightedOrderId = null;
@@ -3490,6 +3668,7 @@
       state.expandedCaseId = id;
       state.tracePlayIndex = -1;
       state.tracePlaybackActive = false;
+      stopEvidenceLoopAnimation();
       clearInterval(state.tracePlaybackTimer);
       await loadSelectedCase();
       renderAll();
@@ -3501,6 +3680,7 @@
       state.activeTab = pageToTab(id);
       if (id !== 'evidence_loop') {
         state.tracePlaybackActive = false;
+        stopEvidenceLoopAnimation();
         clearInterval(state.tracePlaybackTimer);
       }
       history.replaceState(null, '', id === 'overview' ? location.pathname : `#${id}`);
@@ -3512,8 +3692,10 @@
     }
 
     function setTab(id) {
+      if (id !== 'evidence_loop') stopEvidenceLoopAnimation();
       state.activeTab = id;
       renderWorkbench();
+      if (id === 'evidence_loop' && state.detailFocus) startEvidenceLoopAnimation();
     }
 
     function focusCandidate(id, event) {
