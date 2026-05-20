@@ -965,12 +965,225 @@
       request_human_review: '人工复核'
     };
 
+    const STATIC_DEMO = (() => {
+      const cases = [
+        {
+          case_id: 'AER-001',
+          pattern_id: 'EC-SKIM-001',
+          pattern_name: '团伙刷单骗补',
+          risk_level: 'critical',
+          risk_score: 0.94,
+          status: 'human_review_required',
+          primary_entities: {
+            orders: Array.from({ length: 14 }, (_, i) => `O_SKIM_${String(i).padStart(4, '0')}`),
+            users: ['U_SKIM_00', 'U_SKIM_01', 'U_SKIM_02', 'U_SKIM_03', 'U_SKIM_04'],
+            devices: ['D_shared_01', 'D_shared_02', 'D_shared_03'],
+            ips: ['172.16.4.8', '172.16.4.9'],
+            payments: ['P_wallet_01', 'P_wallet_02']
+          },
+          scores: { statistical: 0.91, relational: 0.96, narrative_behavior: 0.88, refund_rate: 1, subsidy_rate: 1 },
+          signal_strength: { device_reuse: 'strong', ip_cluster: 'strong', payment_cluster: 'medium', refund_abnormal: 'strong', subsidy_abuse: 'strong' },
+          evidence_requirements: { device_reuse: 0.2, ip_cluster: 0.16, payment_cluster: 0.14, refund_abnormal: 0.18, logistics_authenticity: 0.12, promo_cohort_outlier: 0.1, subsidy_abuse: 0.1 },
+          assertion: '同一设备、IP 与支付账户在促销窗口内关联多账号集中下单、快速退款并领取补贴，疑似团伙刷单骗补。',
+          evidence: [
+            { evidence_id: 'EV-AER001-001', kind: 'support', dimension: 'device_reuse', source: 'device_fingerprint', confidence: 0.95, description: '3 台设备连接 5 个账号，登录与下单时间高度重叠。' },
+            { evidence_id: 'EV-AER001-002', kind: 'support', dimension: 'ip_cluster', source: 'ip_profile', confidence: 0.91, description: '订单来自少量同段 IP，地理位置与收货地址不一致。' },
+            { evidence_id: 'EV-AER001-003', kind: 'support', dimension: 'payment_cluster', source: 'payment_record', confidence: 0.88, description: '多个账号回流到相同支付簇与钱包账户。' },
+            { evidence_id: 'EV-AER001-004', kind: 'support', dimension: 'refund_abnormal', source: 'refund_order', confidence: 0.93, description: '下单后 24 小时内快速退款，退款路径集中。' },
+            { evidence_id: 'EV-AER001-005', kind: 'support', dimension: 'subsidy_abuse', source: 'subsidy_record', confidence: 0.9, description: '补贴领取率 100%，与正常促销 cohort 显著偏离。' },
+            { evidence_id: 'EV-AER001-006', kind: 'counter', dimension: 'shared_device', source: 'counter_search', confidence: 0.18, description: '检索家庭共享设备解释，未发现稳定正当共享关系。' },
+            { evidence_id: 'EV-AER001-007', kind: 'uncertain', dimension: 'logistics_authenticity', source: 'logistics_order', confidence: 0.42, description: '部分物流轨迹完整，但无法解释支付与设备聚集。' }
+          ],
+          thread: [
+            { step_id: 1, agent_id: 'risk_signal_agent', action_taken: 'expand_infra_graph', decision: '命中强信号，扩展设备、IP、支付账户关系图谱。', observation: '发现共享设备与同段 IP 聚集。', reward: 0.31 },
+            { step_id: 2, agent_id: 'case_router_agent', action_taken: 'query_refund_cluster', decision: '退款异常是核心证据缺口，优先查询退款簇。', observation: '24 小时内退款率显著偏高。', reward: 0.22 },
+            { step_id: 3, agent_id: 'active_evidence_agent', action_taken: 'query_subsidy_ledger', decision: '补贴资金链需要与账号簇对齐。', observation: '补贴领取与账号簇高度重合。', reward: 0.18 },
+            { step_id: 4, agent_id: 'active_evidence_agent', action_taken: 'query_payment_cluster', decision: '继续核验支付账户复用。', observation: '支付钱包回流路径集中。', reward: 0.17 },
+            { step_id: 5, agent_id: 'counter_evidence_agent', action_taken: 'seek_counter_evidence', decision: '主动检索共享设备和自然促销反证。', observation: '反证不足以推翻风险断言。', reward: 0.11 },
+            { step_id: 6, agent_id: 'evidence_passport_agent', action_taken: 'emit_passport', decision: '证据满足护照门槛，生成可复核证据护照。', observation: '进入人工复核。', reward: 0.2 }
+          ]
+        },
+        {
+          case_id: 'AER-002',
+          pattern_id: 'EC-FAKE-002',
+          pattern_name: '空包虚假交易',
+          risk_level: 'critical',
+          risk_score: 0.88,
+          status: 'human_review_required',
+          primary_entities: {
+            orders: Array.from({ length: 8 }, (_, i) => `O_FAKE_${String(i).padStart(4, '0')}`),
+            users: ['U_FAKE_00', 'U_FAKE_01', 'U_FAKE_02'],
+            devices: ['D_fake_01', 'D_fake_02'],
+            ips: ['10.5.8.21'],
+            payments: ['P_fake_01']
+          },
+          scores: { statistical: 0.86, relational: 0.74, narrative_behavior: 0.92, low_logistics_rate: 0.82, avg_automation_score: 0.85 },
+          signal_strength: { logistics_authenticity: 'strong', auto_confirm: 'strong', review_similarity: 'medium' },
+          evidence_requirements: { logistics_authenticity: 0.3, auto_confirm: 0.22, review_similarity: 0.18, seller_relation: 0.16, weight_anomaly: 0.14 },
+          assertion: '物流轨迹异常、自动确认收货和评论复用同时出现，疑似空包虚假交易冲销量。',
+          evidence: [
+            { evidence_id: 'EV-AER002-001', kind: 'support', dimension: 'logistics_authenticity', source: 'logistics_order', confidence: 0.89, description: '50 单中 41 单缺少有效物流轨迹。' },
+            { evidence_id: 'EV-AER002-002', kind: 'support', dimension: 'auto_confirm', source: 'order_master', confidence: 0.85, description: '签收后 2 小时内自动确认收货占比高。' },
+            { evidence_id: 'EV-AER002-003', kind: 'uncertain', dimension: 'warehouse_batch', source: 'counter_search', confidence: 0.36, description: '存在海外仓批量发货可能，需要人工核验。' }
+          ],
+          thread: [
+            { step_id: 1, agent_id: 'risk_signal_agent', action_taken: 'query_logistics_trace', decision: '物流真实性不足，优先核验轨迹。', observation: '空包率 82%。', reward: 0.28 },
+            { step_id: 2, agent_id: 'active_evidence_agent', action_taken: 'analyze_behavior_sequence', decision: '核查自动确认与评论行为。', observation: '自动确认率 85%。', reward: 0.16 },
+            { step_id: 3, agent_id: 'counter_evidence_agent', action_taken: 'seek_counter_evidence', decision: '检索仓配批量发货反证。', observation: '反证需要人工复核。', reward: 0.08 }
+          ]
+        },
+        {
+          case_id: 'AER-003',
+          pattern_id: 'EC-ARBI-003',
+          pattern_name: '补贴套利观察',
+          risk_level: 'medium',
+          risk_score: 0.72,
+          status: 'reviewed_confirmed',
+          primary_entities: {
+            orders: Array.from({ length: 5 }, (_, i) => `O_ARBI_${String(i).padStart(4, '0')}`),
+            users: ['U_ARBI_00'],
+            devices: ['D_arbi_01'],
+            ips: ['172.20.9.3'],
+            payments: ['P_arbi_01']
+          },
+          scores: { statistical: 0.72, relational: 0.55, narrative_behavior: 0.68, subsidy_rate: 1, refund_rate: 1 },
+          signal_strength: { subsidy_abuse: 'medium', refund_abnormal: 'medium', qualification_reuse: 'weak' },
+          evidence_requirements: { subsidy_abuse: 0.28, refund_abnormal: 0.2, qualification_reuse: 0.18, payment_cluster: 0.12 },
+          assertion: '单账号补贴使用率与退款率偏高，存在补贴套利观察信号。',
+          evidence: [
+            { evidence_id: 'EV-AER003-001', kind: 'support', dimension: 'subsidy_abuse', source: 'subsidy_record', confidence: 0.76, description: '补贴使用率达到 100%。' },
+            { evidence_id: 'EV-AER003-002', kind: 'counter', dimension: 'single_account', source: 'counter_search', confidence: 0.32, description: '账号数量少，未形成团伙结构。' }
+          ],
+          thread: [
+            { step_id: 1, agent_id: 'risk_signal_agent', action_taken: 'query_subsidy_ledger', decision: '补贴异常进入观察池。', observation: '低复杂度，自动归档。', reward: 0.1 },
+            { step_id: 2, agent_id: 'evidence_passport_agent', action_taken: 'emit_passport', decision: '证据护照简版生成。', observation: '进入持续观察池。', reward: 0.08 }
+          ]
+        }
+      ];
+      const graphs = {}, passports = {}, routes = {};
+      cases.forEach(c => {
+        const entities = c.primary_entities || {};
+        const nodes = [
+          { id: c.case_id, label: c.case_id, type: 'case' },
+          { id: `${c.case_id}-assertion`, label: c.pattern_id, type: 'assertion' },
+          ...(entities.orders || []).slice(0, 10).map(id => ({ id, label: id, type: 'order' })),
+          ...(entities.users || []).map(id => ({ id, label: id, type: 'user' })),
+          ...(entities.devices || []).map(id => ({ id, label: id, type: 'device' })),
+          ...(entities.ips || []).map(id => ({ id, label: id, type: 'ip' })),
+          ...(c.evidence || []).slice(0, 8).map(e => ({ id: e.evidence_id, label: e.dimension, type: 'evidence' }))
+        ];
+        graphs[c.case_id] = { nodes, edges: nodes.filter(n => n.id !== c.case_id).map((n, i) => ({ source: c.case_id, target: n.id, relation: n.type, weight: 0.4 + (i % 5) * 0.1 })) };
+        passports[c.case_id] = {
+          case_header: { case_id: c.case_id, pattern_id: c.pattern_id, risk_score: c.risk_score },
+          human_gate: { required: c.status !== 'reviewed_confirmed', sufficiency_score: c.case_id === 'AER-001' ? 0.9 : 0.78, counter_score: c.case_id === 'AER-001' ? 0.18 : 0.32 },
+          recommended_action: c.case_id === 'AER-001' ? ['提交人工复核', '冻结关联账号补贴资格', '保留完整证据链', '写回风险模式库'] : ['生成标准证据护照', '持续观察', '人工抽检']
+        };
+        routes[c.case_id] = { ranked_actions: [
+          { action: 'expand_infra_graph', reason: '补齐账号、设备、IP 与支付账户关系', action_utility: 0.42 },
+          { action: 'query_refund_cluster', reason: '验证退款路径是否形成异常簇', action_utility: 0.37 },
+          { action: 'query_payment_cluster', reason: '核验资金回流与支付账户复用', action_utility: 0.33 },
+          { action: 'query_logistics_trace', reason: '校验物流真实性与签收质量', action_utility: 0.29 },
+          { action: 'seek_counter_evidence', reason: '主动检索家庭共享、仓配批量等反证', action_utility: 0.22 },
+          { action: 'emit_passport', reason: '沉淀可复核证据护照', action_utility: 0.18 }
+        ] };
+      });
+      return {
+        cases,
+        graphs,
+        passports,
+        routes,
+        candidates: [
+          { candidate_id: 'CAND-2026-AER-001', name: '共享基础设施刷单骗补候选模式', status: 'under_review', supporting_cases: ['AER-001'], common_signals: ['device_reuse', 'ip_cluster', 'payment_cluster', 'refund_abnormal', 'subsidy_abuse'], required_counter_checks: ['shared_device', 'campus_nat', 'normal_promo'], description: '由 AER-001 学习得到的候选风险模式，等待人工确认后写回。' },
+          { candidate_id: 'EC-FAKE-002', name: '空包虚假交易冲销量', status: 'human_review_required', supporting_cases: ['AER-002'], common_signals: ['logistics_authenticity', 'auto_confirm', 'review_similarity'], required_counter_checks: ['warehouse_batch', 'logistics_delay'] },
+          { candidate_id: 'EC-ARBI-003', name: '补贴套利快速退款', status: 'human_review_required', supporting_cases: ['AER-003'], common_signals: ['subsidy_abuse', 'refund_abnormal', 'qualification_reuse'], required_counter_checks: ['single_account', 'normal_campaign'] }
+        ],
+        patterns: [
+          { pattern_id: 'EC-SKIM-001', name: '团伙刷单骗补', status: 'active' },
+          { pattern_id: 'EC-FAKE-002', name: '空包虚假交易', status: 'active' },
+          { pattern_id: 'EC-ARBI-003', name: '补贴套利观察', status: 'active' }
+        ],
+        policyWeights: [],
+        notifications: [],
+        notificationStatus: { enabled: true, feishu_enabled: false, feishu_configured: false, default_channels: ['mock'], note: 'GitHub Pages 静态演示模式' },
+        dashboard: {
+          case_count: cases.length,
+          evidence_count: cases.reduce((sum, c) => sum + c.evidence.length, 0),
+          trajectory_count: cases.reduce((sum, c) => sum + c.thread.length, 0),
+          passport_count: 3,
+          model_backend: 'static-demo',
+          model_invocations: [
+            { agent_id: 'risk_signal_agent', backend: 'openai', count: 16, used_fallback: 0 },
+            { agent_id: 'case_router_agent', backend: 'openai', count: 14, used_fallback: 0 },
+            { agent_id: 'evidence_passport_agent', backend: 'openai', count: 8, used_fallback: 0 },
+            { agent_id: 'pattern_learning_agent', backend: 'openai', count: 6, used_fallback: 0 }
+          ],
+          actions: [
+            { action: 'expand_infra_graph', count: 10 },
+            { action: 'query_refund_cluster', count: 6 },
+            { action: 'query_payment_cluster', count: 5 },
+            { action: 'query_logistics_trace', count: 5 },
+            { action: 'seek_counter_evidence', count: 4 },
+            { action: 'emit_passport', count: 3 }
+          ]
+        }
+      };
+    })();
 
+    function cloneStatic(value) {
+      return JSON.parse(JSON.stringify(value));
+    }
+
+    function staticApi(path, opts = {}) {
+      const method = String(opts.method || 'GET').toUpperCase();
+      const cleanPath = String(path).split('?')[0];
+      if (method === 'GET' && cleanPath === '/api/dashboard') return cloneStatic(STATIC_DEMO.dashboard);
+      if (method === 'GET' && cleanPath === '/api/cases') return cloneStatic(STATIC_DEMO.cases);
+      if (method === 'GET' && cleanPath === '/api/patterns/candidates') return cloneStatic(STATIC_DEMO.candidates);
+      if (method === 'GET' && cleanPath === '/api/patterns') return cloneStatic(STATIC_DEMO.patterns);
+      if (method === 'GET' && cleanPath === '/api/policy/weights') return cloneStatic(STATIC_DEMO.policyWeights);
+      if (method === 'GET' && cleanPath === '/api/notifications/status') return cloneStatic(STATIC_DEMO.notificationStatus);
+      if (method === 'GET' && cleanPath === '/api/notifications') return { items: cloneStatic(STATIC_DEMO.notifications) };
+      let match = cleanPath.match(/^\/api\/cases\/([^/]+)$/);
+      if (method === 'GET' && match) return cloneStatic(STATIC_DEMO.cases.find(c => c.case_id === decodeURIComponent(match[1])) || STATIC_DEMO.cases[0]);
+      match = cleanPath.match(/^\/api\/cases\/([^/]+)\/graph$/);
+      if (method === 'GET' && match) return cloneStatic(STATIC_DEMO.graphs[decodeURIComponent(match[1])] || STATIC_DEMO.graphs['AER-001']);
+      match = cleanPath.match(/^\/api\/cases\/([^/]+)\/passport$/);
+      if (method === 'GET' && match) return cloneStatic(STATIC_DEMO.passports[decodeURIComponent(match[1])] || STATIC_DEMO.passports['AER-001']);
+      match = cleanPath.match(/^\/api\/cases\/([^/]+)\/route$/);
+      if (method === 'GET' && match) return cloneStatic(STATIC_DEMO.routes[decodeURIComponent(match[1])] || STATIC_DEMO.routes['AER-001']);
+      match = cleanPath.match(/^\/api\/patterns\/candidates\/([^/]+)\/review$/);
+      if (method === 'POST' && match) {
+        const id = decodeURIComponent(match[1]);
+        const candidate = STATIC_DEMO.candidates.find(c => c.candidate_id === id);
+        if (candidate) candidate.status = 'approved';
+        if (!STATIC_DEMO.policyWeights.some(w => w.source_candidate_id === id)) {
+          ['expand_infra_graph', 'query_refund_cluster', 'query_payment_cluster', 'query_logistics_trace', 'seek_counter_evidence', 'emit_passport'].forEach((action, index) => {
+            STATIC_DEMO.policyWeights.push({ pattern_id: candidate?.supporting_cases?.includes('AER-001') ? 'EC-SKIM-001' : candidate?.candidate_id || id, action, delta: Number((0.12 - index * 0.01).toFixed(2)), source_candidate_id: id });
+          });
+        }
+        return { ok: true, candidate_id: id, status: 'approved', risk_pattern_id: candidate?.candidate_id || id, policy_weights_written: STATIC_DEMO.policyWeights.length };
+      }
+      if (method === 'POST' && cleanPath === '/api/notifications/send') {
+        let body = {};
+        try { body = JSON.parse(opts.body || '{}'); } catch {}
+        const event = { event_id: `STATIC-${Date.now()}`, case_id: body.case_id || 'AER-001', event_type: body.event_type || 'human_review_required', status: 'delivered', created_at: new Date().toISOString(), deliveries: [{ channel: 'mock', status: 'delivered', error_message: '' }] };
+        STATIC_DEMO.notifications.unshift(event);
+        return { ok: true, event, deliveries: cloneStatic(event.deliveries) };
+      }
+      if (method === 'POST' && (cleanPath.includes('/run') || cleanPath.includes('/step') || cleanPath.includes('/review') || cleanPath === '/api/demo/run')) return { ok: true, mode: 'static-demo' };
+      return undefined;
+    }
 
     async function api(path, opts = {}) {
-      const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts });
-      if (!res.ok) throw new Error(await res.text());
-      return res.json();
+      try {
+        const res = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...opts });
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      } catch (err) {
+        const fallback = staticApi(path, opts);
+        if (fallback !== undefined) return fallback;
+        throw err;
+      }
     }
 
     function safeJson(value, fallback) {
